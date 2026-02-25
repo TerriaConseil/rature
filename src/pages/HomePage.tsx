@@ -1,8 +1,6 @@
 import { useRef } from 'react';
 import { Navbar } from '@/components/Navbar.tsx';
 import { DropZone } from '@/components/home/DropZone.tsx';
-import { HowItWorks } from '@/components/home/HowItWorks.tsx';
-import { Features } from '@/components/home/Features.tsx';
 import { Footer } from '@/components/home/Footer.tsx';
 
 interface HomePageProps {
@@ -46,11 +44,6 @@ export function HomePage({ onFileSelect }: HomePageProps) {
         </div>
       </section>
 
-      {/* Sections */}
-      <HowItWorks />
-      <Features />
-
-      {/* Mobile warning */}
       <div className="fixed inset-0 z-100 flex items-center justify-center bg-surface p-8 md:hidden">
         <div className="text-center max-w-sm">
           <p className="text-3xl mb-4">🖥️</p>
