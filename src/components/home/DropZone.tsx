@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { UploadCloud, FileText } from 'lucide-react';
+import { FileText, Upload } from 'lucide-react';
 import { cn } from '@/lib/utils.ts';
 
 interface DropZoneProps {
@@ -45,7 +45,7 @@ export function DropZone({ onFileSelect }: DropZoneProps) {
       onDrop={onDrop}
       onClick={() => inputRef.current?.click()}
       className={cn(
-        'relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed p-10 cursor-pointer transition-all duration-200 group select-none',
+        'relative flex flex-col items-center justify-center gap-4 rounded-2xl p-10 cursor-pointer transition-all duration-200 group select-none',
         isDragging
           ? 'border-accent bg-teal-50/50 dark:bg-teal-950/20 scale-[1.01]'
           : 'border-border-strong hover:border-accent hover:bg-surface-subtle',
@@ -70,15 +70,14 @@ export function DropZone({ onFileSelect }: DropZoneProps) {
         {isDragging ? (
           <FileText size={26} strokeWidth={1.5} />
         ) : (
-          <UploadCloud size={26} strokeWidth={1.5} />
+          <Upload size={26} strokeWidth={1.5} />
         )}
       </div>
 
       <div className="text-center space-y-1">
-        <p className="text-sm font-medium text-fg">
+        <p className="text-sm font-bold text-fg">
           {isDragging ? 'Déposez votre PDF ici' : 'Déposez votre PDF ou cliquez pour importer'}
         </p>
-        <p className="text-xs text-fg-subtle">.pdf — jusqu'à 50 Mo</p>
       </div>
     </div>
   );
