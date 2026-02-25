@@ -1,0 +1,82 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─── Static design tokens ─────────────────────────────────────── */
+@theme {
+  --color-accent: #0d9488;
+  --color-accent-hover: #0f766e;
+  --color-accent-foreground: #ffffff;
+  --font-sans: Inter, Geist, system-ui, -apple-system, sans-serif;
+}
+
+/* ─── Semantic tokens (change between light / dark) ─────────────── */
+:root {
+  --surface: #fafafa;
+  --surface-subtle: #f3f4f6;
+  --card: #ffffff;
+  --fg: #111827;
+  --fg-muted: #6b7280;
+  --fg-subtle: #9ca3af;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+}
+
+.dark {
+  --surface: #121218;
+  --surface-subtle: #17171e;
+  --card: #1e1e26;
+  --fg: #f9fafb;
+  --fg-muted: #9ca3af;
+  --fg-subtle: #6b7280;
+  --border: #2d2d3a;
+  --border-strong: #3d3d4e;
+}
+
+/* Map semantic tokens to Tailwind utilities via @theme inline */
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-card: var(--card);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-border-theme: var(--border);
+  --color-border-strong: var(--border-strong);
+}
+
+/* ─── Base ───────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background-color: var(--surface);
+  color: var(--fg);
+  font-family: var(--font-sans, system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 99px;
+}
