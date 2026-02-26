@@ -26,7 +26,7 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <div className="flex flex-col min-h-full bg-surface text-fg antialiased">
+      <div className="flex flex-col min-h-full text-fg antialiased bg-linear-to-b from-gray-200 to-surface">
         {page === 'home' && (
           <HomePage onFileSelect={handleFileSelect} />
         )}
