@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback } from "react";
-import { toast } from "sonner";
 
 import type { GroupedEntity, NERPipelineEntity } from "@/models/token-classification-model.ts";
+import type { NERModel } from "@/models/utils.ts";
 
 export interface NERResult {
   rawEntities: NERPipelineEntity[];
@@ -37,12 +37,13 @@ type NERWorkerMessage =
     message: string;
   };
 
-export function useNERWorker(modelName: string) {
+export function useNERWorker() {
   const workerRef = useRef<Worker | null>(null);
   const [status, setStatus] = useState<NERStatus>("idle");
   const [backend, setBackend] = useState<"webgpu" | "wasm" | null>(null);
   const [modelTokens, setModelTokens] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const modelNameRef = useRef<NERModel | null>(null);
   const pendingJobsRef = useRef<
     Map<
       string,
@@ -62,7 +63,7 @@ export function useNERWorker(modelName: string) {
       case "ready":
         workerRef.current.postMessage({
           type: "init",
-          model: modelName,
+          model: modelNameRef.current,
           preferredBackend: 'wasm',
         });
         break;
@@ -73,9 +74,7 @@ export function useNERWorker(modelName: string) {
         break;
 
       case "status":
-        console.log(event.data.message);
         if (event.data.backend) {
-          toast.success(`Model ${modelName} loaded with ${event.data.backend}`);
           setBackend(event.data.backend);
           setModelTokens(event.data.modelTokens);
         }
@@ -115,17 +114,23 @@ export function useNERWorker(modelName: string) {
     setStatus("error");
   };
 
-  const initialize = () => {
+  const initialize = (model: NERModel) => {
+    if (status !== "idle") return;
+
     setStatus("loading");
     setBackend(null);
     setModelTokens([]);
+    modelNameRef.current = model;
 
-    const worker = new Worker(new URL("../workers/nerWorker.ts", import.meta.url), { type: "module" });
+    if (!workerRef.current) {
+      const worker = new Worker(new URL("../workers/nerWorker.ts", import.meta.url), { type: "module" });
 
-    worker.onmessage = handleWorkerMessages;
-    worker.onerror = handleWorkerErrors;
+      worker.onmessage = handleWorkerMessages;
+      worker.onerror = handleWorkerErrors;
+      workerRef.current = worker;
+    }
 
-    workerRef.current = worker;
+    return workerRef.current;
   };
 
   const processText = useCallback(

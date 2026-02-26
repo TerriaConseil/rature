@@ -1,43 +1,77 @@
-import { useEffect, useState } from 'react';
 import { FileText } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+
+import { useNERWorker } from '@/hooks/useNERWorker.ts';
+import { useAnonymization } from '@/hooks/useAnonymization.ts';
+import type { NERModel } from '@/models/utils.ts';
 
 interface LoadingPageProps {
-  fileName: string
-  onComplete: () => void
+  fileName: string;
+  modelName: NERModel;
+  onComplete: () => void;
 }
 
 const STEPS = [
   'Chargement du modèle de détection...',
   'Lecture du document...',
-  'Analyse de la mise en page...',
   'Détection des entités nommées...',
   'Finalisation...',
 ];
 
-export function LoadingPage({ fileName, onComplete }: LoadingPageProps) {
+export function LoadingPage({ fileName, modelName, onComplete }: LoadingPageProps) {
+  const { status, initialize, processText, terminate } = useNERWorker();
+  const { setNerEntities } = useAnonymization();
   const [progress, setProgress] = useState(0);
   const [stepIndex, setStepIndex] = useState(0);
 
-  useEffect(() => {
-    const duration = 2800; // ms total
-    const interval = 40;
-    const steps = duration / interval;
-    let current = 0;
-
-    const timer = setInterval(() => {
-      current += 1;
-      const pct = Math.min((current / steps) * 100, 100);
-      setProgress(pct);
-      setStepIndex(Math.min(Math.floor(pct / 26), STEPS.length - 1));
-
-      if (pct >= 100) {
-        clearInterval(timer);
-        setTimeout(onComplete, 300);
-      }
-    }, interval);
-
-    return () => clearInterval(timer);
+  const finalize = useCallback(() => {
+    setTimeout(onComplete, 2000);
   }, [onComplete]);
+
+  const analyzeDocument = useCallback(async (text: string) => {
+    const { entities } = await processText(text);
+
+    setNerEntities(entities);
+    setProgress(90);
+    setStepIndex(3);
+    finalize();
+  }, [finalize, processText, setNerEntities]);
+
+  const processFile = useCallback(() => {
+    const text = "Bonjour je m'appelle Julien KILO.";
+
+    setTimeout(() => {
+      setProgress(50);
+      setStepIndex(2);
+
+      analyzeDocument(text);
+    }, 2000);
+  }, [analyzeDocument]);
+
+  useEffect(() => {
+    if (progress !== 0 || status !== 'idle') return;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setProgress(10);
+
+    initialize(modelName);
+
+    return () => {
+      if (status !== 'idle') {
+        terminate();
+      }
+    };
+  }, [initialize, modelName, progress, status, terminate]);
+
+  useEffect(() => {
+    if (progress !== 10 || status !== 'ready') return;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setProgress(30);
+    setStepIndex(1);
+
+    processFile();
+  }, [processFile, progress, status]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-8 px-6">
