@@ -8,7 +8,7 @@ interface AnonymizationContextValue {
   setNerEntities: (entities: GroupedEntity[]) => void;
 };
 
-export const AnonimzationContext = createContext<AnonymizationContextValue>({
+export const AnonymizationContext = createContext<AnonymizationContextValue>({
   nerEntities: [],
   addEntity: () => {},
   removeEntity: () => {},

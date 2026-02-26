@@ -1,4 +1,4 @@
-import { AnonimzationContext } from "@/context/anonymization.tsx";
+import { AnonymizationContext } from "@/context/anonymization.tsx";
 import { type GroupedEntity } from "@/models/token-classification-model.ts";
 import { useState, type ReactNode } from "react";
 
@@ -18,7 +18,7 @@ export function AnonymizationProvider({ children }: AnonymizationProviderProps) 
   };
 
   return (
-    <AnonimzationContext value={{
+    <AnonymizationContext value={{
         nerEntities,
         addEntity,
         removeEntity,
@@ -26,6 +26,6 @@ export function AnonymizationProvider({ children }: AnonymizationProviderProps) 
       }}
     >
       {children}
-    </AnonimzationContext>
+    </AnonymizationContext>
   );
 }
