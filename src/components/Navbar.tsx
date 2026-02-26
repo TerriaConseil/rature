@@ -14,24 +14,24 @@ export function Navbar() {
         <nav className="hidden md:flex items-center gap-1">
           <a
             href="/"
-            className="p-3 h-full flex flex-1 items-center gap-3 text-sm text-fg-muted hover:text-fg transition-colors hover:bg-surface-subtle"
+            className="group p-3 h-full flex flex-1 items-center gap-3 text-sm text-fg-muted hover:text-white transition-colors hover:bg-black"
           >
             <Upload size="24" className='shrink-0' />
-            <span className="font-medium hidden md:flex min-w-0">Anonymiser</span>
+            <span className="relative font-medium hidden md:flex min-w-0 after:content-[''] after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:h-[1.5px] after:bg-current after:w-0 group-hover:after:w-full after:transition-[width] after:duration-500">Anonymiser</span>
           </a>
           <a
             href="/settings"
-            className="p-3 h-full flex flex-1 items-center gap-3 text-sm text-fg-muted hover:text-fg transition-colors hover:bg-surface-subtle"
+            className="group p-3 h-full flex flex-1 items-center gap-3 text-sm text-fg-muted hover:text-white transition-colors hover:bg-black"
           >
             <Settings size="24" className='shrink-0' />
-            <span className="font-medium hidden md:flex min-w-0">Paramètres</span>
+            <span className="relative font-medium hidden md:flex min-w-0 after:content-[''] after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:h-[1.5px] after:bg-current after:w-0 group-hover:after:w-full after:transition-[width] after:duration-500">Paramètres</span>
           </a>
           <a
             href="/about-us"
-            className="p-3 h-full flex flex-1 items-center gap-3 text-sm text-fg-muted hover:text-fg transition-colors hover:bg-surface-subtle"
+            className="group p-3 h-full flex flex-1 items-center gap-3 text-sm text-fg-muted hover:text-white transition-colors hover:bg-black"
           >
             <Info size="24" className='shrink-0' />
-            <span className="font-medium hidden md:flex min-w-0">À propos</span>
+            <span className="relative font-medium hidden md:flex min-w-0 after:content-[''] after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:h-[1.5px] after:bg-current after:w-0 group-hover:after:w-full after:transition-[width] after:duration-500">À propos</span>
           </a>
         </nav>
 
