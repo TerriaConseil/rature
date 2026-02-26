@@ -1,14 +1,9 @@
-import { FileText } from 'lucide-react';
-
 export function Footer() {
   return (
     <footer className="border-t border-border-theme py-8">
       <div className="mx-auto max-w-300 px-6 flex flex-wrap items-center justify-between gap-4">
-        <a href="#" className="flex items-center gap-2 text-fg-muted hover:text-fg transition-colors">
-          <span className="flex items-center justify-center w-6 h-6 rounded-[5px] bg-accent text-accent-foreground">
-            <FileText size={13} strokeWidth={2.5} />
-          </span>
-          <span className="text-sm font-semibold">Rature</span>
+        <a href="#">
+          <span className="bg-neutral-800 text-lg font-bold tracking-tight text-neutral-100 dark:bg-neutral-200 dark:text-neutral-800 px-3 pt-0.5 pb-1 [font-variant:small-caps]">rature</span>
         </a>
 
         <p className="text-xs text-fg-subtle">
