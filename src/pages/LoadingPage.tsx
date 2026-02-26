@@ -40,13 +40,11 @@ export function LoadingPage({ fileName, onComplete }: LoadingPageProps) {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-8 px-6">
-      {/* Animated icon */}
       <div className="relative flex items-center justify-center w-20 h-20 rounded-2xl bg-teal-50 dark:bg-teal-950/30 text-accent">
         <FileText size={36} strokeWidth={1.25} />
         <span className="absolute inset-0 rounded-2xl border-2 border-accent/30 animate-ping" />
       </div>
 
-      {/* Text */}
       <div className="text-center space-y-2 max-w-sm">
         <h2 className="text-xl font-semibold text-fg">Analyse en cours</h2>
         <p className="text-sm text-fg-muted truncate max-w-xs mx-auto" title={fileName}>
@@ -54,7 +52,6 @@ export function LoadingPage({ fileName, onComplete }: LoadingPageProps) {
         </p>
       </div>
 
-      {/* Progress bar */}
       <div className="w-full max-w-xs space-y-2">
         <div className="h-1 w-full rounded-full bg-border-theme overflow-hidden">
           <div

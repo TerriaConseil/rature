@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import { Navbar } from '@/components/Navbar.tsx';
 import { DropZone } from '@/components/home/DropZone.tsx';
 import { Footer } from '@/components/home/Footer.tsx';
@@ -8,17 +7,11 @@ interface HomePageProps {
 }
 
 export function HomePage({ onFileSelect }: HomePageProps) {
-  const dropZoneRef = useRef<HTMLDivElement>(null);
-
-  const scrollToDropZone = () => {
-    dropZoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
   return (
-    <div className="flex flex-col min-h-full">
-      <Navbar onUploadClick={scrollToDropZone} />
+    <div className="flex flex-col justify-between flex-1 h-full">
+      <Navbar />
 
-      <section className="mx-auto w-full max-w-300 px-6 pt-20 pb-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <section className="flex-1 mx-auto h-full w-full max-w-300 px-6 pt-56 pb-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div className="flex flex-col gap-6">
           <h1 className="text-5xl lg:text-6xl font-extrabold text-fg tracking-tight leading-[1.1]">
             Anonymisez vos PDFs directement dans votre{' '}
@@ -30,8 +23,6 @@ export function HomePage({ onFileSelect }: HomePageProps) {
             qu'ils ne quittent votre appareil. Partagez vos documents anonymisés en toute confiance
             avec n'importe quel assistant IA.
           </p>
-
-          <div ref={dropZoneRef} />
         </div>
 
         <div className="flex flex-col gap-4">
