@@ -7,6 +7,7 @@ interface LoadingPageProps {
 }
 
 const STEPS = [
+  'Chargement du modèle de détection...',
   'Lecture du document...',
   'Analyse de la mise en page...',
   'Détection des entités nommées...',
