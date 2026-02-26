@@ -48,7 +48,7 @@ export function DropZone({ onFileSelect }: DropZoneProps) {
         'relative flex flex-col items-center justify-center gap-4 rounded-2xl p-10 cursor-pointer transition-all duration-200 group select-none',
         isDragging
           ? 'border-accent bg-teal-50/50 dark:bg-teal-950/20 scale-[1.01]'
-          : 'border-border-strong hover:border-accent hover:bg-surface-subtle',
+          : 'border-border-strong hover:border-accent hover:bg-surface-subtle hover:dark:bg-neutral-100/10',
       )}
     >
       <input
@@ -64,7 +64,7 @@ export function DropZone({ onFileSelect }: DropZoneProps) {
           'flex items-center justify-center w-14 h-14 rounded-2xl transition-all duration-200',
           isDragging
             ? 'bg-accent text-accent-foreground'
-            : 'bg-surface-subtle text-fg-muted group-hover:bg-accent group-hover:text-accent-foreground',
+            : 'bg-surface-subtle text-fg-muted dark:bg-neutral-200 dark:text-neutral-800 group-hover:bg-accent group-hover:text-accent-foreground',
         )}
       >
         {isDragging ? (
