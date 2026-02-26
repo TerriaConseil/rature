@@ -1,0 +1,8 @@
+{
+  "name": "Rature",
+  "short_name": "Rature",
+  "icons": [],
+  "theme_color": "#0d9488",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
