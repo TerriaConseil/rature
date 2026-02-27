@@ -1,12 +1,20 @@
 import { Navbar } from '@/components/Navbar.tsx';
 import { DropZone } from '@/components/home/DropZone.tsx';
 import { Footer } from '@/components/home/Footer.tsx';
+import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 
 interface HomePageProps {
-  onFileSelect: (file: File) => void
+  onFileSelect: () => void
 }
 
 export function HomePage({ onFileSelect }: HomePageProps) {
+  const { setFile } = usePdfProcessing();
+
+  const handleFileSelected = (file: File) => {
+    setFile(file);
+    onFileSelect();
+  };
+
   return (
     <div className="flex flex-col justify-between flex-1 h-full">
       <Navbar />
@@ -30,7 +38,7 @@ export function HomePage({ onFileSelect }: HomePageProps) {
             className="rounded-2xl border border-border-theme bg-card p-6"
             style={{ boxShadow: '0 4px 24px 0 rgb(0 0 0 / 0.06)' }}
           >
-            <DropZone onFileSelect={onFileSelect} />
+            <DropZone onFileSelect={handleFileSelected} />
           </div>
         </div>
       </section>

@@ -5,15 +5,18 @@ import { DetectionSidebar } from '@/components/workflow/DetectionSidebar.tsx';
 import { ExportModal } from '@/components/workflow/ExportModal.tsx';
 import { MOCK_ENTITIES } from '@/data/mockEntities.ts';
 import type { DetectedEntity } from '@/types/index.ts';
+import { useAnonymization } from '@/hooks/useAnonymization.ts';
+import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 
 interface WorkflowPageProps {
-  fileName: string
-  onBack: () => void
-}
+  onBack: () => void;
+};
 
 const TOTAL_PAGES = 3;
 
-export function WorkflowPage({ fileName, onBack }: WorkflowPageProps) {
+export function WorkflowPage({ onBack }: WorkflowPageProps) {
+  const { reset: resetEntities } = useAnonymization();
+  const { file, reset: resetPdfDocument } = usePdfProcessing();
   const [entities, setEntities] = useState<DetectedEntity[]>(MOCK_ENTITIES);
   const [currentPage, setCurrentPage] = useState(1);
   const [zoom, setZoom] = useState(100);
@@ -45,14 +48,24 @@ export function WorkflowPage({ fileName, onBack }: WorkflowPageProps) {
   const handleZoomIn = () => setZoom(z => Math.min(z + 25, 200));
   const handleZoomOut = () => setZoom(z => Math.max(z - 25, 50));
 
+  const handleBackClick = () => {
+    resetEntities();
+    resetPdfDocument();
+    onBack();
+  };
+
+  if (!file) {
+    return <div>No file selected!</div>;
+  }
+
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <Toolbar
-        fileName={fileName}
+        fileName={file.name}
         currentPage={currentPage}
         totalPages={TOTAL_PAGES}
         zoom={zoom}
-        onBack={onBack}
+        onBack={handleBackClick}
         onPrevPage={() => setCurrentPage(p => Math.max(p - 1, 1))}
         onNextPage={() => setCurrentPage(p => Math.min(p + 1, TOTAL_PAGES))}
         onZoomIn={handleZoomIn}
@@ -86,7 +99,7 @@ export function WorkflowPage({ fileName, onBack }: WorkflowPageProps) {
       {showExport && (
         <ExportModal
           entities={entities}
-          fileName={fileName}
+          fileName={file.name}
           onClose={() => setShowExport(false)}
           onDownload={() => {
             // Real export will be wired later

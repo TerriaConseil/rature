@@ -13,8 +13,9 @@ interface PdfProcessingContextValue {
   file: File | null;
   pdfDocument: PDFDocument | null;
   processingStatus: PDFProcessingStatus;
-  processFile: (file: File) => Promise<TextExtract[]>;
+  processFile: () => Promise<TextExtract[]>;
   reset: () => void;
+  setFile: (file: File) => void;
 }
 
 export const PdfProcessingContext = createContext<PdfProcessingContextValue>({
@@ -24,4 +25,5 @@ export const PdfProcessingContext = createContext<PdfProcessingContextValue>({
   processingStatus: 'idle',
   processFile: () => new Promise(() => {}),
   reset: () => {},
+  setFile: () => {},
 });

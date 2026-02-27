@@ -17,11 +17,14 @@ export function AnonymizationProvider({ children }: AnonymizationProviderProps) 
     setNerEntities((prev) => prev.filter((entity) => entity.id !== entityId));
   };
 
+  const reset = () => setNerEntities([]);
+
   return (
     <AnonymizationContext value={{
         nerEntities,
         addEntity,
         removeEntity,
+        reset,
         setNerEntities,
       }}
     >

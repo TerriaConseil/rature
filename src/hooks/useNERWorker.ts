@@ -11,7 +11,7 @@ export interface NERResult {
 
 type NERStatus = "idle" | "loading" | "ready" | "processing" | "error";
 
-type NERWorkerMessage =
+export type NERWorkerMessage =
   | {
     type: "ready"
   }
@@ -115,14 +115,12 @@ export function useNERWorker() {
   };
 
   const initialize = (model: NERModel) => {
-    if (status !== "idle") return;
-
-    setStatus("loading");
-    setBackend(null);
-    setModelTokens([]);
-    modelNameRef.current = model;
-
     if (!workerRef.current) {
+      setStatus("loading");
+      setBackend(null);
+      setModelTokens([]);
+      modelNameRef.current = model;
+
       const worker = new Worker(new URL("../workers/nerWorker.ts", import.meta.url), { type: "module" });
 
       worker.onmessage = handleWorkerMessages;
@@ -141,10 +139,10 @@ export function useNERWorker() {
           return;
         }
 
+        setStatus("processing");
         const jobId = `job_${crypto.randomUUID()}`;
         pendingJobsRef.current.set(jobId, { resolve, reject });
 
-        setStatus("processing");
         workerRef.current.postMessage({ type: "process", text, jobId });
       });
     },
@@ -156,6 +154,7 @@ export function useNERWorker() {
 
     workerRef.current.postMessage({ type: "terminate" });
     workerRef.current.terminate();
+    workerRef.current = null;
   };
 
   return {

@@ -1,12 +1,12 @@
 import { FileText } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useNERWorker } from '@/hooks/useNERWorker.ts';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import type { NERModel } from '@/models/utils.ts';
+import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 
 interface LoadingPageProps {
-  fileName: string;
   modelName: NERModel;
   onComplete: () => void;
 }
@@ -18,60 +18,78 @@ const STEPS = [
   'Finalisation...',
 ];
 
-export function LoadingPage({ fileName, modelName, onComplete }: LoadingPageProps) {
-  const { status, initialize, processText, terminate } = useNERWorker();
+export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
+  const { status: workerStatus, error, initialize, processText, terminate } = useNERWorker();
   const { setNerEntities } = useAnonymization();
-  const [progress, setProgress] = useState(0);
+  const { file, processingStatus: pdfProcessingStatus, processFile } = usePdfProcessing();
+
+  const [progress, setProgress] = useState(10);
   const [stepIndex, setStepIndex] = useState(0);
 
+  const updateStep = (step: number) => {
+    setStepIndex(step);
+
+    if (step === 1) {
+      setProgress(30);
+    }
+
+    if (step === 2) {
+      setProgress(50);
+    }
+
+    if (step === 3) {
+      setProgress(90);
+    }
+  };
+
   const finalize = useCallback(() => {
+    updateStep(3);
+
+    setTimeout(() => setProgress(100), 1500);
     setTimeout(onComplete, 2000);
   }, [onComplete]);
 
   const analyzeDocument = useCallback(async (text: string) => {
+    setTimeout(() => updateStep(2), 500);
+
     const { entities } = await processText(text);
 
     setNerEntities(entities);
-    setProgress(90);
-    setStepIndex(3);
-    finalize();
+
+    setTimeout(() => finalize(), 750);
   }, [finalize, processText, setNerEntities]);
 
-  const processFile = useCallback(() => {
-    const text = "Bonjour je m'appelle Julien KILO.";
+  const processDocument = useCallback(async () => {
+    if (pdfProcessingStatus !== 'idle') return;
 
-    setTimeout(() => {
-      setProgress(50);
-      setStepIndex(2);
+    updateStep(1);
 
-      analyzeDocument(text);
-    }, 2000);
-  }, [analyzeDocument]);
+    const text = await processFile();
+
+    analyzeDocument(text.map((extract) => extract.text).join('\n'));
+  }, [analyzeDocument, pdfProcessingStatus, processFile]);
+
+  const workerMemo = useMemo(() => initialize(modelName), [initialize, modelName]);
 
   useEffect(() => {
-    if (progress !== 0 || status !== 'idle') return;
+    if (workerStatus !== 'ready') return;
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setProgress(10);
+    processDocument();
+  }, [pdfProcessingStatus, processDocument, stepIndex, workerStatus]);
 
-    initialize(modelName);
-
+  useEffect(() => {
     return () => {
-      if (status !== 'idle') {
+      if (!!workerMemo && workerStatus !== 'idle' && (!!error || progress === 100)) {
+        console.log('exterminate', workerStatus);
         terminate();
       }
     };
-  }, [initialize, modelName, progress, status, terminate]);
+  }, [error, progress, terminate, workerMemo, workerStatus]);
 
-  useEffect(() => {
-    if (progress !== 10 || status !== 'ready') return;
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setProgress(30);
-    setStepIndex(1);
-
-    processFile();
-  }, [processFile, progress, status]);
+  if (!file) {
+    return <div>No file selected!</div>;
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-8 px-6">
@@ -82,15 +100,15 @@ export function LoadingPage({ fileName, modelName, onComplete }: LoadingPageProp
 
       <div className="text-center space-y-2 max-w-sm">
         <h2 className="text-xl font-semibold text-fg">Analyse en cours</h2>
-        <p className="text-sm text-fg-muted truncate max-w-xs mx-auto" title={fileName}>
-          {fileName}
+        <p className="text-sm text-fg-muted truncate max-w-xs mx-auto" title={file.name}>
+          {file.name}
         </p>
       </div>
 
       <div className="w-full max-w-xs space-y-2">
         <div className="h-1 w-full rounded-full bg-border-theme overflow-hidden">
           <div
-            className="h-full rounded-full bg-accent transition-all duration-100 ease-out"
+            className="h-full rounded-full bg-accent transition-all duration-300 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>

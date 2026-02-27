@@ -15,10 +15,12 @@ export function PdfProcessingProvider({ children }: PdfProcessingProviderProps) 
   const [pdfDocument, setPdfDocument] = useState<PDFDocument | null>(null);
   const [extractedText, setExtractedText] = useState<TextExtract[]>([]);
 
-  const processFile = async (file: File) => {
-    setStatus("processing");
+  const processFile = async () => {
+    if (!file) {
+      throw new Error('You must set the file first');
+    }
 
-    setFile(file);
+    setStatus("processing");
 
     try {
       const result = await uploadPDF(file);
@@ -56,6 +58,7 @@ export function PdfProcessingProvider({ children }: PdfProcessingProviderProps) 
       extractedText,
       processFile,
       reset,
+      setFile,
     }}>
       {children}
     </PdfProcessingContext>

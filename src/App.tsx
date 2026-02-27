@@ -10,11 +10,9 @@ import type { AppPage } from '@/types/index.ts';
 
 export default function App() {
   const [page, setPage] = useState<AppPage>('home');
-  const [fileName, setFileName] = useState('');
   const [modelName] = useState<NERModel>(NER_MODELS_NAMES[0]);
 
-  const handleFileSelect = useCallback((file: File) => {
-    setFileName(file.name);
+  const handleFileSelected = useCallback(() => {
     setPage('loading');
   }, []);
 
@@ -24,19 +22,17 @@ export default function App() {
 
   const handleBack = useCallback(() => {
     setPage('home');
-    setFileName('');
   }, []);
 
   return (
     <Providers>
       <div className="flex flex-col min-h-full text-fg antialiased bg-linear-to-b from-gray-200 to-surface dark:from-surface dark:to-gray-900">
         {page === 'home' && (
-          <HomePage onFileSelect={handleFileSelect} />
+          <HomePage onFileSelect={handleFileSelected} />
         )}
 
         {page === 'loading' && (
           <LoadingPage
-            fileName={fileName}
             modelName={modelName}
             onComplete={handleLoadingComplete}
           />
@@ -44,7 +40,6 @@ export default function App() {
 
         {page === 'workflow' && (
           <WorkflowPage
-            fileName={fileName}
             onBack={handleBack}
           />
         )}
