@@ -226,22 +226,6 @@ export function DetectionSidebar({
           </div>
         )}
       </div>
-
-      <div className="px-4 py-3 border-t border-border-theme shrink-0">
-        <p className="text-xs font-medium text-fg-muted mb-2">Légende</p>
-        <div className="grid grid-cols-2 gap-y-1.5 gap-x-3">
-          {allTypes.map(type => {
-            const meta = NER_MODELS[modelName].entities[type];
-
-            return (
-              <div key={type} className="flex items-center gap-1.5">
-                <span className={cn('w-2 h-2 rounded-full shrink-0', meta.dot)} />
-                <span className="text-xs text-fg-muted">{meta.label}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
     </aside>
   );
 }
