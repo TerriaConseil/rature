@@ -43,7 +43,7 @@ export function Toolbar({
         className="flex items-center gap-1.5 text-sm text-fg-muted hover:text-fg transition-colors cursor-pointer"
       >
         <ArrowLeft size={15} />
-        <span className="hidden sm:inline">Accueil</span>
+        <span className="hidden sm:inline">Retour</span>
       </button>
 
       <div className="w-px h-5 bg-border-theme" />
