@@ -15,7 +15,6 @@ declare const self: DedicatedWorkerGlobalScope;
 let nerPipeline: TokenClassificationModel | null = null;
 let isInitialized = false;
 
-// Initialize NER pipeline
 async function initializePipeline(modelName: NERModel = 'bertBaseNer', preferredBackend: 'wasm' | 'webgpu' = 'wasm') {
   try {
     self.postMessage({ type: "status", message: "Loading model..." });
@@ -55,7 +54,6 @@ async function initializePipeline(modelName: NERModel = 'bertBaseNer', preferred
   }
 }
 
-// Process text for NER
 async function processText(text: string, jobId: string) {
   if (!isInitialized || !nerPipeline) {
     self.postMessage({
@@ -89,7 +87,6 @@ async function processText(text: string, jobId: string) {
   }
 }
 
-// Message handler
 self.onmessage = async (event) => {
   const { type } = event.data;
 

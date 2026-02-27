@@ -2,6 +2,7 @@ import type { TokenClassificationPipeline } from "@huggingface/transformers";
 
 import { DATE_REGEX, EMAIL_REGEX, ID_REGEX, IP_ADDRESS_REGEX, URL_REGEX } from "@/lib/utils.ts";
 import { CUSTOM_ENTITY_TYPES, type CustomEntity, type GroupedEntity, type NERPipelineEntity } from "@/types/index.ts";
+import { CUSTOM_PAGE_SPLIT_TOKEN } from "./utils.ts";
 
 export type NERClassificationPipeline = TokenClassificationPipeline;
 
@@ -11,6 +12,7 @@ export interface EntityWithOffset {
   scores: number[];
   start: number;
   end: number;
+  page: number;
 };
 
 type AggregationStrategy = 'none' | 'simple';
@@ -29,6 +31,7 @@ export class TokenClassificationModel {
   public model: string;
   public classifier: NERClassificationPipeline | null = null;
   public fullText: string = "";
+  public textGroupedByPage: string[] = [];
   public rawPipelineEntities: NERPipelineEntity[] = [];
   public regexEntities: CustomEntity[] = [];
   public mergedEntities: NERPipelineEntity[] = [];
@@ -86,7 +89,8 @@ export class TokenClassificationModel {
     this.rawPipelineEntities = [];
     this.entitiesWithOffset = [];
     this.entities = [];
-    this.fullText = text.replaceAll(/\n+/g, ' ').replaceAll(/\s+/g, ' ');
+    this.fullText = text.replaceAll(CUSTOM_PAGE_SPLIT_TOKEN, ' ');
+    this.textGroupedByPage = text.split(CUSTOM_PAGE_SPLIT_TOKEN);
 
     // Extract
     this.rawPipelineEntities = await this.extractClassifierEntities();
@@ -266,9 +270,12 @@ export class TokenClassificationModel {
   }
 
   private buildOffsets(rawEntities: NERPipelineEntity[]) {
-    const originalText = this.fullText;
     const entitiesWithOffset: EntityWithOffset[] = [];
+    const totalPages = this.textGroupedByPage.length;
+
     let cursor = 0;
+    let currentPage = 1;
+    let originalText = this.textGroupedByPage[currentPage - 1];
 
     for (let i = 0; i < rawEntities.length; i++) {
       const token = rawEntities[i];
@@ -277,6 +284,12 @@ export class TokenClassificationModel {
         while (cursor < originalText.length && originalText[cursor] !== token.word.replace('##', '')[0]) {
           cursor++;
         }
+      }
+
+      if (cursor >= originalText.length && currentPage <= totalPages) {
+        cursor = 0;
+        currentPage++;
+        originalText = this.textGroupedByPage[currentPage - 1];
       }
 
       if (this.isPartOfWord(token)) {
@@ -304,6 +317,7 @@ export class TokenClassificationModel {
           scores: [token.score],
           start,
           end,
+          page: currentPage,
         });
       }
     }
@@ -331,7 +345,7 @@ export class TokenClassificationModel {
           type: entity.type.replace('R-', ''),
           text: entity.text,
           score: currentScore,
-          page: 1,
+          page: entity.page,
           start: entity.start,
           end: entity.end,
           included: true,
@@ -346,7 +360,7 @@ export class TokenClassificationModel {
             type: entity.type,
             text: entity.text,
             score: currentScore,
-            page: 1,
+            page: entity.page,
             start: entity.start,
             end: entity.end,
             included: true,
@@ -371,7 +385,7 @@ export class TokenClassificationModel {
             type: entity.type,
             text: entity.text,
             score: currentScore,
-            page: 1,
+            page: entity.page,
             start: entity.start,
             end: entity.end,
             included: true,
@@ -387,7 +401,7 @@ export class TokenClassificationModel {
             type: currentType,
             text: entity.text,
             score: currentScore,
-            page: 1,
+            page: entity.page,
             start: entity.start,
             end: entity.end,
             included: true,
@@ -408,7 +422,7 @@ export class TokenClassificationModel {
             type: currentType,
             text: entity.text,
             score: currentScore,
-            page: 1,
+            page: entity.page,
             start: entity.start,
             end: entity.end,
             included: true,

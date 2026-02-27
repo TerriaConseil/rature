@@ -11,6 +11,8 @@ export const NER_MODELS_NAMES = [
 
 export type NERModel = typeof NER_MODELS_NAMES[number];
 
+export const CUSTOM_PAGE_SPLIT_TOKEN = "\n\n[CUSTOM_PAGE_TOKEN]\n\n";
+
 type EntityMeta = {
   title: string;
   label: string;

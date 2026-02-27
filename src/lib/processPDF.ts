@@ -138,7 +138,7 @@ export async function extractTextFromPDF(
         pdfPage: page,
         pageNumber: i + 1,
         structuredText,
-        text: textContent,
+        text: textContent.trim().replaceAll(/\n+/g, ' ').replaceAll(/\s+/g, ' '),
         wordCount: textContent.split(/\s+/).filter(Boolean).length,
       });
     }

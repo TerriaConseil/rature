@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useNERWorker } from '@/hooks/useNERWorker.ts';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
-import type { NERModel } from '@/models/utils.ts';
+import { CUSTOM_PAGE_SPLIT_TOKEN, type NERModel } from '@/models/utils.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 
 interface LoadingPageProps {
@@ -69,7 +69,7 @@ export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
 
     const text = await processFile();
 
-    analyzeDocument(text.map((extract) => extract.text).join('\n\n'));
+    analyzeDocument(text.map((extract) => extract.text).join(CUSTOM_PAGE_SPLIT_TOKEN));
   }, [analyzeDocument, pdfProcessingStatus, processFile]);
 
   const workerMemo = useMemo(() => initialize(modelName), [initialize, modelName]);
@@ -84,7 +84,6 @@ export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
   useEffect(() => {
     return () => {
       if (!!workerMemo && workerStatus !== 'idle' && (!!error || progress === 100)) {
-        console.log('exterminate', workerStatus);
         terminate();
       }
     };

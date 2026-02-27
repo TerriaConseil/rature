@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils.ts';
 type CreateTextPartsParams = {
   model: NERModel;
   text: string;
-  textOffset: number;
   entities: GroupedEntity[];
   highlightedEntityId: string | null;
   onEntityClick: (id: string) => void;
@@ -18,27 +17,23 @@ type CreateTextPartsParams = {
 const createTextParts = ({
   model,
   text,
-  textOffset,
   entities,
   highlightedEntityId,
   onEntityClick,
 }: CreateTextPartsParams) => {
   const textParts: ReactNode[] = [];
-  const parsedText = text.replaceAll(/\n/g, ' ').replaceAll(/\s+/g, ' ');
   let cursor = 0;
 
   for (const entity of entities) {
     if (!entity.text) continue;
 
-    const start = entity.start - textOffset;
-
-    if (cursor < start) {
+    if (cursor < entity.start) {
       textParts.push(
         <span
           key={crypto.randomUUID()}
-          data-offset={cursor + textOffset}
+          data-offset={cursor}
         >
-          {parsedText.slice(cursor, start)}
+          {text.slice(cursor, entity.start)}
         </span>
       );
     }
@@ -64,8 +59,8 @@ const createTextParts = ({
     cursor = entity.end;
   }
 
-  if (cursor < parsedText.length) {
-    textParts.push(<span key="tail" data-offset={cursor + textOffset}>{parsedText.slice(cursor)}</span>);
+  if (cursor < text.length) {
+    textParts.push(<span key="tail" data-offset={cursor}>{text.slice(cursor)}</span>);
   }
 
   return textParts;
@@ -82,13 +77,12 @@ export function PDFViewer({ currentPage, entities, selectedEntityId, onEntityCli
   const { modelName } = useAnonymization();
   const { extractedText } = usePdfProcessing();
 
-  const pageContent = extractedText[currentPage] ?? extractedText[0];
+  const pageContent = extractedText[currentPage - 1] ?? extractedText[0];
   const pageEntities = entities.filter(e => e.page === currentPage).sort((a, b) => a.start - b.start);
 
   const textParts = createTextParts({
     model: modelName,
     text: pageContent.text,
-    textOffset: pageContent.offset,
     entities: pageEntities,
     highlightedEntityId: selectedEntityId,
     onEntityClick,

@@ -26,26 +26,10 @@ export function PdfProcessingProvider({ children }: PdfProcessingProviderProps) 
     try {
       const result = await uploadPDF(file);
 
-      const extracted = result.pages.reduce((acc, { pageNumber, text }) => {
-        if (acc.length === 0) {
-          return [{
-            page: 1,
-            text,
-            offset: 0,
-          }];
-        }
-
-        const lastPartOffset = acc[acc.length - 1].offset;
-
-        return [
-          ...acc,
-          {
-            page: pageNumber,
-            text,
-            offset: lastPartOffset + text.length,
-          },
-        ];
-      }, [] as TextExtract[]);
+      const extracted = result.pages.map(({ pageNumber, text }) => ({
+        page: pageNumber,
+        text,
+      }));
 
       setPageCount(result.pageCount);
       setPdfDocument(result.document);

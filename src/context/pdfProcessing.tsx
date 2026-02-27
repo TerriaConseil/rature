@@ -6,7 +6,6 @@ export type PDFProcessingStatus = "idle" | "processing" | "complete" | "error";
 export type TextExtract = {
   page: number;
   text: string;
-  offset: number;
 };
 
 interface PdfProcessingContextValue {

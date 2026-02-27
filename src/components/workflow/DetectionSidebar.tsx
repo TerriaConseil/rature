@@ -43,7 +43,6 @@ export function DetectionSidebar({
     ...CUSTOM_ENTITY_TYPES.map((type) => type.replace('R-', '')),
   ];
 
-  console.log(modelTokens, allTypes, new Set(entities.map((ent) => ent.type)));
   const grouped = allTypes.reduce<Record<string, GroupedEntity[]>>(
     (acc, type) => {
       acc[type] = filtered.filter(e => e.type === type);
