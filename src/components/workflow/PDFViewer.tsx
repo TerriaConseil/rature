@@ -52,8 +52,8 @@ const createTextParts = ({
         key={entity.id}
         onClick={() => onEntityClick(entity.id)}
         className={cn(
-          'inline cursor-pointer rounded-sm px-0.5 transition-all duration-150',
-          isIncluded ? meta.highlight : 'bg-gray-200/60 dark:bg-gray-700/40 border-b-2 border-gray-400 dark:border-gray-500 opacity-50',
+          'inline cursor-pointer px-0.5 transition-all duration-150',
+          isIncluded ? meta.highlight : 'border-b-2 border-gray-400 dark:border-gray-500',
           isSelected && 'ring-2 ring-offset-1 ring-accent',
         )}
       >
