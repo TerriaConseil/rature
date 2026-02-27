@@ -47,6 +47,7 @@ export function PdfProcessingProvider({ children }: PdfProcessingProviderProps) 
   };
 
   const reset = () => {
+    setStatus('idle');
     setFile(null);
     setPdfDocument(null);
     setExtractedText([]);

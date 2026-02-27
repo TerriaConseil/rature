@@ -4,8 +4,10 @@ import { CUSTOM_ENTITY_TYPES, type GroupedEntity } from '@/types/index.ts';
 import { cn } from '@/lib/utils.ts';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { NER_MODELS } from '@/models/utils.ts';
+import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 
 interface DetectionSidebarProps {
+  currentPage: number;
   entities: GroupedEntity[];
   selectedEntityId: string | null;
   onToggle: (id: string) => void;
@@ -16,6 +18,7 @@ interface DetectionSidebarProps {
 }
 
 export function DetectionSidebar({
+  currentPage,
   entities,
   selectedEntityId,
   onToggle,
@@ -25,13 +28,15 @@ export function DetectionSidebar({
   onEntitySelect,
 }: DetectionSidebarProps) {
   const { modelName, modelTokens } = useAnonymization();
+  const { pageCount } = usePdfProcessing();
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState<string | 'all'>('all');
 
-  const includedCount = entities.filter(e => e.included).length;
-  const totalPages = Math.max(...entities.map(e => e.page));
+  const currentPageEntities = entities.filter((e) => e.page === currentPage);
 
-  const filtered = entities.filter(e => {
+  const includedCount = currentPageEntities.filter(e => e.included).length;
+
+  const filtered = currentPageEntities.filter(e => {
     const matchSearch = e.text.toLowerCase().includes(search.toLowerCase());
     const matchType = filterType === 'all' || e.type === filterType;
 
@@ -57,7 +62,7 @@ export function DetectionSidebar({
         <div className="flex items-center justify-between mb-1">
           <h2 className="text-sm font-semibold text-fg">Entités détectées</h2>
           <span className="text-xs text-fg-muted bg-surface-subtle rounded-full px-2 py-0.5">
-            {entities.length} entités · {totalPages} pages
+            {entities.length} entités · {pageCount} page{pageCount > 1 ? 's' : ''}
           </span>
         </div>
         <p className="text-xs text-fg-subtle">

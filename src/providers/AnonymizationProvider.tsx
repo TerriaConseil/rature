@@ -23,6 +23,7 @@ export function AnonymizationProvider({ children }: AnonymizationProviderProps) 
 
   const reset = () => {
     setNerEntities([]);
+    setModelTokens([]);
   };
 
   return (

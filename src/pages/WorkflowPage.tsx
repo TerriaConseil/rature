@@ -80,6 +80,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
           onEntityClick={handleEntitySelect}
         />
         <DetectionSidebar
+          currentPage={currentPage}
           entities={entities}
           selectedEntityId={selectedEntityId}
           onToggle={toggleEntity}
