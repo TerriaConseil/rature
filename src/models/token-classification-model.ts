@@ -103,7 +103,7 @@ export class TokenClassificationModel {
     this.entitiesWithOffset = this.buildOffsets(this.mergedEntities);
 
     // Aggregate
-    this.entities = this.aggregateEntities();
+    this.entities = this.aggregateEntities(this.entitiesWithOffset);
 
     return this.entities;
   }
@@ -325,14 +325,26 @@ export class TokenClassificationModel {
     return entitiesWithOffset;
   }
 
-  private aggregateEntities() {
-    const entities = this.entitiesWithOffset.sort((a, b) => a.start - b.start);
+  private aggregateEntities(entitiesWithOffset: EntityWithOffset[]) {
+    const entities = entitiesWithOffset.sort((a, b) => a.start - b.start).sort((a, b) => a.page - b.page);
     const aggregated: GroupedEntity[] = [];
     let current: GroupedEntity | null = null;
 
     for (let i = 0; i < entities.length; i++) {
       const entity = entities[i];
+      const entityType = entity.type.replace('R-', '');
       const currentScore = Math.max(...entity.scores);
+
+      const entityToAggregate = {
+        id: crypto.randomUUID(),
+        type: entityType,
+        text: entity.text,
+        score: currentScore,
+        page: entity.page,
+        start: entity.start,
+        end: entity.end,
+        included: true,
+      };
 
       if (entity.type === 'O' || CUSTOM_ENTITY_TYPES.includes(entity.type as CustomEntity['type'])) {
         if (current) {
@@ -340,31 +352,13 @@ export class TokenClassificationModel {
           current = null;
         }
 
-        aggregated.push({
-          id: crypto.randomUUID(),
-          type: entity.type.replace('R-', ''),
-          text: entity.text,
-          score: currentScore,
-          page: entity.page,
-          start: entity.start,
-          end: entity.end,
-          included: true,
-        });
+        aggregated.push(entityToAggregate);
         continue;
       }
 
       if (this.aggregationStrategy === 'simple') {
         if (i === 0 || !current) {
-          current = {
-            id: crypto.randomUUID(),
-            type: entity.type,
-            text: entity.text,
-            score: currentScore,
-            page: entity.page,
-            start: entity.start,
-            end: entity.end,
-            included: true,
-          };
+          current = entityToAggregate;
           continue;
         }
 
@@ -380,16 +374,7 @@ export class TokenClassificationModel {
           current.end = entity.end;
         } else {
           aggregated.push(current);
-          current = {
-            id: crypto.randomUUID(),
-            type: entity.type,
-            text: entity.text,
-            score: currentScore,
-            page: entity.page,
-            start: entity.start,
-            end: entity.end,
-            included: true,
-          };
+          current = entityToAggregate;
         }
       } else {
         const [position, currentType] = entity.type.split('-');
@@ -397,14 +382,8 @@ export class TokenClassificationModel {
 
         if (isBeginning) {
           aggregated.push({
-            id: crypto.randomUUID(),
+            ...entityToAggregate,
             type: currentType,
-            text: entity.text,
-            score: currentScore,
-            page: entity.page,
-            start: entity.start,
-            end: entity.end,
-            included: true,
           });
 
           continue;
@@ -418,14 +397,8 @@ export class TokenClassificationModel {
           lastEntity.end = entity.end;
         } else {
           aggregated.push({
-            id: crypto.randomUUID(),
+            ...entityToAggregate,
             type: currentType,
-            text: entity.text,
-            score: currentScore,
-            page: entity.page,
-            start: entity.start,
-            end: entity.end,
-            included: true,
           });
         }
       }
