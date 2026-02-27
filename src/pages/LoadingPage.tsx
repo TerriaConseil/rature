@@ -19,8 +19,8 @@ const STEPS = [
 ];
 
 export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
-  const { status: workerStatus, error, initialize, processText, terminate } = useNERWorker();
-  const { setNerEntities } = useAnonymization();
+  const { modelTokens, status: workerStatus, error, initialize, processText, terminate } = useNERWorker();
+  const { setModelTokens, setNerEntities } = useAnonymization();
   const { file, processingStatus: pdfProcessingStatus, processFile } = usePdfProcessing();
 
   const [progress, setProgress] = useState(10);
@@ -54,10 +54,13 @@ export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
 
     const { entities } = await processText(text);
 
-    setNerEntities(entities);
+    const labeledEntities = entities.filter((entity) => entity.type !== 'O');
+
+    setNerEntities(labeledEntities);
+    setModelTokens(modelTokens);
 
     setTimeout(() => finalize(), 750);
-  }, [finalize, processText, setNerEntities]);
+  }, [finalize, modelTokens, processText, setModelTokens, setNerEntities]);
 
   const processDocument = useCallback(async () => {
     if (pdfProcessingStatus !== 'idle') return;
@@ -66,7 +69,7 @@ export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
 
     const text = await processFile();
 
-    analyzeDocument(text.map((extract) => extract.text).join('\n'));
+    analyzeDocument(text.map((extract) => extract.text).join('\n\n'));
   }, [analyzeDocument, pdfProcessingStatus, processFile]);
 
   const workerMemo = useMemo(() => initialize(modelName), [initialize, modelName]);

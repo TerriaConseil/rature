@@ -1,12 +1,16 @@
-import { AnonymizationContext } from "@/context/anonymization.tsx";
-import { type GroupedEntity } from "@/models/token-classification-model.ts";
 import { useState, type ReactNode } from "react";
+
+import { AnonymizationContext } from "@/context/anonymization.tsx";
+import type { GroupedEntity } from "@/types/index.ts";
+import { NER_MODELS_NAMES, type NERModel } from "@/models/utils.ts";
 
 type AnonymizationProviderProps = {
   children: ReactNode;
 };
 
 export function AnonymizationProvider({ children }: AnonymizationProviderProps) {
+  const [modelName] = useState<NERModel>(NER_MODELS_NAMES[0]);
+  const [modelTokens, setModelTokens] = useState<string[]>([]);
   const [nerEntities, setNerEntities] = useState<GroupedEntity[]>([]);
 
   const addEntity = (entity: GroupedEntity) => {
@@ -17,14 +21,19 @@ export function AnonymizationProvider({ children }: AnonymizationProviderProps) 
     setNerEntities((prev) => prev.filter((entity) => entity.id !== entityId));
   };
 
-  const reset = () => setNerEntities([]);
+  const reset = () => {
+    setNerEntities([]);
+  };
 
   return (
     <AnonymizationContext value={{
+        modelName,
+        modelTokens,
         nerEntities,
         addEntity,
         removeEntity,
         reset,
+        setModelTokens,
         setNerEntities,
       }}
     >

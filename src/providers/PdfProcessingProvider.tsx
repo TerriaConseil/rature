@@ -12,6 +12,7 @@ type PdfProcessingProviderProps = {
 export function PdfProcessingProvider({ children }: PdfProcessingProviderProps) {
   const [status, setStatus] = useState<PDFProcessingStatus>('idle');
   const [file, setFile] = useState<File | null>(null);
+  const [pageCount, setPageCount] = useState(0);
   const [pdfDocument, setPdfDocument] = useState<PDFDocument | null>(null);
   const [extractedText, setExtractedText] = useState<TextExtract[]>([]);
 
@@ -25,11 +26,28 @@ export function PdfProcessingProvider({ children }: PdfProcessingProviderProps) 
     try {
       const result = await uploadPDF(file);
 
-      const extracted = result.pages.map(({ pageNumber, text }) => ({
-        page: pageNumber,
-        text,
-      }));
+      const extracted = result.pages.reduce((acc, { pageNumber, text }) => {
+        if (acc.length === 0) {
+          return [{
+            page: 1,
+            text,
+            offset: 0,
+          }];
+        }
 
+        const lastPartOffset = acc[acc.length - 1].offset;
+
+        return [
+          ...acc,
+          {
+            page: pageNumber,
+            text,
+            offset: lastPartOffset + text.length,
+          },
+        ];
+      }, [] as TextExtract[]);
+
+      setPageCount(result.pageCount);
       setPdfDocument(result.document);
       setExtractedText(extracted || []);
       setStatus("complete");
@@ -54,6 +72,7 @@ export function PdfProcessingProvider({ children }: PdfProcessingProviderProps) 
     <PdfProcessingContext value={{
       file,
       pdfDocument,
+      pageCount,
       processingStatus: status,
       extractedText,
       processFile,

@@ -6,11 +6,13 @@ export type PDFProcessingStatus = "idle" | "processing" | "complete" | "error";
 export type TextExtract = {
   page: number;
   text: string;
+  offset: number;
 };
 
 interface PdfProcessingContextValue {
   extractedText: TextExtract[];
   file: File | null;
+  pageCount: number;
   pdfDocument: PDFDocument | null;
   processingStatus: PDFProcessingStatus;
   processFile: () => Promise<TextExtract[]>;
@@ -21,6 +23,7 @@ interface PdfProcessingContextValue {
 export const PdfProcessingContext = createContext<PdfProcessingContextValue>({
   extractedText: [],
   file: null,
+  pageCount: 0,
   pdfDocument: null,
   processingStatus: 'idle',
   processFile: () => new Promise(() => {}),

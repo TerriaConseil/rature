@@ -1,38 +1,14 @@
 import type { TokenClassificationPipeline } from "@huggingface/transformers";
 
 import { DATE_REGEX, EMAIL_REGEX, ID_REGEX, IP_ADDRESS_REGEX, URL_REGEX } from "@/lib/utils.ts";
-
-export const REGEX_ENTITY_TYPES = ['R-EMAIL', 'R-DATE', 'R-URL', 'R-ID', 'R-IP'] as const;
+import { CUSTOM_ENTITY_TYPES, type CustomEntity, type GroupedEntity, type NERPipelineEntity } from "@/types/index.ts";
 
 export type NERClassificationPipeline = TokenClassificationPipeline;
-
-export interface NERPipelineEntity {
-  entity: string;
-  score: number;
-  index: number;
-  word: string;
-  start?: number;
-  end?: number;
-};
-
-export interface RegexEntity {
-  type: typeof REGEX_ENTITY_TYPES[number];
-  word: string;
-};
 
 export interface EntityWithOffset {
   text: string;
   type: string;
   scores: number[];
-  start: number;
-  end: number;
-};
-
-export interface GroupedEntity {
-  id: string;
-  text: string;
-  type: string;
-  score: number;
   start: number;
   end: number;
 };
@@ -54,7 +30,7 @@ export class TokenClassificationModel {
   public classifier: NERClassificationPipeline | null = null;
   public fullText: string = "";
   public rawPipelineEntities: NERPipelineEntity[] = [];
-  public regexEntities: RegexEntity[] = [];
+  public regexEntities: CustomEntity[] = [];
   public mergedEntities: NERPipelineEntity[] = [];
   public entitiesWithOffset: EntityWithOffset[] = [];
   public entities: GroupedEntity[] = [];
@@ -191,7 +167,7 @@ export class TokenClassificationModel {
     const ids = new Set(Array.from(this.fullText.matchAll(ID_REGEX)).map((result) => result[0]));
     const ipAddresses = new Set(Array.from(this.fullText.matchAll(IP_ADDRESS_REGEX)).map((result) => result[0]));
 
-    const regexEntities: RegexEntity[] = [
+    const regexEntities: CustomEntity[] = [
       ...Array.from(emails).map((email) => ({
         type: 'R-EMAIL' as const,
         word: email.trim(),
@@ -217,7 +193,7 @@ export class TokenClassificationModel {
     return regexEntities;
   }
 
-  private mergeAllEntities(rawEntities: NERPipelineEntity[], regexEntities: RegexEntity[]) {
+  private mergeAllEntities(rawEntities: NERPipelineEntity[], regexEntities: CustomEntity[]) {
     if (!this.classifier) {
       throw new Error("Please call initialize() first.");
     }
@@ -344,7 +320,7 @@ export class TokenClassificationModel {
       const entity = entities[i];
       const currentScore = Math.max(...entity.scores);
 
-      if (entity.type === 'O' || REGEX_ENTITY_TYPES.includes(entity.type as RegexEntity['type'])) {
+      if (entity.type === 'O' || CUSTOM_ENTITY_TYPES.includes(entity.type as CustomEntity['type'])) {
         if (current) {
           aggregated.push(current);
           current = null;
@@ -355,8 +331,10 @@ export class TokenClassificationModel {
           type: entity.type.replace('R-', ''),
           text: entity.text,
           score: currentScore,
+          page: 1,
           start: entity.start,
           end: entity.end,
+          included: true,
         });
         continue;
       }
@@ -368,8 +346,10 @@ export class TokenClassificationModel {
             type: entity.type,
             text: entity.text,
             score: currentScore,
+            page: 1,
             start: entity.start,
             end: entity.end,
+            included: true,
           };
           continue;
         }
@@ -391,8 +371,10 @@ export class TokenClassificationModel {
             type: entity.type,
             text: entity.text,
             score: currentScore,
+            page: 1,
             start: entity.start,
             end: entity.end,
+            included: true,
           };
         }
       } else {
@@ -405,8 +387,10 @@ export class TokenClassificationModel {
             type: currentType,
             text: entity.text,
             score: currentScore,
+            page: 1,
             start: entity.start,
             end: entity.end,
+            included: true,
           });
 
           continue;
@@ -424,8 +408,10 @@ export class TokenClassificationModel {
             type: currentType,
             text: entity.text,
             score: currentScore,
+            page: 1,
             start: entity.start,
             end: entity.end,
+            included: true,
           });
         }
       }

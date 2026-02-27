@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback } from "react";
 
-import type { GroupedEntity, NERPipelineEntity } from "@/models/token-classification-model.ts";
 import type { NERModel } from "@/models/utils.ts";
+import type { GroupedEntity, NERPipelineEntity } from "@/types/index.ts";
 
 export interface NERResult {
   rawEntities: NERPipelineEntity[];
@@ -143,7 +143,11 @@ export function useNERWorker() {
         const jobId = `job_${crypto.randomUUID()}`;
         pendingJobsRef.current.set(jobId, { resolve, reject });
 
-        workerRef.current.postMessage({ type: "process", text, jobId });
+        workerRef.current.postMessage({
+          type: "process",
+          text,
+          jobId,
+        });
       });
     },
     [status]

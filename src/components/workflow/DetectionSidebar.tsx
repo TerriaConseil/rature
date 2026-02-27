@@ -1,21 +1,20 @@
 import { useState } from 'react';
 import { Search, CheckSquare, Square, Trash2, Pencil } from 'lucide-react';
-import { ENTITY_META } from '@/data/mockEntities.ts';
-import type { DetectedEntity, EntityType } from '@/types/index.ts';
+import { CUSTOM_ENTITY_TYPES, type GroupedEntity } from '@/types/index.ts';
 import { cn } from '@/lib/utils.ts';
+import { useAnonymization } from '@/hooks/useAnonymization.ts';
+import { NER_MODELS } from '@/models/utils.ts';
 
 interface DetectionSidebarProps {
-  entities: DetectedEntity[]
-  selectedEntityId: string | null
-  currentPage: number
-  onToggle: (id: string) => void
-  onDelete: (id: string) => void
-  onSelectAll: () => void
-  onDeselectAll: () => void
-  onEntitySelect: (id: string) => void
+  entities: GroupedEntity[];
+  selectedEntityId: string | null;
+  currentPage: number;
+  onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
+  onSelectAll: () => void;
+  onDeselectAll: () => void;
+  onEntitySelect: (id: string) => void;
 }
-
-const ALL_TYPES: EntityType[] = ['person', 'date', 'address', 'id', 'organization'];
 
 export function DetectionSidebar({
   entities,
@@ -27,8 +26,9 @@ export function DetectionSidebar({
   onDeselectAll,
   onEntitySelect,
 }: DetectionSidebarProps) {
+  const { modelName, modelTokens } = useAnonymization();
   const [search, setSearch] = useState('');
-  const [filterType, setFilterType] = useState<EntityType | 'all'>('all');
+  const [filterType, setFilterType] = useState<string | 'all'>('all');
 
   const includedCount = entities.filter(e => e.included).length;
   const totalPages = Math.max(...entities.map(e => e.page));
@@ -36,21 +36,26 @@ export function DetectionSidebar({
   const filtered = entities.filter(e => {
     const matchSearch = e.text.toLowerCase().includes(search.toLowerCase());
     const matchType = filterType === 'all' || e.type === filterType;
+
     return matchSearch && matchType;
   });
 
-  // Group by type
-  const grouped = ALL_TYPES.reduce<Record<EntityType, DetectedEntity[]>>(
+  const allTypes = [
+    ...modelTokens,
+    ...CUSTOM_ENTITY_TYPES.map((type) => type.replace('R-', '')),
+  ];
+
+  console.log(modelTokens, allTypes, new Set(entities.map((ent) => ent.type)));
+  const grouped = allTypes.reduce<Record<string, GroupedEntity[]>>(
     (acc, type) => {
       acc[type] = filtered.filter(e => e.type === type);
       return acc;
     },
-    { person: [], date: [], address: [], id: [], organization: [] },
+    {}
   );
 
   return (
     <aside className="w-90 shrink-0 border-l border-border-theme bg-card flex flex-col overflow-hidden">
-      {/* Header */}
       <div className="px-4 py-3 border-b border-border-theme shrink-0">
         <div className="flex items-center justify-between mb-1">
           <h2 className="text-sm font-semibold text-fg">Entités détectées</h2>
@@ -63,7 +68,6 @@ export function DetectionSidebar({
         </p>
       </div>
 
-      {/* Search + filter */}
       <div className="px-4 py-3 space-y-2 border-b border-border-theme shrink-0">
         <div className="relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-fg-subtle pointer-events-none" />
@@ -76,7 +80,6 @@ export function DetectionSidebar({
           />
         </div>
 
-        {/* Type filter pills */}
         <div className="flex flex-wrap gap-1.5">
           <button
             onClick={() => setFilterType('all')}
@@ -89,10 +92,12 @@ export function DetectionSidebar({
           >
             Tous
           </button>
-          {ALL_TYPES.map(type => {
-            const meta = ENTITY_META[type];
+          {allTypes.map(type => {
+            const meta = NER_MODELS[modelName].entities[type];
             const count = entities.filter(e => e.type === type).length;
+
             if (count === 0) return null;
+
             return (
               <button
                 key={type}
@@ -111,7 +116,6 @@ export function DetectionSidebar({
           })}
         </div>
 
-        {/* Select all / deselect all */}
         <div className="flex gap-2">
           <button
             onClick={onSelectAll}
@@ -129,16 +133,16 @@ export function DetectionSidebar({
         </div>
       </div>
 
-      {/* Entity list */}
       <div className="flex-1 overflow-y-auto py-2">
-        {ALL_TYPES.map(type => {
+        {allTypes.map(type => {
           const group = grouped[type];
+
           if (group.length === 0) return null;
-          const meta = ENTITY_META[type];
+
+          const meta = NER_MODELS[modelName].entities[type];
 
           return (
             <div key={type} className="mb-1">
-              {/* Group header */}
               <div className="flex items-center gap-2 px-4 py-1.5">
                 <span className={cn('w-2 h-2 rounded-full', meta.dot)} />
                 <span className="text-xs font-medium text-fg-muted uppercase tracking-wider">
@@ -147,7 +151,6 @@ export function DetectionSidebar({
                 <span className="text-xs text-fg-subtle">({group.length})</span>
               </div>
 
-              {/* Entities */}
               {group.map(entity => {
                 const isSelected = selectedEntityId === entity.id;
                 const isCurrentPage = entity.page === currentPage;
@@ -163,9 +166,11 @@ export function DetectionSidebar({
                         : 'hover:bg-surface-subtle border-l-2 border-transparent',
                     )}
                   >
-                    {/* Toggle */}
                     <button
-                      onClick={e => { e.stopPropagation(); onToggle(entity.id); }}
+                      onClick={e => {
+                        e.stopPropagation();
+                        onToggle(entity.id);
+                      }}
                       className="shrink-0 text-fg-muted hover:text-accent transition-colors cursor-pointer"
                     >
                       {entity.included ? (
@@ -175,7 +180,6 @@ export function DetectionSidebar({
                       )}
                     </button>
 
-                    {/* Text + meta */}
                     <div className="flex-1 min-w-0">
                       <p
                         className={cn(
@@ -193,7 +197,6 @@ export function DetectionSidebar({
                       </p>
                     </div>
 
-                    {/* Actions (shown on hover) */}
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={e => e.stopPropagation()}
@@ -230,12 +233,12 @@ export function DetectionSidebar({
         )}
       </div>
 
-      {/* Color legend */}
       <div className="px-4 py-3 border-t border-border-theme shrink-0">
         <p className="text-xs font-medium text-fg-muted mb-2">Légende</p>
         <div className="grid grid-cols-2 gap-y-1.5 gap-x-3">
-          {ALL_TYPES.map(type => {
-            const meta = ENTITY_META[type];
+          {allTypes.map(type => {
+            const meta = NER_MODELS[modelName].entities[type];
+
             return (
               <div key={type} className="flex items-center gap-1.5">
                 <span className={cn('w-2 h-2 rounded-full shrink-0', meta.dot)} />
