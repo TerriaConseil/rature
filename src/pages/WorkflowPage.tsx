@@ -82,7 +82,6 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         <DetectionSidebar
           entities={entities}
           selectedEntityId={selectedEntityId}
-          currentPage={currentPage}
           onToggle={toggleEntity}
           onDelete={deleteEntity}
           onSelectAll={selectAll}

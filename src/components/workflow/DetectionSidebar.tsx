@@ -8,7 +8,6 @@ import { NER_MODELS } from '@/models/utils.ts';
 interface DetectionSidebarProps {
   entities: GroupedEntity[];
   selectedEntityId: string | null;
-  currentPage: number;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onSelectAll: () => void;
@@ -19,7 +18,6 @@ interface DetectionSidebarProps {
 export function DetectionSidebar({
   entities,
   selectedEntityId,
-  currentPage,
   onToggle,
   onDelete,
   onSelectAll,
@@ -153,7 +151,6 @@ export function DetectionSidebar({
 
               {group.map(entity => {
                 const isSelected = selectedEntityId === entity.id;
-                const isCurrentPage = entity.page === currentPage;
 
                 return (
                   <div
@@ -191,9 +188,6 @@ export function DetectionSidebar({
                       </p>
                       <p className="text-xs text-fg-subtle">
                         Page {entity.page}
-                        {isCurrentPage && (
-                          <span className="ml-1.5 text-accent font-medium">· page actuelle</span>
-                        )}
                       </p>
                     </div>
 
