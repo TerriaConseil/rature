@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, CheckSquare, Square, Trash2, ChevronRight } from 'lucide-react';
+import { Search, CheckSquare, Square, Trash2, ChevronRight, ChevronLeft, ScanEye } from 'lucide-react';
 import { CUSTOM_ENTITY_TYPES, type GroupedEntity } from '@/types/index.ts';
 import { cn } from '@/lib/utils.ts';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
@@ -56,21 +56,25 @@ interface DetectionSidebarProps {
   currentPage: number;
   entities: GroupedEntity[];
   selectedEntityId: string | null;
+  highlightedEntityText: string | null;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onSelectAll: () => void;
   onDeselectAll: () => void;
   onEntitySelect: (id: string) => void;
+  onHighlightAll: (text: string | null) => void;
 }
 
 export function DetectionSidebar({
   entities,
   selectedEntityId,
+  highlightedEntityText,
   onToggle,
   onDelete,
   onSelectAll,
   onDeselectAll,
   onEntitySelect,
+  onHighlightAll,
 }: DetectionSidebarProps) {
   const { modelName, modelTokens } = useAnonymization();
   const { pageCount } = usePdfProcessing();
@@ -123,25 +127,26 @@ export function DetectionSidebar({
 
   const handleEntityClick = (name: string) => {
     const entity = groupedByName.find((e) => e.text === name);
-
     if (!entity) return;
-
     const instancesIds = entity.instances.map(({ id }) => id);
+    if (selectedEntityId && instancesIds.includes(selectedEntityId)) return;
+    onEntitySelect(entity.instances[0].id);
+  };
 
-    if (selectedEntityId && instancesIds.includes(selectedEntityId)) {
-      const currentInstanceIndex = entity.instances.findIndex((instance) => instance.id === selectedEntityId);
-      let nextIndex;
+  const handlePrevInstance = (name: string) => {
+    const entity = groupedByName.find((e) => e.text === name);
+    if (!entity) return;
+    const currentIndex = entity.instances.findIndex(i => i.id === selectedEntityId);
+    const prevIndex = currentIndex <= 0 ? entity.instances.length - 1 : currentIndex - 1;
+    onEntitySelect(entity.instances[prevIndex].id);
+  };
 
-      if (currentInstanceIndex === entity.instances.length - 1) {
-        nextIndex = 0;
-      } else {
-        nextIndex = currentInstanceIndex + 1;
-      }
-
-      onEntitySelect(entity.instances[nextIndex].id);
-    } else {
-      onEntitySelect(entity.instances[0].id);
-    }
+  const handleNextInstance = (name: string) => {
+    const entity = groupedByName.find((e) => e.text === name);
+    if (!entity) return;
+    const currentIndex = entity.instances.findIndex(i => i.id === selectedEntityId);
+    const nextIndex = currentIndex >= entity.instances.length - 1 ? 0 : currentIndex + 1;
+    onEntitySelect(entity.instances[nextIndex].id);
   };
 
   return (
@@ -258,6 +263,10 @@ export function DetectionSidebar({
                 <div className="overflow-hidden">
               {group.map(entity => {
                 const isSelected = !!selectedEntityId && entity.instances.map((e) => e.id).includes(selectedEntityId);
+                const isHighlightedAll = highlightedEntityText === entity.text;
+                const currentInstanceIndex = isSelected
+                  ? entity.instances.findIndex(i => i.id === selectedEntityId)
+                  : 0;
 
                 return (
                   <div
@@ -294,15 +303,56 @@ export function DetectionSidebar({
                       >
                         {entity.text}
                       </p>
-                      <p className="text-xs text-fg-subtle">
-                        Trouvé {entity.instances.length} fois
-                      </p>
+                      {/* <p className="text-xs text-fg-subtle">
+                        {entity.instances.length} occurrences
+                      </p> */}
                     </div>
 
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<button
+                    <div className="flex items-center gap-1 shrink-0">
+                      {entity.instances.length > 1 && !isSelected && (
+                        <span className="text-xs tabular-nums font-medium text-fg-muted bg-surface-subtle border border-border-theme rounded px-1.5 py-0.5">
+                          ×{entity.instances.length}
+                        </span>
+                      )}
+
+                      {entity.instances.length > 1 && isSelected && (
+                        <div className="flex items-center gap-0.5" onClick={e => e.stopPropagation()}>
+                          <button
+                            onClick={() => onHighlightAll(isHighlightedAll ? null : entity.text)}
+                            className={cn(
+                              'p-1 rounded transition-colors cursor-pointer',
+                              isHighlightedAll ? 'text-accent' : 'text-fg-muted hover:text-fg',
+                            )}
+                            title="Surligner toutes les occurrences"
+                          >
+                            <ScanEye size={13} />
+                          </button>
+                          <button
+                            onClick={() => handlePrevInstance(entity.text)}
+                            className="p-1 rounded text-fg-muted hover:text-fg transition-colors cursor-pointer"
+                            title="Occurrence précédente"
+                          >
+                            <ChevronLeft size={13} />
+                          </button>
+                          <span className="text-xs tabular-nums text-accent font-medium min-w-7 text-center">
+                            {currentInstanceIndex + 1}/{entity.instances.length}
+                          </span>
+                          <button
+                            onClick={() => handleNextInstance(entity.text)}
+                            className="p-1 rounded text-fg-muted hover:text-fg transition-colors cursor-pointer"
+                            title="Occurrence suivante"
+                          >
+                            <ChevronRight size={13} />
+                          </button>
+                        </div>
+                      )}
+
+                      <button
                         onClick={e => { e.stopPropagation(); onDelete(entity.text); }}
-                        className="w-6 h-6 flex items-center justify-center rounded-[5px] text-fg-subtle hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all cursor-pointer"
+                        className={cn(
+                          'w-6 h-6 flex items-center justify-center rounded-[5px] text-fg-subtle hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all cursor-pointer',
+                          !isSelected && 'opacity-0 group-hover:opacity-100 transition-opacity',
+                        )}
                         title="Supprimer"
                       >
                         <Trash2 size={12} />

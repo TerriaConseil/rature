@@ -17,6 +17,7 @@ type CreateTextPartsParams = {
   text: string;
   entities: GroupedEntity[];
   highlightedEntityId: string | null;
+  highlightedEntityText?: string | null;
   onEntityClick: (id: string) => void;
   pendingRange?: PendingRange | null;
 };
@@ -26,6 +27,7 @@ const createTextParts = ({
   text,
   entities,
   highlightedEntityId,
+  highlightedEntityText,
   onEntityClick,
   pendingRange,
 }: CreateTextPartsParams) => {
@@ -76,6 +78,7 @@ const createTextParts = ({
       const entity = item.data;
       const meta = NER_MODELS[model].entities[entity.type];
       const isSelected = !!highlightedEntityId && highlightedEntityId === entity.id;
+      const isHighlightedAll = !!highlightedEntityText && entity.text === highlightedEntityText && !isSelected;
       const isIncluded = entity.included;
 
       textParts.push(
@@ -87,6 +90,7 @@ const createTextParts = ({
             'inline cursor-pointer px-0.5 transition-all duration-150',
             isIncluded ? meta.highlight : 'border-b-2 border-gray-400 dark:border-gray-500',
             isSelected && 'ring-2 ring-offset-1 ring-accent',
+            isHighlightedAll && 'ring-2 ring-offset-1 ring-accent/40',
           )}
         >
           {entity.text}
@@ -116,6 +120,7 @@ interface PDFViewerProps {
   zoom: number;
   entities: GroupedEntity[];
   selectedEntityId: string | null;
+  highlightedEntityText?: string | null;
   onEntityClick: (id: string) => void;
 }
 
@@ -124,6 +129,7 @@ export function PDFViewer({
   zoom,
   entities,
   selectedEntityId,
+  highlightedEntityText,
   onEntityClick,
 }: PDFViewerProps) {
   const { modelName, addEntity } = useAnonymization();
@@ -139,6 +145,7 @@ export function PDFViewer({
     text: pageContent.text,
     entities: pageEntities,
     highlightedEntityId: selectedEntityId,
+    highlightedEntityText,
     onEntityClick,
     pendingRange: selection,
   });

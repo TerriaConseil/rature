@@ -24,6 +24,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [zoom, setZoom] = useState(100);
   const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
+  const [highlightedEntityText, setHighlightedEntityText] = useState<string | null>(null);
   const [showExport, setShowExport] = useState(false);
 
   const toggleEntity = (name: string) => {
@@ -38,6 +39,11 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
     setEntities(entities.filter(e => !ids.includes(e.id)));
 
     if (selectedEntityId && ids.includes(selectedEntityId)) setSelectedEntityId(null);
+    if (highlightedEntityText === name) setHighlightedEntityText(null);
+  };
+
+  const handleHighlightAll = (text: string | null) => {
+    setHighlightedEntityText(prev => (prev === text ? null : text));
   };
 
   const selectAll = () => setEntities(entities.map(e => ({ ...e, included: true })));
@@ -113,17 +119,20 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
             zoom={zoom}
             entities={entities}
             selectedEntityId={selectedEntityId}
+            highlightedEntityText={highlightedEntityText}
             onEntityClick={handleEntitySelect}
           />
           <DetectionSidebar
             currentPage={currentPage}
             entities={entities}
             selectedEntityId={selectedEntityId}
+            highlightedEntityText={highlightedEntityText}
             onToggle={toggleEntity}
             onDelete={deleteEntity}
             onSelectAll={selectAll}
             onDeselectAll={deselectAll}
             onEntitySelect={handleEntitySelect}
+            onHighlightAll={handleHighlightAll}
           />
         </div>
       ) : isRedacting ? (
