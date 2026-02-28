@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Search, CheckSquare, Square, Trash2, Pencil } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Search, CheckSquare, Square, Trash2 } from 'lucide-react';
 import { CUSTOM_ENTITY_TYPES, type GroupedEntity } from '@/types/index.ts';
 import { cn } from '@/lib/utils.ts';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
@@ -72,6 +72,13 @@ export function DetectionSidebar({
   const { pageCount } = usePdfProcessing();
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState<string | 'all'>('all');
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!selectedEntityId || !scrollContainerRef.current) return;
+    const selectedEl = scrollContainerRef.current.querySelector('[data-selected="true"]');
+    selectedEl?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [selectedEntityId]);
 
   const includedCount = entities.filter(e => e.included).length;
 
@@ -199,7 +206,7 @@ export function DetectionSidebar({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-2">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto py-2">
         {allTypes.map(type => {
           const group = groupedByType[type];
 
@@ -223,6 +230,7 @@ export function DetectionSidebar({
                 return (
                   <div
                     key={`${entity.text}-${entity.instances[0].id}`}
+                    data-selected={isSelected}
                     onClick={() => handleEntityClick(entity.text)}
                     className={cn(
                       'flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-all group',
@@ -260,14 +268,7 @@ export function DetectionSidebar({
                     </div>
 
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
-                        onClick={e => e.stopPropagation()}
-                        className="w-6 h-6 flex items-center justify-center rounded-[5px] text-fg-subtle hover:text-fg hover:bg-border-theme transition-all cursor-pointer"
-                        title="Modifier"
-                      >
-                        <Pencil size={12} />
-                      </button>
-                      <button
+<button
                         onClick={e => { e.stopPropagation(); onDelete(entity.text); }}
                         className="w-6 h-6 flex items-center justify-center rounded-[5px] text-fg-subtle hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all cursor-pointer"
                         title="Supprimer"
