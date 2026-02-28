@@ -6,6 +6,48 @@ import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { NER_MODELS } from '@/models/utils.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 
+type GroupedByNameEntity = {
+  text: string;
+  type: string;
+  included: boolean;
+  instances: {
+    id: string;
+    page: number;
+    score: number;
+    start: number;
+    end: number;
+  }[];
+};
+
+const groupByName = (entities: GroupedEntity[]) => {
+  const groupedByNameEntities: GroupedByNameEntity[] = [];
+  const labeledEntities = entities.filter((entity) => entity.type !== 'O');
+
+  for (const entity of labeledEntities) {
+    const { id, page, score, start, end } = entity;
+    const grouped = groupedByNameEntities.find((e) => e.text === entity.text);
+
+    if (grouped) {
+      grouped.instances.push({ id, page, score, start, end });
+    } else {
+      groupedByNameEntities.push({
+        text: entity.text,
+        type: entity.type,
+        included: entity.included,
+        instances: [{
+          id: entity.id,
+          page,
+          score,
+          start,
+          end,
+        }],
+      });
+    }
+  }
+
+  return groupedByNameEntities;
+};
+
 interface DetectionSidebarProps {
   currentPage: number;
   entities: GroupedEntity[];
@@ -18,7 +60,6 @@ interface DetectionSidebarProps {
 }
 
 export function DetectionSidebar({
-  currentPage,
   entities,
   selectedEntityId,
   onToggle,
@@ -32,11 +73,9 @@ export function DetectionSidebar({
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState<string | 'all'>('all');
 
-  const currentPageEntities = entities.filter((e) => e.page === currentPage);
+  const includedCount = entities.filter(e => e.included).length;
 
-  const includedCount = currentPageEntities.filter(e => e.included).length;
-
-  const filtered = currentPageEntities.filter(e => {
+  const filtered = entities.filter(e => {
     const matchSearch = e.text.toLowerCase().includes(search.toLowerCase());
     const matchType = filterType === 'all' || e.type === filterType;
 
@@ -48,13 +87,38 @@ export function DetectionSidebar({
     ...CUSTOM_ENTITY_TYPES.map((type) => type.replace('R-', '')),
   ];
 
-  const grouped = allTypes.reduce<Record<string, GroupedEntity[]>>(
+  const groupedByName = groupByName(filtered);
+
+  const groupedByType = allTypes.reduce<Record<string, GroupedByNameEntity[]>>(
     (acc, type) => {
-      acc[type] = filtered.filter(e => e.type === type);
+      acc[type] = groupedByName.filter(e => e.type === type);
       return acc;
     },
     {}
   );
+
+  const handleEntityClick = (name: string) => {
+    const entity = groupedByName.find((e) => e.text === name);
+
+    if (!entity) return;
+
+    const instancesIds = entity.instances.map(({ id }) => id);
+
+    if (selectedEntityId && instancesIds.includes(selectedEntityId)) {
+      const currentInstanceIndex = entity.instances.findIndex((instance) => instance.id === selectedEntityId);
+      let nextIndex;
+
+      if (currentInstanceIndex === entity.instances.length - 1) {
+        nextIndex = 0;
+      } else {
+        nextIndex = currentInstanceIndex + 1;
+      }
+
+      onEntitySelect(entity.instances[nextIndex].id);
+    } else {
+      onEntitySelect(entity.instances[0].id);
+    }
+  };
 
   return (
     <aside className="w-90 shrink-0 border-l border-border-theme bg-card flex flex-col overflow-hidden">
@@ -137,7 +201,7 @@ export function DetectionSidebar({
 
       <div className="flex-1 overflow-y-auto py-2">
         {allTypes.map(type => {
-          const group = grouped[type];
+          const group = groupedByType[type];
 
           if (group.length === 0) return null;
 
@@ -154,12 +218,12 @@ export function DetectionSidebar({
               </div>
 
               {group.map(entity => {
-                const isSelected = selectedEntityId === entity.id;
+                const isSelected = !!selectedEntityId && entity.instances.map((e) => e.id).includes(selectedEntityId);
 
                 return (
                   <div
-                    key={entity.id}
-                    onClick={() => onEntitySelect(entity.id)}
+                    key={`${entity.text}-${entity.instances[0].id}`}
+                    onClick={() => handleEntityClick(entity.text)}
                     className={cn(
                       'flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-all group',
                       isSelected
@@ -170,7 +234,7 @@ export function DetectionSidebar({
                     <button
                       onClick={e => {
                         e.stopPropagation();
-                        onToggle(entity.id);
+                        onToggle(entity.text);
                       }}
                       className="shrink-0 text-fg-muted hover:text-accent transition-colors cursor-pointer"
                     >
@@ -191,7 +255,7 @@ export function DetectionSidebar({
                         {entity.text}
                       </p>
                       <p className="text-xs text-fg-subtle">
-                        Page {entity.page}
+                        Trouvé {entity.instances.length} fois
                       </p>
                     </div>
 
@@ -204,7 +268,7 @@ export function DetectionSidebar({
                         <Pencil size={12} />
                       </button>
                       <button
-                        onClick={e => { e.stopPropagation(); onDelete(entity.id); }}
+                        onClick={e => { e.stopPropagation(); onDelete(entity.text); }}
                         className="w-6 h-6 flex items-center justify-center rounded-[5px] text-fg-subtle hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all cursor-pointer"
                         title="Supprimer"
                       >

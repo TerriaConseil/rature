@@ -18,15 +18,18 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
   const [showExport, setShowExport] = useState(false);
 
-  const toggleEntity = (id: string) => {
-    setEntities(entities.map(e => (e.id === id ? { ...e, included: !e.included } : e)),
+  const toggleEntity = (name: string) => {
+    setEntities(entities.map(e => (e.text === name ? { ...e, included: !e.included } : e)),
     );
   };
 
-  const deleteEntity = (id: string) => {
-    setEntities(entities.filter(e => e.id !== id));
+  const deleteEntity = (name: string) => {
+    const matchingEntities = entities.filter(e => e.text === name);
+    const ids = matchingEntities.map((e) => e.id);
 
-    if (selectedEntityId === id) setSelectedEntityId(null);
+    setEntities(entities.filter(e => !ids.includes(e.id)));
+
+    if (selectedEntityId && ids.includes(selectedEntityId)) setSelectedEntityId(null);
   };
 
   const selectAll = () => setEntities(entities.map(e => ({ ...e, included: true })));

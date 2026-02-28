@@ -73,7 +73,12 @@ interface PDFViewerProps {
   onEntityClick: (id: string) => void;
 }
 
-export function PDFViewer({ currentPage, entities, selectedEntityId, onEntityClick }: PDFViewerProps) {
+export function PDFViewer({
+  currentPage,
+  entities,
+  selectedEntityId,
+  onEntityClick,
+}: PDFViewerProps) {
   const { modelName } = useAnonymization();
   const { extractedText } = usePdfProcessing();
 
@@ -89,12 +94,14 @@ export function PDFViewer({ currentPage, entities, selectedEntityId, onEntityCli
   });
 
   return (
-    <div className="flex-1 overflow-auto bg-surface-subtle flex justify-center py-8 px-4">
+    <div className="flex-1 overflow-auto bg-surface-subtle flex justify-center py-16 px-4">
       <div
         className="bg-white dark:bg-[#2a2a36] rounded-lg shadow-lg w-full max-w-2xl min-h-210.5 p-12 relative"
-        style={{ boxShadow: '0 4px 32px rgb(0 0 0 / 0.12)' }}
+        style={{
+          boxShadow: '0 4px 32px rgb(0 0 0 / 0.12)',
+        }}
       >
-        <div className="absolute top-3 right-4 text-[10px] text-gray-400 tabular-nums">
+        <div className="absolute top-3 right-4 text-xs text-gray-400 tabular-nums">
           Page {currentPage}
         </div>
 
