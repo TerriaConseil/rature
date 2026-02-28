@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
-import { ColorSpace } from 'mupdf';
+import { ColorSpace, type PDFDocument } from 'mupdf';
 
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 
 interface PDFPageRendererProps {
   pageIndex: number;
   zoom: number;
+  pdfDocument?: PDFDocument | null;
 }
 
-export function PDFPageRenderer({ pageIndex, zoom }: PDFPageRendererProps) {
-  const { pdfDocument } = usePdfProcessing();
+export function PDFPageRenderer({ pageIndex, zoom, pdfDocument: propDocument }: PDFPageRendererProps) {
+  const { pdfDocument: contextDocument } = usePdfProcessing();
+  const pdfDocument = propDocument ?? contextDocument;
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [cssSize, setCssSize] = useState<{ width: number; height: number } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
