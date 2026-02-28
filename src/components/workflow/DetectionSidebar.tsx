@@ -45,6 +45,10 @@ const groupByName = (entities: GroupedEntity[]) => {
     }
   }
 
+  for (const group of groupedByNameEntities) {
+    group.instances.sort((a, b) => a.page !== b.page ? a.page - b.page : a.start - b.start);
+  }
+
   return groupedByNameEntities;
 };
 
