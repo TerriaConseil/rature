@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, CheckSquare, Square, Trash2 } from 'lucide-react';
+import { Search, CheckSquare, Square, Trash2, ChevronRight } from 'lucide-react';
 import { CUSTOM_ENTITY_TYPES, type GroupedEntity } from '@/types/index.ts';
 import { cn } from '@/lib/utils.ts';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
@@ -72,7 +72,20 @@ export function DetectionSidebar({
   const { pageCount } = usePdfProcessing();
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState<string | 'all'>('all');
+  const [collapsedTypes, setCollapsedTypes] = useState<Set<string>>(new Set());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const toggleCollapse = (type: string) => {
+    setCollapsedTypes(prev => {
+      const next = new Set(prev);
+      if (next.has(type)) {
+        next.delete(type);
+      } else {
+        next.add(type);
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (!selectedEntityId || !scrollContainerRef.current) return;
@@ -216,14 +229,29 @@ export function DetectionSidebar({
 
           return (
             <div key={type} className="mb-1">
-              <div className="flex items-center gap-2 px-4 py-1.5">
-                <span className={cn('w-2 h-2 rounded-full', meta.dot)} />
+              <button
+                onClick={() => toggleCollapse(type)}
+                className="w-full flex items-center gap-2 px-4 py-1.5 hover:bg-surface-subtle transition-colors cursor-pointer group/header"
+              >
+                <ChevronRight
+                  size={12}
+                  className={cn(
+                    'text-fg-subtle shrink-0 transition-transform duration-300',
+                    !collapsedTypes.has(type) && 'rotate-90',
+                  )}
+                />
+                <span className={cn('w-2 h-2 rounded-full shrink-0', meta.dot)} />
                 <span className="text-xs font-medium text-fg-muted uppercase tracking-wider">
-                  {meta.label}s
+                  {meta.title}
                 </span>
                 <span className="text-xs text-fg-subtle">({group.length})</span>
-              </div>
+              </button>
 
+              <div
+                className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+                style={{ gridTemplateRows: collapsedTypes.has(type) ? '0fr' : '1fr' }}
+              >
+                <div className="overflow-hidden">
               {group.map(entity => {
                 const isSelected = !!selectedEntityId && entity.instances.map((e) => e.id).includes(selectedEntityId);
 
@@ -279,6 +307,8 @@ export function DetectionSidebar({
                   </div>
                 );
               })}
+                </div>
+              </div>
             </div>
           );
         })}
