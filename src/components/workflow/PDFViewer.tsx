@@ -98,7 +98,7 @@ export function PDFViewer({
   return (
     <div className="flex-1 overflow-auto bg-surface-subtle flex justify-center py-16 px-4">
       <div
-        className="bg-white dark:bg-[#2a2a36] rounded-lg shadow-lg w-full max-w-2xl min-h-210.5 p-12 relative"
+        className="bg-white dark:bg-[#2a2a36] rounded-lg shadow-lg w-full max-w-2xl min-h-210.5 p-12 relative self-start"
         style={{
           boxShadow: '0 4px 32px rgb(0 0 0 / 0.12)',
           transform: `scale(${zoom / 100})`,
