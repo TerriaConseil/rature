@@ -8,6 +8,7 @@ import { ExportModal } from '@/components/workflow/ExportModal.tsx';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 import { redactPDFDocument } from '@/lib/pdf/redactPDF.ts';
+import { downloadPDFDocument } from '@/lib/pdf/exportPDF.ts';
 import type { WorkflowMode } from '@/types/index.ts';
 
 interface WorkflowPageProps {
@@ -142,8 +143,13 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
           entities={entities}
           fileName={file.name}
           onClose={() => setShowExport(false)}
-          onDownload={() => {
-            // Real export will be wired later
+          onDownload={async ({ removeMetadata }) => {
+            let doc = redactedDocument;
+            if (!doc && file) {
+              doc = await redactPDFDocument(file, entities);
+            }
+            if (!doc || !file) return;
+            downloadPDFDocument(doc, file.name, removeMetadata);
           }}
         />
       )}
