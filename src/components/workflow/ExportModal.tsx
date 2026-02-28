@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { X, Download, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button.tsx';
-import type { DetectedEntity } from '@/types/index.ts';
+import type { GroupedEntity } from '@/types/index.ts';
 
 interface ExportModalProps {
-  entities: DetectedEntity[]
+  entities: GroupedEntity[]
   fileName: string
   onClose: () => void
   onDownload: () => void

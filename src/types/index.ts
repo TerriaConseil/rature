@@ -26,3 +26,5 @@ export interface GroupedEntity {
   end: number;
   included: boolean;
 };
+
+export type WorkflowMode = 'edition' | 'preview';

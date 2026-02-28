@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Toolbar } from '@/components/workflow/Toolbar.tsx';
 import { PDFViewer } from '@/components/workflow/PDFViewer.tsx';
+import { PDFPageRenderer } from '@/components/workflow/PDFPageRenderer.tsx';
 import { DetectionSidebar } from '@/components/workflow/DetectionSidebar.tsx';
 import { ExportModal } from '@/components/workflow/ExportModal.tsx';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
+import type { WorkflowMode } from '@/types/index.ts';
 
 interface WorkflowPageProps {
   onBack: () => void;
@@ -13,6 +15,7 @@ interface WorkflowPageProps {
 export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const { nerEntities: entities, reset: resetEntities, setNerEntities: setEntities } = useAnonymization();
   const { file, pageCount, reset: resetPdfDocument } = usePdfProcessing();
+  const [mode, setMode] = useState<WorkflowMode>('edition');
   const [currentPage, setCurrentPage] = useState(1);
   const [zoom, setZoom] = useState(100);
   const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
@@ -64,6 +67,8 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         currentPage={currentPage}
         totalPages={pageCount}
         zoom={zoom}
+        mode={mode}
+        onModeChange={setMode}
         onBack={handleBackClick}
         onPrevPage={() => setCurrentPage(p => Math.max(p - 1, 1))}
         onNextPage={() => setCurrentPage(p => Math.min(p + 1, pageCount))}
@@ -75,25 +80,29 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         onExport={() => setShowExport(true)}
       />
 
-      <div className="flex flex-1 overflow-hidden">
-        <PDFViewer
-          currentPage={currentPage}
-          zoom={zoom}
-          entities={entities}
-          selectedEntityId={selectedEntityId}
-          onEntityClick={handleEntitySelect}
-        />
-        <DetectionSidebar
-          currentPage={currentPage}
-          entities={entities}
-          selectedEntityId={selectedEntityId}
-          onToggle={toggleEntity}
-          onDelete={deleteEntity}
-          onSelectAll={selectAll}
-          onDeselectAll={deselectAll}
-          onEntitySelect={handleEntitySelect}
-        />
-      </div>
+      {mode === 'edition' ? (
+        <div className="flex flex-1 overflow-hidden">
+          <PDFViewer
+            currentPage={currentPage}
+            zoom={zoom}
+            entities={entities}
+            selectedEntityId={selectedEntityId}
+            onEntityClick={handleEntitySelect}
+          />
+          <DetectionSidebar
+            currentPage={currentPage}
+            entities={entities}
+            selectedEntityId={selectedEntityId}
+            onToggle={toggleEntity}
+            onDelete={deleteEntity}
+            onSelectAll={selectAll}
+            onDeselectAll={deselectAll}
+            onEntitySelect={handleEntitySelect}
+          />
+        </div>
+      ) : (
+        <PDFPageRenderer pageIndex={currentPage - 1} zoom={zoom} />
+      )}
 
       {showExport && (
         <ExportModal

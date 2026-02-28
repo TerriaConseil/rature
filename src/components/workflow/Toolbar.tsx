@@ -6,14 +6,20 @@ import {
   ChevronLeft,
   ChevronRight,
   Download,
+  Pencil,
+  Eye,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button.tsx';
+import { cn } from '@/lib/utils.ts';
+import type { WorkflowMode } from '@/types/index.ts';
 
 interface ToolbarProps {
   fileName: string
   currentPage: number
   totalPages: number
   zoom: number
+  mode: WorkflowMode
+  onModeChange: (mode: WorkflowMode) => void
   onBack: () => void
   onPrevPage: () => void
   onNextPage: () => void
@@ -28,6 +34,8 @@ export function Toolbar({
   currentPage,
   totalPages,
   zoom,
+  mode,
+  onModeChange,
   onBack,
   onPrevPage,
   onNextPage,
@@ -37,7 +45,15 @@ export function Toolbar({
   onExport,
 }: ToolbarProps) {
   return (
-    <div className="h-14 border-b border-border-theme bg-card flex items-center gap-3 px-4 shrink-0">
+    <div className={cn(
+      'h-14 border-b flex items-center gap-3 px-4 shrink-0 transition-all duration-300 relative overflow-hidden',
+      mode === 'preview'
+        ? 'bg-teal-50 dark:bg-teal-950/30 border-accent/50 dark:border-accent/30'
+        : 'bg-card border-border-theme',
+    )}>
+      {mode === 'preview' && (
+        <div className="absolute top-0 inset-x-0 h-0.75 bg-accent" />
+      )}
       <button
         onClick={onBack}
         className="flex items-center gap-1.5 text-sm text-fg-muted hover:text-fg transition-colors cursor-pointer"
@@ -51,6 +67,29 @@ export function Toolbar({
       <span className="text-sm font-medium text-fg truncate max-w-50" title={fileName}>
         {fileName}
       </span>
+
+      <div className="flex items-center rounded-lg border border-border-theme bg-surface-subtle p-0.5 gap-0.5">
+        <button
+          onClick={() => onModeChange('edition')}
+          className={cn(
+            'flex items-center gap-1.5 h-6 px-2.5 rounded-md text-xs font-medium transition-all duration-200 cursor-pointer',
+            mode === 'edition' ? 'bg-card text-fg shadow-sm' : 'text-fg-muted hover:text-fg',
+          )}
+        >
+          <Pencil size={12} />
+          <span>Édition</span>
+        </button>
+        <button
+          onClick={() => onModeChange('preview')}
+          className={cn(
+            'flex items-center gap-1.5 h-6 px-2.5 rounded-md text-xs font-medium transition-all duration-200 cursor-pointer',
+            mode === 'preview' ? 'bg-accent text-white shadow-sm' : 'text-fg-muted hover:text-fg',
+          )}
+        >
+          <Eye size={12} />
+          <span>Aperçu</span>
+        </button>
+      </div>
 
       <div className="flex-1" />
 
@@ -94,10 +133,12 @@ export function Toolbar({
 
       <div className="w-px h-5 bg-border-theme" />
 
-      <Button variant="secondary" size="sm" onClick={onRescan}>
-        <RotateCcw size={13} />
-        Ré-analyser
-      </Button>
+      {mode === 'edition' && (
+        <Button variant="secondary" size="sm" onClick={onRescan}>
+          <RotateCcw size={13} />
+          Ré-analyser
+        </Button>
+      )}
 
       <Button size="sm" onClick={onExport}>
         <Download size={13} />
