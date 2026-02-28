@@ -69,7 +69,7 @@ export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
 
     const text = await processFile();
 
-    analyzeDocument(text.map((extract) => extract.text).join(CUSTOM_PAGE_SPLIT_TOKEN));
+    analyzeDocument(text.map((extract) => extract.text.replaceAll(/\n+/g, ' ')).join(CUSTOM_PAGE_SPLIT_TOKEN));
   }, [analyzeDocument, pdfProcessingStatus, processFile]);
 
   const workerMemo = useMemo(() => initialize(modelName), [initialize, modelName]);

@@ -45,7 +45,7 @@ function extractTextFromStructuredJSON(jsonString: string): string {
       }
     }
 
-    return textParts.join(" ");
+    return textParts.join("\n");
   } catch (error) {
     console.error("Failed to parse structured text JSON:", error);
     return "";
@@ -138,7 +138,7 @@ export async function extractTextFromPDF(
         pdfPage: page,
         pageNumber: i + 1,
         structuredText,
-        text: textContent.trim().replaceAll(/\n+/g, ' ').replaceAll(/\s+/g, ' '),
+        text: textContent.split('\n').map(line => line.trim()).filter(Boolean).join('\n'),
         wordCount: textContent.split(/\s+/).filter(Boolean).length,
       });
     }

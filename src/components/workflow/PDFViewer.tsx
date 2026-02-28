@@ -108,7 +108,7 @@ export function PDFViewer({
           Page {currentPage}
         </div>
 
-        <div className="font-mono text-[13px] leading-[1.9] text-gray-800 dark:text-gray-200 space-y-0">
+        <div className="font-mono text-[13px] leading-[1.9] text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
           {textParts}
         </div>
       </div>
