@@ -1,6 +1,4 @@
-import { extractTextFromPDF } from "./processPDF.ts";
-
-const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
+import { extractTextFromPDF } from "@/lib/pdf/processPDF.ts";
 
 const uploadPDF = async (file: File) => {
   if (!file || !(file instanceof File)) {
@@ -9,10 +7,6 @@ const uploadPDF = async (file: File) => {
 
   if (!file.type.includes("pdf") && !file.name.endsWith(".pdf")) {
     throw new Error("File must be a PDF");
-  }
-
-  if (file.size > MAX_SIZE) {
-    throw new Error("File size exceeds 10 MB limit");
   }
 
   const arrayBuffer = await file.arrayBuffer();

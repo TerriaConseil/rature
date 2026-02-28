@@ -3,7 +3,7 @@ import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import { PdfProcessingContext, type TextExtract, type PDFProcessingStatus } from "@/context/pdfProcessing.tsx";
-import uploadPDF from "@/lib/uploadPDF.tsx";
+import uploadPDF from "@/lib/pdf/uploadPDF.tsx";
 
 type PdfProcessingProviderProps = {
   children: ReactNode;
