@@ -78,6 +78,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
       <div className="flex flex-1 overflow-hidden">
         <PDFViewer
           currentPage={currentPage}
+          zoom={zoom}
           entities={entities}
           selectedEntityId={selectedEntityId}
           onEntityClick={handleEntitySelect}

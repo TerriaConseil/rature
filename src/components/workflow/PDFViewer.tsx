@@ -68,6 +68,7 @@ const createTextParts = ({
 
 interface PDFViewerProps {
   currentPage: number;
+  zoom: number;
   entities: GroupedEntity[];
   selectedEntityId: string | null;
   onEntityClick: (id: string) => void;
@@ -75,6 +76,7 @@ interface PDFViewerProps {
 
 export function PDFViewer({
   currentPage,
+  zoom,
   entities,
   selectedEntityId,
   onEntityClick,
@@ -99,6 +101,8 @@ export function PDFViewer({
         className="bg-white dark:bg-[#2a2a36] rounded-lg shadow-lg w-full max-w-2xl min-h-210.5 p-12 relative"
         style={{
           boxShadow: '0 4px 32px rgb(0 0 0 / 0.12)',
+          transform: `scale(${zoom / 100})`,
+          transformOrigin: 'top center',
         }}
       >
         <div className="absolute top-3 right-4 text-xs text-gray-400 tabular-nums">
