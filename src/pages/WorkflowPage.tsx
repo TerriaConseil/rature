@@ -9,7 +9,7 @@ import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 import { redactPDFDocument } from '@/lib/pdf/redactPDF.ts';
 import { downloadPDFDocument } from '@/lib/pdf/exportPDF.ts';
-import type { WorkflowMode } from '@/types/index.ts';
+import type { GroupedEntity, WorkflowMode } from '@/types/index.ts';
 
 interface WorkflowPageProps {
   onBack: () => void;
@@ -44,6 +44,10 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
 
   const handleHighlightAll = (text: string | null) => {
     setHighlightedEntityText(prev => (prev === text ? null : text));
+  };
+
+  const handleEntityUpdate = (entityId: string, updates: Partial<GroupedEntity>) => {
+    setEntities(entities.map(e => e.id === entityId ? { ...e, ...updates } : e));
   };
 
   const selectAll = () => setEntities(entities.map(e => ({ ...e, included: true })));
@@ -121,6 +125,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
             selectedEntityId={selectedEntityId}
             highlightedEntityText={highlightedEntityText}
             onEntityClick={handleEntitySelect}
+            onEntityUpdate={handleEntityUpdate}
           />
           <DetectionSidebar
             currentPage={currentPage}

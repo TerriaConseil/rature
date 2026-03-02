@@ -12,6 +12,23 @@ const PENDING_ID = '__pending__';
 
 type PendingRange = { start: number; end: number; text: string };
 
+type DragState = {
+  entityId: string;
+  handle: 'left' | 'right';
+  // Bounds at the moment drag started — never mutated
+  originalStart: number;
+  originalEnd: number;
+  // Clamping bounds computed once at drag start
+  minStart: number;
+  maxEnd: number;
+  // Pixel reference for delta calculation
+  startMouseX: number;
+  charWidth: number;
+  // Live preview bounds — update on every mousemove
+  previewStart: number;
+  previewEnd: number;
+};
+
 type CreateTextPartsParams = {
   model: NERModel;
   text: string;
@@ -20,6 +37,8 @@ type CreateTextPartsParams = {
   highlightedEntityText?: string | null;
   onEntityClick: (id: string) => void;
   pendingRange?: PendingRange | null;
+  onDragStart?: (e: React.MouseEvent, entityId: string, handle: 'left' | 'right') => void;
+  isDragging?: boolean;
 };
 
 const createTextParts = ({
@@ -30,6 +49,8 @@ const createTextParts = ({
   highlightedEntityText,
   onEntityClick,
   pendingRange,
+  onDragStart,
+  isDragging,
 }: CreateTextPartsParams) => {
   // Merge entities and the pending range into a single sorted list
   type SpanItem =
@@ -85,14 +106,29 @@ const createTextParts = ({
         <span
           key={entity.id}
           data-entity-id={entity.id}
-          onClick={() => onEntityClick(entity.id)}
+          onClick={() => !isDragging && onEntityClick(entity.id)}
           className={cn(
-            'inline cursor-pointer px-0.5 transition-all duration-150',
+            'cursor-pointer px-0.5 transition-all duration-150',
+            isSelected ? 'inline-block relative group' : 'inline',
             isIncluded ? meta.highlight : 'border-b-2 border-gray-400 dark:border-gray-500',
             isSelected && 'ring-2 ring-offset-1 ring-accent',
             isHighlightedAll && 'ring-2 ring-offset-1 ring-accent/40',
           )}
         >
+          {isSelected && onDragStart && (
+            <>
+              <span
+                aria-label="Étendre à gauche"
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-4 rounded-sm bg-accent cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                onMouseDown={e => onDragStart(e, entity.id, 'left')}
+              />
+              <span
+                aria-label="Étendre à droite"
+                className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-4 rounded-sm bg-accent cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                onMouseDown={e => onDragStart(e, entity.id, 'right')}
+              />
+            </>
+          )}
           {entity.text}
         </span>
       );
@@ -122,6 +158,7 @@ interface PDFViewerProps {
   selectedEntityId: string | null;
   highlightedEntityText?: string | null;
   onEntityClick: (id: string) => void;
+  onEntityUpdate: (entityId: string, updates: Partial<GroupedEntity>) => void;
 }
 
 export function PDFViewer({
@@ -131,26 +168,126 @@ export function PDFViewer({
   selectedEntityId,
   highlightedEntityText,
   onEntityClick,
+  onEntityUpdate,
 }: PDFViewerProps) {
   const { modelName, addEntity } = useAnonymization();
   const { extractedText } = usePdfProcessing();
   const containerRef = useRef<HTMLDivElement>(null);
   const [selection, setSelection] = useState<SelectionState | null>(null);
+  const [dragState, setDragState] = useState<DragState | null>(null);
+  // Ref so event handlers always see the latest drag state without stale closures
+  const dragStateRef = useRef<DragState | null>(null);
 
   const pageContent = extractedText[currentPage - 1] ?? extractedText[0];
   const pageEntities = entities.filter(e => e.page === currentPage).sort((a, b) => a.start - b.start);
 
+  // Keep ref in sync with state
+  dragStateRef.current = dragState;
+
+  // During drag, override the dragged entity's bounds for real-time preview
+  const displayEntities = dragState
+    ? pageEntities.map(e =>
+        e.id === dragState.entityId
+          ? { ...e, start: dragState.previewStart, end: dragState.previewEnd, text: pageContent.text.slice(dragState.previewStart, dragState.previewEnd) }
+          : e
+      )
+    : pageEntities;
+
+  /** Measure the width of one monospace character in the text container. */
+  const measureCharWidth = (): number => {
+    if (!containerRef.current) return 7.8;
+    const walker = document.createTreeWalker(containerRef.current, NodeFilter.SHOW_TEXT);
+    const firstText = walker.nextNode();
+    if (!firstText?.textContent) return 7.8;
+    const range = document.createRange();
+    range.setStart(firstText, 0);
+    range.setEnd(firstText, 1);
+    return range.getBoundingClientRect().width || 7.8;
+  };
+
+  const startDrag = (e: React.MouseEvent, entityId: string, handle: 'left' | 'right') => {
+    e.preventDefault();
+    e.stopPropagation();
+    const entity = pageEntities.find(en => en.id === entityId);
+    if (!entity) return;
+
+    // Compute clamping bounds once so the effect never needs pageEntities
+    const sorted = [...pageEntities].sort((a, b) => a.start - b.start);
+    const idx = sorted.findIndex(en => en.id === entityId);
+    const minStart = idx > 0 ? sorted[idx - 1].end : 0;
+    const maxEnd = idx < sorted.length - 1 ? sorted[idx + 1].start : pageContent.text.length;
+
+    setDragState({
+      entityId,
+      handle,
+      originalStart: entity.start,
+      originalEnd: entity.end,
+      minStart,
+      maxEnd,
+      startMouseX: e.clientX,
+      charWidth: measureCharWidth(),
+      previewStart: entity.start,
+      previewEnd: entity.end,
+    });
+  };
+
+  // Register global listeners once; read live state from ref to avoid stale closures.
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const ds = dragStateRef.current;
+      if (!ds) return;
+
+      // Delta-based: convert pixel offset from drag-start into character count.
+      // This is robust against DOM layout changes caused by entity preview updates.
+      const deltaChars = Math.round((e.clientX - ds.startMouseX) / ds.charWidth);
+
+      setDragState(prev => {
+        if (!prev) return null;
+        if (prev.handle === 'left') {
+          const newStart = Math.max(prev.minStart, Math.min(prev.originalStart + deltaChars, prev.previewEnd - 1));
+          return { ...prev, previewStart: newStart };
+        } else {
+          const newEnd = Math.min(prev.maxEnd, Math.max(prev.originalEnd + deltaChars, prev.previewStart + 1));
+          return { ...prev, previewEnd: newEnd };
+        }
+      });
+    };
+
+    const handleMouseUp = () => {
+      const ds = dragStateRef.current;
+      if (!ds) return;
+      const newText = pageContent.text.slice(ds.previewStart, ds.previewEnd);
+      if (newText.trim()) {
+        onEntityUpdate(ds.entityId, { start: ds.previewStart, end: ds.previewEnd, text: newText });
+      }
+      setDragState(null);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageContent.text, onEntityUpdate]);
+
   const textParts = createTextParts({
     model: modelName,
     text: pageContent.text,
-    entities: pageEntities,
+    entities: displayEntities,
     highlightedEntityId: selectedEntityId,
     highlightedEntityText,
     onEntityClick,
     pendingRange: selection,
+    onDragStart: startDrag,
+    isDragging: !!dragState,
   });
 
   const handleMouseUp = () => {
+    // Don't open selection popover while dragging
+    if (dragStateRef.current) return;
+
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
       setSelection(null);
@@ -266,7 +403,10 @@ export function PDFViewer({
         <div
           ref={containerRef}
           onMouseUp={handleMouseUp}
-          className="font-mono text-[13px] leading-[1.9] text-gray-800 dark:text-gray-200 whitespace-pre-wrap select-text"
+          className={cn(
+            'font-mono text-[13px] leading-[1.9] text-gray-800 dark:text-gray-200 whitespace-pre-wrap select-text',
+            dragState && 'select-none cursor-ew-resize',
+          )}
         >
           {textParts}
         </div>

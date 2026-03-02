@@ -168,7 +168,7 @@ export function DetectionSidebar({
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-fg-subtle pointer-events-none" />
           <input
             type="text"
-            placeholder="Rechercher..."
+            placeholder="Rechercher une entité..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full h-8 pl-8 pr-3 text-xs rounded-lg border border-border-theme bg-surface text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-2 focus:ring-accent"

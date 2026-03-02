@@ -133,7 +133,7 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
                     Supprimer les métadonnées
                   </p>
                   <p className="text-xs text-fg-muted">
-                    Auteur, date de création, propriétés du document
+                    Auteur, date de création, propriétés du document original
                   </p>
                 </div>
               </label>
