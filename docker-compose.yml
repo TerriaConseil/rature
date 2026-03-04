@@ -2,7 +2,7 @@ services:
   rature-web:
     build:
       context: .
-    image: rature:latest
+      dockerfile: Dockerfile
     container_name: rature
     restart: unless-stopped
     networks:
