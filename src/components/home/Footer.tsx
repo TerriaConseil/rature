@@ -1,22 +1,28 @@
 export function Footer() {
   return (
     <footer className="border-t border-border-theme py-8">
-      <div className="mx-auto max-w-300 px-6 flex flex-wrap items-center justify-between gap-4">
-        <a href="#">
-          <span className="bg-neutral-800 text-lg font-bold tracking-tight text-neutral-100 dark:bg-neutral-200 dark:text-neutral-800 px-3 pt-0.5 pb-1 [font-variant:small-caps]">rature</span>
-        </a>
-
-        <p className="text-xs text-fg-subtle">
-          © {new Date().getFullYear()} Terria Conseil. Tous droits réservés.
+      <div className="mx-auto max-w-300 px-6 flex flex-wrap items-center justify-center gap-3">
+        <p className="text-sm text-fg/70">
+          © {new Date().getFullYear()} Terria Conseil
         </p>
-
+        <p className="text-sm text-fg/80">•</p>
+        <a
+          href="https://github.com/TerriaConseil/rature"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-fg/70 hover:text-fg transition-colors"
+        >
+          Code source
+        </a>
+        <p className="text-sm text-fg/80">•</p>
         <nav className="flex items-center gap-4">
-          <a href="#" className="text-xs text-fg-subtle hover:text-fg-muted transition-colors">
+          <a href="#" className="text-sm text-fg/70 hover:text-fg transition-colors">
             Politique de confidentialité
           </a>
-          <a href="#" className="text-xs text-fg-subtle hover:text-fg-muted transition-colors">
+          {/* <p className="text-xs text-fg-subtle">•</p>
+          <a href="#" className="text-xs text-fg hover:text-fg-subtle transition-colors">
             Terria Conseil
-          </a>
+          </a> */}
         </nav>
       </div>
     </footer>
