@@ -71,6 +71,13 @@ export const NER_MODELS: NERModelMeta = {
         badge: COLORS.badge.green,
         highlight: COLORS.highlight.green,
       },
+      MANUAL: {
+        label: "Ajout manuel",
+        title: "Ajouts manuels",
+        dot: COLORS.dot.fuchsia,
+        badge: COLORS.badge.fuchsia,
+        highlight: COLORS.highlight.fuchsia,
+      },
       MISC: {
         label: "Autre",
         title: "Autres",
@@ -252,6 +259,13 @@ export const NER_MODELS: NERModelMeta = {
         badge: COLORS.badge.teal,
         highlight: COLORS.highlight.teal,
       },
+      MANUAL: {
+        label: "Ajout manuel",
+        title: "Ajouts manuels",
+        dot: COLORS.dot.fuchsia,
+        badge: COLORS.badge.fuchsia,
+        highlight: COLORS.highlight.fuchsia,
+      },
       NOM_PERSONNE: {
         label: "Nom de famille",
         title: "Noms de famille",
@@ -426,6 +440,13 @@ export const NER_MODELS: NERModelMeta = {
         badge: COLORS.badge.green,
         highlight: COLORS.highlight.green,
       },
+      MANUAL: {
+        label: "Ajout manuel",
+        title: "Ajouts manuels",
+        dot: COLORS.dot.fuchsia,
+        badge: COLORS.badge.fuchsia,
+        highlight: COLORS.highlight.fuchsia,
+      },
       MISC: {
         label: "Autre",
         title: "Autres",
@@ -494,6 +515,13 @@ export const NER_MODELS: NERModelMeta = {
         dot: COLORS.dot.green,
         badge: COLORS.badge.green,
         highlight: COLORS.highlight.green,
+      },
+      MANUAL: {
+        label: "Ajout manuel",
+        title: "Ajouts manuels",
+        dot: COLORS.dot.fuchsia,
+        badge: COLORS.badge.fuchsia,
+        highlight: COLORS.highlight.fuchsia,
       },
       MISC: {
         label: "Autre",
@@ -564,6 +592,13 @@ export const NER_MODELS: NERModelMeta = {
         badge: COLORS.badge.green,
         highlight: COLORS.highlight.green,
       },
+      MANUAL: {
+        label: "Ajout manuel",
+        title: "Ajouts manuels",
+        dot: COLORS.dot.fuchsia,
+        badge: COLORS.badge.fuchsia,
+        highlight: COLORS.highlight.fuchsia,
+      },
       MISC: {
         label: "Autre",
         title: "Autres",
@@ -632,6 +667,13 @@ export const NER_MODELS: NERModelMeta = {
         dot: COLORS.dot.green,
         badge: COLORS.badge.green,
         highlight: COLORS.highlight.green,
+      },
+      MANUAL: {
+        label: "Ajout manuel",
+        title: "Ajouts manuels",
+        dot: COLORS.dot.fuchsia,
+        badge: COLORS.badge.fuchsia,
+        highlight: COLORS.highlight.fuchsia,
       },
       MISC: {
         label: "Autre",

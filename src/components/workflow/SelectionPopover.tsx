@@ -1,20 +1,20 @@
-import { useEffect, useRef } from 'react';
 import { X, Tag } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+
+import { Button } from '@/components/ui/button.tsx';
 import { cn } from '@/lib/utils.ts';
 
 interface SelectionPopoverProps {
   selectedText: string;
   position: { x: number; y: number };
-  entityTypes: Record<string, { label: string; dot: string; badge: string; highlight: string }>;
-  onSelectType: (type: string) => void;
+  onCreate: () => void;
   onDismiss: () => void;
 }
 
 export function SelectionPopover({
   selectedText,
   position,
-  entityTypes,
-  onSelectType,
+  onCreate,
   onDismiss,
 }: SelectionPopoverProps) {
   const firstButtonRef = useRef<HTMLButtonElement>(null);
@@ -24,8 +24,6 @@ export function SelectionPopover({
 
   const truncatedText =
     selectedText.length > 34 ? selectedText.slice(0, 34) + '…' : selectedText;
-
-  const types = Object.entries(entityTypes);
 
   useEffect(() => {
     const timer = setTimeout(() => firstButtonRef.current?.focus(), 60);
@@ -63,10 +61,8 @@ export function SelectionPopover({
           isAbove ? 'origin-bottom' : 'origin-top',
         )}
       >
-        {/* Teal accent line — the precision instrument signature */}
         <div className="h-0.75 bg-accent w-full" />
 
-        {/* Header */}
         <div className="flex items-center justify-between px-3 pt-2.5 pb-2">
           <div className="flex items-center gap-1.5">
             <Tag size={11} className="text-accent" strokeWidth={2.5} />
@@ -83,7 +79,6 @@ export function SelectionPopover({
           </button>
         </div>
 
-        {/* Selected text preview */}
         <div className="px-3 pb-2.5">
           <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-surface-subtle border border-border-theme">
             <span className="w-1.5 h-1.5 rounded-full bg-accent/70 shrink-0" />
@@ -93,27 +88,12 @@ export function SelectionPopover({
           </div>
         </div>
 
-        {/* Divider */}
         <div className="h-px bg-border-theme mx-0 mb-2.5" />
 
-        {/* Entity type grid */}
-        <div className="px-3 pb-3 grid grid-cols-2 gap-1.5 max-h-45 overflow-y-auto">
-          {types.map(([type, meta], index) => (
-            <button
-              key={type}
-              ref={index === 0 ? firstButtonRef : undefined}
-              onClick={() => onSelectType(type)}
-              className={cn(
-                'flex items-center gap-2 px-2.5 py-1.75 rounded-lg text-[11.5px] font-medium',
-                'border cursor-pointer transition-all duration-100',
-                'hover:brightness-95 active:scale-95',
-                meta.badge,
-              )}
-            >
-              <span className={cn('w-2 h-2 rounded-full shrink-0', meta.dot)} />
-              <span className="truncate leading-none">{meta.label}</span>
-            </button>
-          ))}
+        <div className="px-3 pb-3 flex items-center justify-center gap-1.5 max-h-45 overflow-y-auto">
+          <Button size="md" onClick={onCreate}>
+            Ajouter
+          </Button>
         </div>
       </div>
     </div>

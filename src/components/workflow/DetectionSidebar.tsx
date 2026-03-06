@@ -111,6 +111,7 @@ export function DetectionSidebar({
   });
 
   const allTypes = [
+    'MANUAL',
     ...modelTokens,
     ...CUSTOM_ENTITY_TYPES.map((type) => type.replace('R-', '')),
   ];

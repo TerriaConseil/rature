@@ -335,7 +335,7 @@ export function PDFViewer({
     }
   };
 
-  const handleAddEntity = (type: string) => {
+  const handleAddEntity = () => {
     if (!selection) return;
 
     // Check for overlap with existing entities on this page
@@ -353,7 +353,7 @@ export function PDFViewer({
     const newEntity: GroupedEntity = {
       id: crypto.randomUUID(),
       text: selection.text,
-      type,
+      type: 'MANUAL',
       score: 1.0,
       page: currentPage,
       start: selection.start,
@@ -434,8 +434,7 @@ export function PDFViewer({
           <SelectionPopover
             selectedText={selection.text}
             position={selection.position}
-            entityTypes={NER_MODELS[modelName].entities}
-            onSelectType={handleAddEntity}
+            onCreate={handleAddEntity}
             onDismiss={dismissSelection}
           />
         </div>
