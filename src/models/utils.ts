@@ -33,8 +33,8 @@ type NERModelMeta = {
 
 export const NER_MODELS: NERModelMeta = {
   bertBaseNer: {
-    label: 'BERT Base NER 🇬🇧',
-    url: 'https://huggingface.co/Xenova/bert-base-NER',
+    label: 'BERT Base NER',
+    url: 'https://huggingface.co/dslim/bert-base-NER',
     entities: {
       DATE: {
         label: "Date",
@@ -102,7 +102,7 @@ export const NER_MODELS: NERModelMeta = {
     },
   },
   camembertNerPii: {
-    label: 'CamemBERT NER PII 🇫🇷',
+    label: 'CamemBERT NER PII',
     url: 'https://huggingface.co/Anonym-IA/V2-camembert-ner-pii-onnx-fp32',
     entities: {
       ACCOUNTNUMBER: {
@@ -388,7 +388,7 @@ export const NER_MODELS: NERModelMeta = {
     },
   },
   nermembert24Entities: {
-    label: 'NERmembert2 4 entities 🇫🇷',
+    label: 'NERmembert2 4 entities',
     url: 'https://huggingface.co/CATIE-AQ/NERmembert2-4entities',
     entities: {
       DATE: {
@@ -457,7 +457,7 @@ export const NER_MODELS: NERModelMeta = {
     },
   },
   nermembertLarge4Entities: {
-    label: 'NERmembert Large 4 entities 🇫🇷',
+    label: 'NERmembert Large 4 entities',
     url: 'https://huggingface.co/CATIE-AQ/NERmembert-large-4entities',
     entities: {
       DATE: {
@@ -526,7 +526,7 @@ export const NER_MODELS: NERModelMeta = {
     },
   },
   nermemberta4Entities: {
-    label: 'NERmemberta 4 entities 🇫🇷',
+    label: 'NERmemberta 4 entities',
     url: 'https://huggingface.co/CATIE-AQ/NERmemberta-4entities',
     entities: {
       DATE: {
@@ -595,7 +595,7 @@ export const NER_MODELS: NERModelMeta = {
     },
   },
   distilbertBaseMultiCasedNer: {
-    label: 'DistilBERT Base Muti NER 🌐',
+    label: 'DistilBERT Base Muti NER',
     url: 'https://huggingface.co/Davlan/distilbert-base-multilingual-cased-ner-hrl',
     entities: {
       DATE: {

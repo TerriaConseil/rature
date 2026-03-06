@@ -80,3 +80,10 @@ body {
   background: var(--border-strong);
   border-radius: 99px;
 }
+
+/* ─── Icon spin-pulse (quick spin, long pause) ───────────────── */
+@keyframes icon-spin-pulse {
+  0%   { transform: rotate(0deg); }
+  13%  { transform: rotate(360deg); }
+  100% { transform: rotate(360deg); }
+}

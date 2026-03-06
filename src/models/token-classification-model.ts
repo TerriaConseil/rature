@@ -1,4 +1,4 @@
-import type { TokenClassificationPipeline } from "@huggingface/transformers";
+import type { ProgressCallback, TokenClassificationPipeline } from "@huggingface/transformers";
 
 import { DATE_REGEX, EMAIL_REGEX, ID_REGEX, IP_ADDRESS_REGEX, URL_REGEX } from "@/lib/utils.ts";
 import { CUSTOM_ENTITY_TYPES, type CustomEntity, type GroupedEntity, type NERPipelineEntity } from "@/types/index.ts";
@@ -53,7 +53,10 @@ export class TokenClassificationModel {
     console.log(`TokenClassificationModel instantiated with ${model}`);
   }
 
-  public async initialize(backend: 'webgpu' | 'wasm' = 'wasm') {
+  public async initialize(
+    backend: 'webgpu' | 'wasm' = 'wasm',
+    onProgress?: ProgressCallback,
+  ) {
     if (this.classifier === null) {
       const { env, pipeline } = await import("@huggingface/transformers");
 
@@ -71,6 +74,7 @@ export class TokenClassificationModel {
       this.classifier = await pipeline<'token-classification'>('token-classification', this.model, {
         device: backend,
         dtype: 'fp32',
+        progress_callback: onProgress,
       });
     }
 
@@ -85,7 +89,10 @@ export class TokenClassificationModel {
     };
   };
 
-  public async process(text: string) {
+  public async process(
+    text: string,
+    onProgress?: (info: { chunksProcessed: number; totalChunks: number; totalPages: number }) => void,
+  ) {
     this.rawPipelineEntities = [];
     this.entitiesWithOffset = [];
     this.entities = [];
@@ -93,7 +100,7 @@ export class TokenClassificationModel {
     this.textGroupedByPage = text.split(CUSTOM_PAGE_SPLIT_TOKEN);
 
     // Extract
-    this.rawPipelineEntities = await this.extractClassifierEntities();
+    this.rawPipelineEntities = await this.extractClassifierEntities(onProgress);
     this.regexEntities = this.extractRegexEntities();
 
     // Merge
@@ -127,7 +134,9 @@ export class TokenClassificationModel {
     return false;
   }
 
-  private async extractClassifierEntities() {
+  private async extractClassifierEntities(
+    onProgress?: (info: { chunksProcessed: number; totalChunks: number; totalPages: number }) => void,
+  ) {
     if (!this.classifier) {
       throw new Error("Please call initialize() first.");
     }
@@ -136,9 +145,11 @@ export class TokenClassificationModel {
 
     const splittedText = this.fullText.split(' ');
     const totalSize = splittedText.length;
+    const totalPages = this.textGroupedByPage.length;
 
     if (totalSize <= this.MAX_CHUNK_LENGTH) {
       rawEntities = await this.classifier(this.fullText, { ignore_labels: [] }) as NERPipelineEntity[];
+      onProgress?.({ chunksProcessed: 1, totalChunks: 1, totalPages });
     } else {
       const nbTurns = Math.ceil(totalSize / this.MAX_CHUNK_LENGTH);
 
@@ -158,6 +169,8 @@ export class TokenClassificationModel {
         } else {
           rawEntities = [...results];
         }
+
+        onProgress?.({ chunksProcessed: i + 1, totalChunks: nbTurns, totalPages });
       }
     }
 

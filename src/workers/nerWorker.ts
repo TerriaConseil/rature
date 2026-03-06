@@ -8,7 +8,7 @@ import {
   NERmembertLarge4Entities,
 } from "@/models/index.ts";
 import type { TokenClassificationModel } from "@/models/token-classification-model.ts";
-import type { NERModel } from "@/models/utils.ts";
+import { type NERModel } from "@/models/utils.ts";
 
 declare const self: DedicatedWorkerGlobalScope;
 
@@ -34,7 +34,17 @@ async function initializePipeline(modelName: NERModel = 'bertBaseNer', preferred
       nerPipeline = new BertBaseMerModel();
     } 
 
-    const { backend, modelTokens } = await nerPipeline.initialize(preferredBackend);
+    const { backend, modelTokens } = await nerPipeline.initialize(preferredBackend, (progress) => {
+      if (progress.status === 'progress' && progress.loaded !== undefined && progress.total !== undefined && progress.total > 0) {
+        self.postMessage({
+          type: 'download_progress',
+          modelName: modelName,
+          loaded: progress.loaded,
+          total: progress.total,
+          percent: Math.round((progress.loaded / progress.total) * 100),
+        });
+      }
+    });
 
     self.postMessage({
       type: "status",
@@ -66,7 +76,14 @@ async function processText(text: string, jobId: string) {
 
   try {
     const startTime = performance.now();
-    await nerPipeline.process(text);
+    await nerPipeline.process(text, (info) => {
+      self.postMessage({
+        type: 'processing_progress',
+        chunksProcessed: info.chunksProcessed,
+        totalChunks: info.totalChunks,
+        totalPages: info.totalPages,
+      });
+    });
     const endTime = performance.now();
 
     self.postMessage({

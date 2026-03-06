@@ -11,6 +11,19 @@ export interface NERResult {
 
 type NERStatus = "idle" | "loading" | "ready" | "processing" | "error";
 
+export type DownloadProgress = {
+  modelName: NERModel;
+  loaded: number;
+  total: number;
+  percent: number;
+};
+
+export type ProcessingProgress = {
+  chunksProcessed: number;
+  totalChunks: number;
+  totalPages: number;
+};
+
 export type NERWorkerMessage =
   | {
     type: "ready"
@@ -23,6 +36,19 @@ export type NERWorkerMessage =
     backend: "wasm" | "webgpu";
     message: string;
     modelTokens: string[];
+  }
+  | {
+    type: "download_progress";
+    modelName: NERModel;
+    loaded: number;
+    total: number;
+    percent: number;
+  }
+  | {
+    type: "processing_progress";
+    chunksProcessed: number;
+    totalChunks: number;
+    totalPages: number;
   }
   | {
     type: "result";
@@ -43,6 +69,8 @@ export function useNERWorker() {
   const [backend, setBackend] = useState<"webgpu" | "wasm" | null>(null);
   const [modelTokens, setModelTokens] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [downloadProgress, setDownloadProgress] = useState<DownloadProgress | null>(null);
+  const [processingProgress, setProcessingProgress] = useState<ProcessingProgress | null>(null);
   const modelNameRef = useRef<NERModel | null>(null);
   const pendingJobsRef = useRef<
     Map<
@@ -78,6 +106,23 @@ export function useNERWorker() {
           setBackend(event.data.backend);
           setModelTokens(event.data.modelTokens);
         }
+        break;
+
+      case "download_progress":
+        setDownloadProgress({
+          modelName: event.data.modelName,
+          loaded: event.data.loaded,
+          total: event.data.total,
+          percent: event.data.percent,
+        });
+        break;
+
+      case "processing_progress":
+        setProcessingProgress({
+          chunksProcessed: event.data.chunksProcessed,
+          totalChunks: event.data.totalChunks,
+          totalPages: event.data.totalPages,
+        });
         break;
 
       case "result": {
@@ -163,8 +208,10 @@ export function useNERWorker() {
 
   return {
     backend,
+    downloadProgress,
     error,
     modelTokens,
+    processingProgress,
     status,
     initialize,
     processText,

@@ -35,7 +35,7 @@ export function Navbar() {
           </a>
         </nav>
 
-        <div className="h-10 w-0.5 bg-gray-200 rounded-lg" />
+        <div className="h-10 w-0.5 bg-neutral-200 dark:bg-neutral-700 rounded-lg" />
 
         <div>
           <button
