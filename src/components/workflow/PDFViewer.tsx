@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type ReactNode } from 'react';
+import { useState, useRef, useEffect, type ReactNode, useCallback } from 'react';
 import { toast } from 'sonner';
 
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
@@ -15,16 +15,12 @@ type PendingRange = { start: number; end: number; text: string };
 type DragState = {
   entityId: string;
   handle: 'left' | 'right';
-  // Bounds at the moment drag started — never mutated
   originalStart: number;
   originalEnd: number;
-  // Clamping bounds computed once at drag start
   minStart: number;
   maxEnd: number;
-  // Pixel reference for delta calculation
   startMouseX: number;
   charWidth: number;
-  // Live preview bounds — update on every mousemove
   previewStart: number;
   previewEnd: number;
 };
@@ -172,7 +168,7 @@ export function PDFViewer({
 }: PDFViewerProps) {
   const { modelName, addEntity } = useAnonymization();
   const { extractedText } = usePdfProcessing();
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
   const [selection, setSelection] = useState<SelectionState | null>(null);
   const [dragState, setDragState] = useState<DragState | null>(null);
   // Ref so event handlers always see the latest drag state without stale closures
@@ -180,9 +176,6 @@ export function PDFViewer({
 
   const pageContent = extractedText[currentPage - 1] ?? extractedText[0];
   const pageEntities = entities.filter(e => e.page === currentPage).sort((a, b) => a.start - b.start);
-
-  // Keep ref in sync with state
-  dragStateRef.current = dragState;
 
   // During drag, override the dragged entity's bounds for real-time preview
   const displayEntities = dragState
@@ -193,22 +186,29 @@ export function PDFViewer({
       )
     : pageEntities;
 
-  /** Measure the width of one monospace character in the text container. */
-  const measureCharWidth = (): number => {
-    if (!containerRef.current) return 7.8;
-    const walker = document.createTreeWalker(containerRef.current, NodeFilter.SHOW_TEXT);
+  const measureCharWidth = useCallback((): number => {
+    if (!containerRef) return 7.8;
+
+    const walker = document.createTreeWalker(containerRef, NodeFilter.SHOW_TEXT);
     const firstText = walker.nextNode();
+
     if (!firstText?.textContent) return 7.8;
+
     const range = document.createRange();
+
     range.setStart(firstText, 0);
     range.setEnd(firstText, 1);
-    return range.getBoundingClientRect().width || 7.8;
-  };
+
+    const charWidth = range.getBoundingClientRect().width || 7.8;
+
+    return charWidth;
+  }, [containerRef]);
 
   const startDrag = (e: React.MouseEvent, entityId: string, handle: 'left' | 'right') => {
     e.preventDefault();
     e.stopPropagation();
     const entity = pageEntities.find(en => en.id === entityId);
+
     if (!entity) return;
 
     // Compute clamping bounds once so the effect never needs pageEntities
@@ -243,11 +243,14 @@ export function PDFViewer({
 
       setDragState(prev => {
         if (!prev) return null;
+
         if (prev.handle === 'left') {
           const newStart = Math.max(prev.minStart, Math.min(prev.originalStart + deltaChars, prev.previewEnd - 1));
+
           return { ...prev, previewStart: newStart };
         } else {
           const newEnd = Math.min(prev.maxEnd, Math.max(prev.originalEnd + deltaChars, prev.previewStart + 1));
+
           return { ...prev, previewEnd: newEnd };
         }
       });
@@ -255,11 +258,15 @@ export function PDFViewer({
 
     const handleMouseUp = () => {
       const ds = dragStateRef.current;
+
       if (!ds) return;
+
       const newText = pageContent.text.slice(ds.previewStart, ds.previewEnd);
+
       if (newText.trim()) {
         onEntityUpdate(ds.entityId, { start: ds.previewStart, end: ds.previewEnd, text: newText });
       }
+
       setDragState(null);
     };
 
@@ -269,8 +276,7 @@ export function PDFViewer({
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageContent.text, onEntityUpdate]);
+  }, [onEntityUpdate, pageContent.text]);
 
   const textParts = createTextParts({
     model: modelName,
@@ -295,7 +301,7 @@ export function PDFViewer({
     }
 
     const selectedText = sel.toString().trim();
-    if (!selectedText || !containerRef.current) {
+    if (!selectedText || !containerRef) {
       setSelection(null);
       return;
     }
@@ -303,14 +309,14 @@ export function PDFViewer({
     const range = sel.getRangeAt(0);
 
     // Verify the selection is inside the text container
-    if (!containerRef.current.contains(range.commonAncestorContainer)) {
+    if (!containerRef.contains(range.commonAncestorContainer)) {
       setSelection(null);
       return;
     }
 
     // Calculate absolute start offset relative to pageContent.text
     const preRange = document.createRange();
-    preRange.selectNodeContents(containerRef.current);
+    preRange.selectNodeContents(containerRef);
     preRange.setEnd(range.startContainer, range.startOffset);
     const startOffset = preRange.toString().length;
     const endOffset = startOffset + selectedText.length;
@@ -323,6 +329,10 @@ export function PDFViewer({
     setSelection({ text: selectedText, start: startOffset, end: endOffset, position: { x, y } });
     // Clear native browser selection — our pending span takes over visually
     window.getSelection()?.removeAllRanges();
+    // Clear currently selected entity
+    if (selectedEntityId) {
+      onEntityClick(selectedEntityId);
+    }
   };
 
   const handleAddEntity = (type: string) => {
@@ -362,12 +372,18 @@ export function PDFViewer({
     window.getSelection()?.removeAllRanges();
   };
 
+  useEffect(() => {
+    dragStateRef.current = dragState;
+  }, [dragState]);
+
   // Scroll selected entity into view when selection changes
   useEffect(() => {
-    if (!selectedEntityId || !containerRef.current) return;
-    const el = containerRef.current.querySelector(`[data-entity-id="${selectedEntityId}"]`);
+    if (!selectedEntityId || !containerRef) return;
+
+    const el = containerRef.querySelector(`[data-entity-id="${selectedEntityId}"]`);
+
     el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, [selectedEntityId]);
+  }, [containerRef, selectedEntityId]);
 
   // Dismiss popover on click outside the popover itself
   useEffect(() => {
@@ -376,8 +392,9 @@ export function PDFViewer({
     const handleMouseDown = (e: MouseEvent) => {
       const target = e.target as Node;
       // Only dismiss if click is not inside the text container or a popover
-      const isInsideContainer = containerRef.current?.contains(target);
+      const isInsideContainer = containerRef?.contains(target);
       const isInsidePopover = (target as HTMLElement).closest?.('[data-popover]');
+
       if (!isInsideContainer && !isInsidePopover) {
         dismissSelection();
       }
@@ -385,7 +402,7 @@ export function PDFViewer({
 
     document.addEventListener('mousedown', handleMouseDown);
     return () => document.removeEventListener('mousedown', handleMouseDown);
-  }, [selection]);
+  }, [containerRef, selection]);
 
   return (
     <div className="flex-1 overflow-auto bg-surface-subtle flex justify-center py-16 px-4">
@@ -401,7 +418,7 @@ export function PDFViewer({
         </div>
 
         <div
-          ref={containerRef}
+          ref={setContainerRef}
           onMouseUp={handleMouseUp}
           className={cn(
             'font-mono text-[13px] leading-[1.9] text-gray-800 dark:text-gray-200 whitespace-pre-wrap select-text',
