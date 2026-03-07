@@ -112,6 +112,9 @@ export class TokenClassificationModel {
     // Aggregate
     this.entities = this.aggregateEntities(this.entitiesWithOffset);
 
+    // Expand partial matches and deduplicate sub-entities
+    this.entities = this.expandAndDeduplicateEntities(this.entities);
+
     return this.entities;
   }
 
@@ -336,6 +339,97 @@ export class TokenClassificationModel {
     }
 
     return entitiesWithOffset;
+  }
+
+  private expandAndDeduplicateEntities(entities: GroupedEntity[]): GroupedEntity[] {
+    const uniqueTexts = new Map<string, Set<string>>();
+    for (const entity of entities) {
+      if (entity.type === 'O') continue;
+      if (!uniqueTexts.has(entity.type)) {
+        uniqueTexts.set(entity.type, new Set());
+      }
+      uniqueTexts.get(entity.type)!.add(entity.text);
+    }
+
+    const expanded = [...entities];
+    const existingPositions = new Set(
+      entities.filter((e) => e.type !== 'O').map((e) => `${e.page}:${e.start}:${e.end}`)
+    );
+
+    const isWordBoundary = (pageText: string, start: number, end: number) => {
+      const before = start === 0 || /\W/.test(pageText[start - 1]);
+      const after = end === pageText.length || /\W/.test(pageText[end]);
+      return before && after;
+    };
+
+    for (const [type, texts] of uniqueTexts) {
+      for (const text of texts) {
+        for (let pageIdx = 0; pageIdx < this.textGroupedByPage.length; pageIdx++) {
+          const pageText = this.textGroupedByPage[pageIdx];
+          const page = pageIdx + 1;
+          let searchFrom = 0;
+
+          while (searchFrom < pageText.length) {
+            const pos = pageText.indexOf(text, searchFrom);
+            if (pos === -1) break;
+
+            const end = pos + text.length;
+
+            if (isWordBoundary(pageText, pos, end)) {
+              const key = `${page}:${pos}:${end}`;
+              if (!existingPositions.has(key)) {
+                expanded.push({
+                  id: crypto.randomUUID(),
+                  text,
+                  type,
+                  score: 0,
+                  page,
+                  start: pos,
+                  end,
+                  included: true,
+                });
+                existingPositions.add(key);
+              }
+            }
+
+            searchFrom = pos + 1;
+          }
+        }
+      }
+    }
+
+    const labeledPositions = new Set(
+      expanded.filter((e) => e.type !== 'O').map((e) => `${e.page}:${e.start}:${e.end}`)
+    );
+    const withoutSupersededO = expanded.filter(
+      (e) => e.type !== 'O' || !labeledPositions.has(`${e.page}:${e.start}:${e.end}`)
+    );
+
+    const toRemove = new Set<string>();
+
+    for (let i = 0; i < withoutSupersededO.length; i++) {
+      const a = withoutSupersededO[i];
+      if (a.type === 'O') continue;
+
+      for (let j = 0; j < withoutSupersededO.length; j++) {
+        if (i === j) continue;
+        const b = withoutSupersededO[j];
+
+        if (
+          a.type === b.type &&
+          a.page === b.page &&
+          a.start <= b.start &&
+          a.end >= b.end &&
+          (a.start < b.start || a.end > b.end)
+        ) {
+          toRemove.add(b.id);
+        }
+      }
+    }
+
+    return withoutSupersededO
+      .filter((e) => !toRemove.has(e.id))
+      .sort((a, b) => a.page - b.page || a.start - b.start);
   }
 
   private aggregateEntities(entitiesWithOffset: EntityWithOffset[]) {
