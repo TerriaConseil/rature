@@ -126,6 +126,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
             highlightedEntityText={highlightedEntityText}
             onEntityClick={handleEntitySelect}
             onEntityUpdate={handleEntityUpdate}
+            onPageChange={setCurrentPage}
           />
           <DetectionSidebar
             currentPage={currentPage}

@@ -1,13 +1,15 @@
 import { useState, useRef, useEffect, type ReactNode, useCallback } from 'react';
+import { Search, ChevronUp, ChevronDown, X } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button.tsx';
+import { SelectionPopover } from '@/components/workflow/SelectionPopover.tsx';
+import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
+import { findAllOccurrences, type EntityMatch } from '@/lib/entity-expansion.ts';
+import { cn } from '@/lib/utils.ts';
 import { NER_MODELS, type NERModel } from '@/models/utils.ts';
 import type { GroupedEntity } from '@/types/index.ts';
-import { useAnonymization } from '@/hooks/useAnonymization.ts';
-import { cn } from '@/lib/utils.ts';
-import { SelectionPopover } from '@/components/workflow/SelectionPopover.tsx';
-import { findAllOccurrences, type EntityMatch } from '@/lib/entity-expansion.ts';
 
 const PENDING_ID = '__pending__';
 
@@ -37,6 +39,8 @@ type CreateTextPartsParams = {
   previewMatches?: EntityMatch[];
   onDragStart?: (e: React.MouseEvent, entityId: string, handle: 'left' | 'right') => void;
   isDragging?: boolean;
+  focusedMatchStart?: number;
+  dimEntities?: boolean;
 };
 
 const createTextParts = ({
@@ -50,6 +54,8 @@ const createTextParts = ({
   previewMatches,
   onDragStart,
   isDragging,
+  focusedMatchStart,
+  dimEntities,
 }: CreateTextPartsParams) => {
   // Merge entities, the pending range, and preview matches into a single sorted list
   type SpanItem =
@@ -101,10 +107,15 @@ const createTextParts = ({
         </span>
       );
     } else if (item.kind === 'preview') {
+      const isFocused = item.start === focusedMatchStart;
       textParts.push(
         <span
           key={`preview-${item.start}-${item.end}`}
-          className="inline px-0.5 bg-accent/5 border-b-2 border-dashed border-accent/40 dark:bg-accent/8"
+          {...(isFocused ? { 'data-search-match': 'focused' } : {})}
+          className={isFocused
+            ? "inline px-0.5 bg-accent/10 border-b-2 border-dashed border-accent dark:bg-accent/15"
+            : "inline px-0.5 bg-accent/5 border-b-2 border-dashed border-accent/40 dark:bg-accent/8"
+          }
         >
           {itemText}
         </span>
@@ -116,17 +127,32 @@ const createTextParts = ({
       const isHighlightedAll = !!highlightedEntityText && entity.text === highlightedEntityText && !isSelected;
       const isIncluded = entity.included;
 
+      const focusedPreviewMatch = previewMatches?.find(m => m.start === focusedMatchStart);
+      const overlapsFocused = focusedPreviewMatch
+        ? focusedPreviewMatch.start < entity.end && focusedPreviewMatch.end > entity.start
+        : false;
+      const overlapsSearch = !overlapsFocused && (previewMatches?.some(
+        m => m.start < entity.end && m.end > entity.start
+      ) ?? false);
+
       textParts.push(
         <span
           key={entity.id}
           data-entity-id={entity.id}
+          {...(overlapsFocused ? { 'data-search-match': 'focused' } : {})}
           onClick={() => !isDragging && onEntityClick(entity.id)}
           className={cn(
             'cursor-pointer px-0.5 transition-all duration-150',
             isSelected ? 'inline-block relative group' : 'inline',
-            isIncluded ? meta.highlight : 'border-b-2 border-gray-400 dark:border-gray-500',
-            isSelected && 'ring-2 ring-offset-1 ring-accent',
-            isHighlightedAll && 'ring-2 ring-offset-1 ring-accent/40',
+            overlapsFocused
+              ? 'bg-accent/10 border-b-2 border-dashed border-accent dark:bg-accent/15'
+              : overlapsSearch
+                ? 'bg-accent/5 border-b-2 border-dashed border-accent/40 dark:bg-accent/8'
+                : dimEntities
+                  ? 'border-b-2 border-gray-300 dark:border-gray-600'
+                  : isIncluded ? meta.highlight : 'border-b-2 border-gray-400 dark:border-gray-500',
+            !dimEntities && !overlapsFocused && !overlapsSearch && isSelected && 'ring-2 ring-offset-1 ring-accent',
+            !dimEntities && !overlapsFocused && !overlapsSearch && isHighlightedAll && 'ring-2 ring-offset-1 ring-accent/40',
           )}
         >
           {isSelected && onDragStart && (
@@ -174,6 +200,7 @@ interface PDFViewerProps {
   highlightedEntityText?: string | null;
   onEntityClick: (id: string) => void;
   onEntityUpdate: (entityId: string, updates: Partial<GroupedEntity>) => void;
+  onPageChange: (page: number) => void;
 }
 
 export function PDFViewer({
@@ -184,6 +211,7 @@ export function PDFViewer({
   highlightedEntityText,
   onEntityClick,
   onEntityUpdate,
+  onPageChange,
 }: PDFViewerProps) {
   const { modelName, addEntity } = useAnonymization();
   const { extractedText } = usePdfProcessing();
@@ -192,6 +220,13 @@ export function PDFViewer({
   const [dragState, setDragState] = useState<DragState | null>(null);
   // Ref so event handlers always see the latest drag state without stale closures
   const dragStateRef = useRef<DragState | null>(null);
+
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [searchMatches, setSearchMatches] = useState<EntityMatch[]>([]);
+  const [searchMatchIndex, setSearchMatchIndex] = useState(0);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const pageContent = extractedText[currentPage - 1] ?? extractedText[0];
   const pageEntities = entities.filter(e => e.page === currentPage).sort((a, b) => a.start - b.start);
@@ -204,6 +239,57 @@ export function PDFViewer({
           : e
       )
     : pageEntities;
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(searchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (debouncedQuery.length < 3) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSearchMatches([]);
+      setSearchMatchIndex(0);
+      return;
+    }
+    const matches = findAllOccurrences(debouncedQuery, extractedText, []);
+    setSearchMatches(matches);
+    setSearchMatchIndex(0);
+    if (matches.length > 0) onPageChange(matches[0].page);
+  }, [debouncedQuery, extractedText, onPageChange]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        e.preventDefault();
+        setSearchOpen(true);
+        setTimeout(() => searchInputRef.current?.focus(), 50);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (searchOpen) setTimeout(() => searchInputRef.current?.focus(), 50);
+  }, [searchOpen]);
+
+  const navigateMatch = (direction: 'prev' | 'next') => {
+    if (searchMatches.length === 0) return;
+    const newIndex = direction === 'next'
+      ? (searchMatchIndex + 1) % searchMatches.length
+      : (searchMatchIndex - 1 + searchMatches.length) % searchMatches.length;
+    setSearchMatchIndex(newIndex);
+    onPageChange(searchMatches[newIndex].page);
+  };
+
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setSearchQuery('');
+    setDebouncedQuery('');
+    setSearchMatches([]);
+    setSearchMatchIndex(0);
+  };
 
   const measureCharWidth = useCallback((): number => {
     if (!containerRef) return 7.8;
@@ -297,11 +383,18 @@ export function PDFViewer({
     };
   }, [onEntityUpdate, pageContent.text]);
 
-  // Preview matches on the current page (excluding the pending selection itself)
+  // Preview matches: selection previews when selecting, search matches when searching
   const currentPagePreviewMatches = selection
     ? selection.allMatches.filter(
         m => m.page === currentPage && !(m.start === selection.start && m.end === selection.end)
       )
+    : debouncedQuery.length >= 3
+      ? searchMatches.filter(m => m.page === currentPage)
+      : undefined;
+
+  const focusedMatch = searchMatches[searchMatchIndex];
+  const focusedMatchStart = !selection && focusedMatch?.page === currentPage
+    ? focusedMatch.start
     : undefined;
 
   const textParts = createTextParts({
@@ -315,6 +408,8 @@ export function PDFViewer({
     previewMatches: currentPagePreviewMatches,
     onDragStart: startDrag,
     isDragging: !!dragState,
+    focusedMatchStart,
+    dimEntities: !selection && searchMatches.length > 0,
   });
 
   const handleMouseUp = () => {
@@ -436,6 +531,14 @@ export function PDFViewer({
     el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [containerRef, selectedEntityId]);
 
+  // Scroll focused search match into view when index or page changes
+  useEffect(() => {
+    if (!containerRef || searchMatches.length === 0) return;
+
+    const el = containerRef.querySelector('[data-search-match="focused"]');
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [containerRef, searchMatchIndex, currentPage, searchMatches.length]);
+
   // Dismiss popover on click outside the popover itself
   useEffect(() => {
     if (!selection) return;
@@ -455,43 +558,128 @@ export function PDFViewer({
     return () => document.removeEventListener('mousedown', handleMouseDown);
   }, [containerRef, selection]);
 
-  return (
-    <div className="flex-1 overflow-auto bg-surface-subtle flex justify-center py-16 px-4">
-      <div
-        className="bg-white dark:bg-[#2a2a36] rounded-lg shadow-lg w-full max-w-2xl min-h-210.5 p-12 relative self-start"
-        style={{
-          boxShadow: '0 4px 32px rgb(0 0 0 / 0.12)',
-          zoom: zoom / 100,
-        }}
-      >
-        <div className="absolute top-3 right-4 text-xs text-gray-400 tabular-nums">
-          Page {currentPage}
-        </div>
+  const isMac = typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.userAgent);
 
-        <div
-          ref={setContainerRef}
-          onMouseUp={handleMouseUp}
+  return (
+    <div className="flex-1 flex flex-col overflow-hidden relative">
+      <div className="absolute top-4 right-2 flex items-center justify-end px-4 h-8 bg-transparent shrink-0">
+        <Button
+          onClick={() => setSearchOpen(true)}
+          title="Rechercher dans le document"
+          variant="secondary"
           className={cn(
-            'font-mono text-[13px] leading-[1.9] text-gray-800 dark:text-gray-200 whitespace-pre-wrap select-text',
-            dragState && 'select-none cursor-ew-resize',
+            "group",
+            searchOpen && 'hidden',
           )}
         >
-          {textParts}
+          <Search size={16} className="group-hover:text-accent transition-colors duration-300 shrink-0" />
+          <p className="max-w-0 group-hover:max-w-2xl transition-all duration-200 overflow-hidden">
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">Rechercher dans le document</span>
+          </p>
+          <kbd className="ml-0.5 px-1.5 py-0.5 text-[10px] font-mono leading-none bg-white dark:bg-[#1a1a24] border border-border rounded shadow-sm text-fg-muted">
+            {isMac ? '⌘F' : 'Ctrl F'}
+          </kbd>
+        </Button>
+      </div>
+
+      <div
+        className={cn(
+          'absolute top-4 right-6 z-20',
+          'flex items-center gap-1.5 pl-3 pr-2 py-1.5',
+          'bg-white dark:bg-[#2a2a36]',
+          'border-2 border-transparent rounded-xl shadow-xl',
+          'focus-within:border-accent',
+          'transition-all duration-200 ease-out',
+          searchOpen
+            ? 'opacity-100 scale-100 pointer-events-auto'
+            : 'opacity-0 scale-95 pointer-events-none',
+        )}
+      >
+        <Search className="w-3.5 h-3.5 text-fg-muted shrink-0" />
+        <input
+          ref={searchInputRef}
+          type="text"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'Escape') closeSearch();
+            if (e.key === 'Enter') navigateMatch(e.shiftKey ? 'prev' : 'next');
+          }}
+          placeholder="Rechercher dans le document…"
+          className="w-52 text-sm bg-transparent outline-none text-fg placeholder:text-fg-muted caret-accent"
+        />
+        {debouncedQuery.length >= 3 && (
+          <span className="text-xs text-fg-muted tabular-nums font-mono shrink-0 min-w-14 text-right">
+            {searchMatches.length > 0
+              ? `${searchMatchIndex + 1} / ${searchMatches.length}`
+              : 'Aucun'}
+          </span>
+        )}
+        <div className="flex items-center gap-0.5 ml-0.5">
+          <button
+            onClick={() => navigateMatch('prev')}
+            disabled={searchMatches.length === 0}
+            aria-label="Occurrence précédente"
+            className="p-1 rounded-lg hover:bg-surface-subtle disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            <ChevronUp className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => navigateMatch('next')}
+            disabled={searchMatches.length === 0}
+            aria-label="Occurrence suivante"
+            className="p-1 rounded-lg hover:bg-surface-subtle disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            <ChevronDown className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={closeSearch}
+            aria-label="Fermer la recherche"
+            className="p-1 rounded-lg hover:bg-surface-subtle transition-colors ml-0.5"
+          >
+            <X className="w-3.5 h-3.5 text-fg-muted" />
+          </button>
         </div>
       </div>
 
-      {selection && (
-        <div data-popover>
-          <SelectionPopover
-            selectedText={selection.text}
-            position={selection.position}
-            matchCount={selection.allMatches.length}
-            onCreate={() => handleAddEntity(false)}
-            onCreateAll={() => handleAddEntity(true)}
-            onDismiss={dismissSelection}
-          />
+      {/* ── Scrollable PDF area ───────────────────────────────────────────── */}
+      <div className="flex-1 overflow-auto bg-surface-subtle flex justify-center py-16 px-4">
+        <div
+          className="bg-white dark:bg-[#2a2a36] rounded-lg shadow-lg w-full max-w-2xl min-h-210.5 p-12 relative self-start"
+          style={{
+            boxShadow: '0 4px 32px rgb(0 0 0 / 0.12)',
+            zoom: zoom / 100,
+          }}
+        >
+          <div className="absolute top-3 right-4 text-xs text-gray-400 tabular-nums">
+            Page {currentPage}
+          </div>
+
+          <div
+            ref={setContainerRef}
+            onMouseUp={handleMouseUp}
+            className={cn(
+              'font-mono text-[13px] leading-[1.9] text-gray-800 dark:text-gray-200 whitespace-pre-wrap select-text',
+              dragState && 'select-none cursor-ew-resize',
+            )}
+          >
+            {textParts}
+          </div>
         </div>
-      )}
+
+        {selection && (
+          <div data-popover>
+            <SelectionPopover
+              selectedText={selection.text}
+              position={selection.position}
+              matchCount={selection.allMatches.length}
+              onCreate={() => handleAddEntity(false)}
+              onCreateAll={() => handleAddEntity(true)}
+              onDismiss={dismissSelection}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
