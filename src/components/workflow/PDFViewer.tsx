@@ -7,6 +7,7 @@ import type { GroupedEntity } from '@/types/index.ts';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { cn } from '@/lib/utils.ts';
 import { SelectionPopover } from '@/components/workflow/SelectionPopover.tsx';
+import { findAllOccurrences, type EntityMatch } from '@/lib/entity-expansion.ts';
 
 const PENDING_ID = '__pending__';
 
@@ -33,6 +34,7 @@ type CreateTextPartsParams = {
   highlightedEntityText?: string | null;
   onEntityClick: (id: string) => void;
   pendingRange?: PendingRange | null;
+  previewMatches?: EntityMatch[];
   onDragStart?: (e: React.MouseEvent, entityId: string, handle: 'left' | 'right') => void;
   isDragging?: boolean;
 };
@@ -45,17 +47,24 @@ const createTextParts = ({
   highlightedEntityText,
   onEntityClick,
   pendingRange,
+  previewMatches,
   onDragStart,
   isDragging,
 }: CreateTextPartsParams) => {
-  // Merge entities and the pending range into a single sorted list
+  // Merge entities, the pending range, and preview matches into a single sorted list
   type SpanItem =
     | { kind: 'entity'; data: GroupedEntity }
-    | { kind: 'pending'; start: number; end: number; text: string };
+    | { kind: 'pending'; start: number; end: number; text: string }
+    | { kind: 'preview'; start: number; end: number; text: string };
 
   const items: SpanItem[] = entities.map(e => ({ kind: 'entity', data: e }));
   if (pendingRange) {
     items.push({ kind: 'pending', ...pendingRange });
+  }
+  if (previewMatches) {
+    for (const m of previewMatches) {
+      items.push({ kind: 'preview', start: m.start, end: m.end, text: m.text });
+    }
   }
   items.sort((a, b) => {
     const aStart = a.kind === 'entity' ? a.data.start : a.start;
@@ -87,6 +96,15 @@ const createTextParts = ({
         <span
           key={PENDING_ID}
           className="inline px-0.5 bg-accent/10 border-b-2 border-dashed border-accent dark:bg-accent/15"
+        >
+          {itemText}
+        </span>
+      );
+    } else if (item.kind === 'preview') {
+      textParts.push(
+        <span
+          key={`preview-${item.start}-${item.end}`}
+          className="inline px-0.5 bg-accent/5 border-b-2 border-dashed border-accent/40 dark:bg-accent/8"
         >
           {itemText}
         </span>
@@ -145,6 +163,7 @@ type SelectionState = {
   start: number;
   end: number;
   position: { x: number; y: number };
+  allMatches: EntityMatch[];
 };
 
 interface PDFViewerProps {
@@ -278,6 +297,13 @@ export function PDFViewer({
     };
   }, [onEntityUpdate, pageContent.text]);
 
+  // Preview matches on the current page (excluding the pending selection itself)
+  const currentPagePreviewMatches = selection
+    ? selection.allMatches.filter(
+        m => m.page === currentPage && !(m.start === selection.start && m.end === selection.end)
+      )
+    : undefined;
+
   const textParts = createTextParts({
     model: modelName,
     text: pageContent.text,
@@ -286,6 +312,7 @@ export function PDFViewer({
     highlightedEntityText,
     onEntityClick,
     pendingRange: selection,
+    previewMatches: currentPagePreviewMatches,
     onDragStart: startDrag,
     isDragging: !!dragState,
   });
@@ -326,7 +353,10 @@ export function PDFViewer({
     const x = (rect.left + rect.right) / 2;
     const y = rect.bottom;
 
-    setSelection({ text: selectedText, start: startOffset, end: endOffset, position: { x, y } });
+    // Find all occurrences across all pages (excluding already-existing entities)
+    const allMatches = findAllOccurrences(selectedText, extractedText, entities);
+
+    setSelection({ text: selectedText, start: startOffset, end: endOffset, position: { x, y }, allMatches });
     // Clear native browser selection — our pending span takes over visually
     window.getSelection()?.removeAllRanges();
     // Clear currently selected entity
@@ -335,7 +365,7 @@ export function PDFViewer({
     }
   };
 
-  const handleAddEntity = () => {
+  const handleAddEntity = (addAll: boolean) => {
     if (!selection) return;
 
     // Check for overlap with existing entities on this page
@@ -350,19 +380,40 @@ export function PDFViewer({
       return;
     }
 
-    const newEntity: GroupedEntity = {
-      id: crypto.randomUUID(),
-      text: selection.text,
-      type: 'MANUAL',
-      score: 1.0,
-      page: currentPage,
-      start: selection.start,
-      end: selection.end,
-      included: true,
-    };
+    if (addAll && selection.allMatches.length > 0) {
+      // Add all discovered occurrences across all pages
+      let firstId: string | null = null;
+      for (const match of selection.allMatches) {
+        const newEntity: GroupedEntity = {
+          id: crypto.randomUUID(),
+          text: match.text,
+          type: 'MANUAL',
+          score: 1.0,
+          page: match.page,
+          start: match.start,
+          end: match.end,
+          included: true,
+        };
+        if (!firstId) firstId = newEntity.id;
+        addEntity(newEntity);
+      }
+      if (firstId) onEntityClick(firstId);
+    } else {
+      // Add only the currently selected occurrence
+      const newEntity: GroupedEntity = {
+        id: crypto.randomUUID(),
+        text: selection.text,
+        type: 'MANUAL',
+        score: 1.0,
+        page: currentPage,
+        start: selection.start,
+        end: selection.end,
+        included: true,
+      };
+      addEntity(newEntity);
+      onEntityClick(newEntity.id);
+    }
 
-    addEntity(newEntity);
-    onEntityClick(newEntity.id);
     setSelection(null);
     window.getSelection()?.removeAllRanges();
   };
@@ -434,7 +485,9 @@ export function PDFViewer({
           <SelectionPopover
             selectedText={selection.text}
             position={selection.position}
-            onCreate={handleAddEntity}
+            matchCount={selection.allMatches.length}
+            onCreate={() => handleAddEntity(false)}
+            onCreateAll={() => handleAddEntity(true)}
             onDismiss={dismissSelection}
           />
         </div>

@@ -1,4 +1,4 @@
-import { X, Tag } from 'lucide-react';
+import { X, Tag, Layers, Plus } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
 import { Button } from '@/components/ui/button.tsx';
@@ -7,19 +7,24 @@ import { cn } from '@/lib/utils.ts';
 interface SelectionPopoverProps {
   selectedText: string;
   position: { x: number; y: number };
+  matchCount: number;
   onCreate: () => void;
+  onCreateAll: () => void;
   onDismiss: () => void;
 }
 
 export function SelectionPopover({
   selectedText,
   position,
+  matchCount,
   onCreate,
+  onCreateAll,
   onDismiss,
 }: SelectionPopoverProps) {
   const firstButtonRef = useRef<HTMLButtonElement>(null);
 
-  const POPOVER_APPROX_HEIGHT = 240;
+  const hasMultipleMatches = matchCount > 1;
+  const POPOVER_APPROX_HEIGHT = hasMultipleMatches ? 290 : 240;
   const isAbove = window.innerHeight - position.y < POPOVER_APPROX_HEIGHT + 16;
 
   const truncatedText =
@@ -88,12 +93,36 @@ export function SelectionPopover({
           </div>
         </div>
 
+        {hasMultipleMatches && (
+          <div className="px-3 pb-2.5">
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-accent/8 border border-accent/20 dark:bg-accent/10">
+              <Layers size={10} className="text-accent shrink-0" strokeWidth={2.5} />
+              <span className="text-[11px] font-medium text-accent leading-tight">
+                {matchCount} occurrence{matchCount > 1 ? 's' : ''} trouvée{matchCount > 1 ? 's' : ''} dans le document
+              </span>
+            </div>
+          </div>
+        )}
+
         <div className="h-px bg-border-theme mx-0 mb-2.5" />
 
-        <div className="px-3 pb-3 flex items-center justify-center gap-1.5 max-h-45 overflow-y-auto">
-          <Button size="md" onClick={onCreate}>
-            Ajouter
-          </Button>
+        <div className="px-3 pb-3 flex flex-col gap-1.5">
+          {hasMultipleMatches ? (
+            <>
+              <Button ref={firstButtonRef} size="md" onClick={onCreateAll} className="w-full justify-center gap-1.5">
+                <Layers size={13} strokeWidth={2.5} />
+                Ajouter tout ({matchCount})
+              </Button>
+              <Button size="md" variant="secondary" onClick={onCreate} className="w-full justify-center gap-1.5">
+                <Plus size={13} strokeWidth={2.5} />
+                Ajouter uniquement celui-ci
+              </Button>
+            </>
+          ) : (
+            <Button ref={firstButtonRef} size="md" onClick={onCreate} className="w-full justify-center">
+              Ajouter
+            </Button>
+          )}
         </div>
       </div>
     </div>
