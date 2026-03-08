@@ -26,7 +26,12 @@ export function downloadPDFDocument(
     }
   }
 
-  const uint8Array = pdf.saveToBuffer().asUint8Array();
+  const uint8Array = pdf.saveToBuffer({
+    garbage: 4,
+    compress: true,
+    clean: true,
+    ascii: false,
+  }).asUint8Array();
   const blob = new Blob([new Uint8Array(uint8Array)], { type: "application/pdf" });
   const url = URL.createObjectURL(blob);
 

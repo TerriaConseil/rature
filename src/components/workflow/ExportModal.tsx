@@ -60,7 +60,6 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div className="w-full max-w-md rounded-2xl border border-border-theme bg-card shadow-2xl">
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-theme">
           <h2 className="text-base font-semibold text-fg">Exporter le PDF anonymisé</h2>
           <button

@@ -7,12 +7,10 @@ export async function redactPDFDocument(
   file: File,
   entities: GroupedEntity[]
 ): Promise<PDFDocument> {
-  // Open a fresh copy — never mutates the original PDFDocument held in context
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
   const pdf = PDFDocument.openDocument(buffer, "application/pdf") as PDFDocument;
 
-  // Deduplicate entity texts once, upfront
   const uniqueTexts = [
     ...new Set(
       entities
@@ -25,8 +23,6 @@ export async function redactPDFDocument(
 
   for (let i = 0; i < pageCount; i++) {
     const page = pdf.loadPage(i);
-    // structuredText.search() is scoped to this single page, so we search
-    // every unique text on every page — no cross-page deduplication needed.
     const structuredText = page.toStructuredText("preserve-whitespace");
 
     for (const text of uniqueTexts) {
