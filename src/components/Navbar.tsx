@@ -1,19 +1,22 @@
 import { Info, Moon, Settings, Sun, Upload } from 'lucide-react';
+import { Link } from 'react-router';
+
 import { useTheme } from '@/hooks/useTheme.tsx';
+import { RatureLogo } from './RatureLogo.tsx';
 
 export function Navbar() {
   const { theme, toggleTheme } = useTheme();
 
   return (
     <header className="fixed top-8 left-1/2 -translate-x-1/2 z-50 max-w-4xl px-4 shadow-card">
-      <div className="flex items-center gap-2 rounded-2xl border border-border-theme bg-card/80 backdrop-blur-xl px-4 py-2.5 shadow-lg">
-        <a href="#" className="h-14 flex items-center gap-2 mr-4 shrink-0 group">
-          <span className="bg-neutral-800 text-4xl font-bold tracking-tight text-neutral-100 dark:bg-neutral-200 dark:text-neutral-800 px-4 pt-0.5 pb-1.5 [font-variant:small-caps]">rature</span>
-        </a>
+      <div className="flex items-center gap-2 border border-border-theme bg-card/80 backdrop-blur-xl px-4 py-2.5 shadow-lg">
+        <Link to="/" className="h-14 flex items-center gap-2 mr-4 shrink-0 group">
+          <RatureLogo size="xl" />
+        </Link>
 
         <nav className="hidden md:flex items-center gap-1">
           <a
-            href="/"
+            href=""
             className="group p-3 h-full flex flex-1 items-center gap-3 text-sm text-fg-muted hover:text-neutral-100 dark:hover:text-neutral-800 transition-colors hover:bg-neutral-800 dark:hover:bg-neutral-200"
           >
             <Upload size="24" className='shrink-0' />
@@ -26,13 +29,13 @@ export function Navbar() {
             <Settings size="24" className='shrink-0' />
             <span className="relative font-medium hidden md:flex min-w-0 after:content-[''] after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:h-[1.5px] after:bg-current after:w-0 group-hover:after:w-full after:transition-[width] after:duration-500">Paramètres</span>
           </a>
-          <a
-            href="/about-us"
+          <Link
+            to="/about"
             className="group p-3 h-full flex flex-1 items-center gap-3 text-sm text-fg-muted hover:text-neutral-100 dark:hover:text-neutral-800 transition-colors hover:bg-neutral-800 dark:hover:bg-neutral-200"
           >
             <Info size="24" className='shrink-0' />
             <span className="relative font-medium hidden md:flex min-w-0 after:content-[''] after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:h-[1.5px] after:bg-current after:w-0 group-hover:after:w-full after:transition-[width] after:duration-500">À propos</span>
-          </a>
+          </Link>
         </nav>
 
         <div className="h-10 w-0.5 bg-neutral-200 dark:bg-neutral-700 rounded-lg" />

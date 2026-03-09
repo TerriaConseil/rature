@@ -45,10 +45,10 @@ export function DropZone({ onFileSelect }: DropZoneProps) {
       onDrop={onDrop}
       onClick={() => inputRef.current?.click()}
       className={cn(
-        'relative flex flex-col items-center justify-center gap-4 rounded-2xl p-10 cursor-pointer transition-all duration-200 group select-none',
+        'relative flex flex-col items-center justify-center gap-4 p-10 cursor-pointer transition-all duration-200 group select-none',
         isDragging
           ? 'border-accent bg-teal-50/50 dark:bg-teal-950/20 scale-[1.01]'
-          : 'border-border-strong hover:border-accent hover:bg-surface-subtle hover:dark:bg-neutral-100/10',
+          : 'border-border-strong hover:border-accent hover:bg-neutral-800 dark:hover:bg-neutral-200',
       )}
     >
       <input
@@ -61,10 +61,10 @@ export function DropZone({ onFileSelect }: DropZoneProps) {
 
       <div
         className={cn(
-          'flex items-center justify-center w-14 h-14 rounded-2xl transition-all duration-200',
+          'flex items-center justify-center w-14 h-14 transition-all duration-300',
           isDragging
             ? 'bg-accent text-accent-foreground'
-            : 'bg-surface-subtle text-fg-muted dark:bg-neutral-200 dark:text-neutral-800 group-hover:bg-accent group-hover:text-accent-foreground',
+            : 'bg-surface-subtle text-fg-muted dark:bg-neutral-200 dark:text-neutral-800 group-hover:bg-accent group-hover:text-neutral-100 group-hover:dark:bg-accent group-hover:dark:text-neutral-100',
         )}
       >
         {isDragging ? (
@@ -75,7 +75,7 @@ export function DropZone({ onFileSelect }: DropZoneProps) {
       </div>
 
       <div className="text-center space-y-1">
-        <p className="text-sm font-bold text-fg">
+        <p className="text-sm font-bold text-neutral-800 group-hover:text-neutral-100 dark:text-neutral-100 group-hover:dark:text-neutral-800">
           {isDragging ? 'Déposez votre PDF ici' : 'Déposez votre PDF ou cliquez pour importer'}
         </p>
       </div>
