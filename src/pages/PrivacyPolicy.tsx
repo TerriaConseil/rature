@@ -192,19 +192,7 @@ export function PrivacyPolicyPage() {
           </p>
         </div>
         <h4 className="font-bold text-lg mb-2">
-          7.2. Données traitées par le prestataire
-        </h4>
-        <div className="flex flex-col gap-2 mb-6 pl-4">
-          <p>
-            Bien que Rature ne collecte <span className="font-bold">aucune donnée personnelle</span>, le prestataire d&apos;hébergement peut traiter les <span className="font-bold">données techniques suivantes</span> dans le cadre de son service :
-            <br />
-            <span className="font-extrabold text-red-600">[A insérer]</span>
-            <br />
-            Ces données ne permettent pas d&apos;identifier un utilisateur ou un document et sont anonymisées ou supprimées selon les délais indiqués.
-          </p>
-        </div>
-        <h4 className="font-bold text-lg mb-2">
-          7.3. Changement de prestataire
+          7.2 Changement de prestataire
         </h4>
         <div className="flex flex-col gap-2 mb-6 pl-4">
           <p>
