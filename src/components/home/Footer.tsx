@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 export function Footer() {
   return (
     <footer className="border-t border-border-theme py-8">
@@ -16,9 +18,12 @@ export function Footer() {
         </a>
         <p className="text-sm text-fg/80">•</p>
         <nav className="flex items-center gap-4">
-          <a href="#" className="text-sm text-fg/70 hover:text-fg transition-colors">
+          <Link
+            to="/privacy-policy"
+            className="text-sm text-fg/70 hover:text-fg transition-colors"
+          >
             Politique de confidentialité
-          </a>
+          </Link>
           {/* <p className="text-xs text-fg-subtle">•</p>
           <a href="#" className="text-xs text-fg hover:text-fg-subtle transition-colors">
             Terria Conseil
