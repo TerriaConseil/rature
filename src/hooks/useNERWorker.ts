@@ -2,6 +2,7 @@ import { useRef, useState, useCallback } from "react";
 
 import type { NERModel } from "@/models/utils.ts";
 import type { GroupedEntity, NERPipelineEntity } from "@/types/index.ts";
+import NerWorker from "@/workers/nerWorker.ts?worker&url";
 
 export interface NERResult {
   rawEntities: NERPipelineEntity[];
@@ -166,7 +167,7 @@ export function useNERWorker() {
       setModelTokens([]);
       modelNameRef.current = model;
 
-      const worker = new Worker(new URL("../workers/nerWorker.ts", import.meta.url), { type: "module" });
+      const worker = new Worker(NerWorker, { type: "module" });
 
       worker.onmessage = handleWorkerMessages;
       worker.onerror = handleWorkerErrors;
