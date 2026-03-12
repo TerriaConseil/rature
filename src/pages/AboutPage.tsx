@@ -11,7 +11,7 @@ export function AboutPage() {
     <div className="flex flex-col justify-between flex-1 h-full">
       <Navbar />
 
-      <section className="flex-1 mx-auto h-full w-full max-w-200 px-6 pt-48 pb-16">
+      <section className="flex-1 mx-auto h-full w-full max-w-200 px-6 pt-40 pb-16">
         <h1 className="flex items-baseline justify-center gap-3 text-center text-4xl font-extrabold tracking-tight leading-[1.1] mb-8">
           <span>À propos de</span>
           <RatureLogo size="xl" />
