@@ -6,7 +6,7 @@ export function PrivacyPolicyPage() {
     <div className="flex flex-col justify-between flex-1 h-full">
       <Navbar />
 
-      <section className="flex-1 mx-auto h-full w-full max-w-200 px-6 pt-48 pb-16">
+      <section className="flex-1 mx-auto h-full w-full max-w-200 px-6 pt-40 pb-16">
         <h1 className="flex items-baseline justify-center gap-3 text-center text-4xl font-extrabold tracking-tight leading-[1.1] mb-8">
           Politique de confidentialité
         </h1>
@@ -188,7 +188,7 @@ export function PrivacyPolicyPage() {
           </p>
           <p>
             Ce prestataire agit en tant que <span className="font-bold">sous-traitant</span> au sens du RGPD (article 28) et n&apos;a accès{' '}
-            <span className="font-bold">qu&apos;aux données techniques minimales</span> nécessaires au fonctionnement du service (voir section 6.2).
+            <span className="font-bold">qu&apos;aux données techniques minimales</span> nécessaires au fonctionnement du service.
           </p>
         </div>
         <h4 className="font-bold text-lg mb-2">
