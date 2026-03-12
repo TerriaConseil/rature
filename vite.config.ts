@@ -17,12 +17,12 @@ export default defineConfig({
     viteStaticCopy({
 			targets: [
 				{
-					src: 'node_modules/mupdf/dist/mupdf-wasm.wasm',
-					dest: 'node_modules/.vite/deps',
+					src: "node_modules/mupdf/dist/mupdf-wasm.wasm",
+					dest: "node_modules/.vite/deps",
 				},
         {
           src: "node_modules/onnxruntime-web/dist/*.wasm",
-          dest: "",
+          dest: ".",
         },
 			]
 		}),
@@ -41,5 +41,8 @@ export default defineConfig({
     minify: "esbuild",
     cssCodeSplit: true,
     sourcemap: false,
+  },
+  optimizeDeps: {
+		exclude: ["mupdf"],
   },
 });
