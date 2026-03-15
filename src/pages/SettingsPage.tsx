@@ -43,7 +43,7 @@ export function SettingsPage() {
                   Prochainement, vous pourrez choisir parmi plusieurs modèles afin d'affiner la détection selon vos besoins.
                 </p>
                 <div className="mt-4 w-full flex items-center justify-between">
-                  <p className="flex items-center gap-2 text-md font-bold">
+                  <p className="flex items-center gap-2 text-md font-medium">
                     <CheckSquare size="16" className="text-accent" />
                     BERT Base NER
                     <Badge variant="accent" >Modèle actuel</Badge>
@@ -85,8 +85,10 @@ export function SettingsPage() {
                 <p className="mt-1 text-fg-muted">
                   Nous allons mettre en place des statistiques sur l'utilisation du produit Rature.
                   <br />
+                  <br />
                   Ces statistiques seront complètement anonymes et concerneront uniquement l'utilisation des fonctionnalités de Rature,
                   conformément à notre <Link to="/privacy-policy" className="underline underline-offset-4">politique de confidentialité</Link>.
+                  <br />
                   <br />
                   Vous pourrez vous désinscrire complètement de ces statistiques depuis cette page.
                 </p>
@@ -156,7 +158,9 @@ export function SettingsPage() {
                 <p className="mt-1 text-fg-muted">
                   Rature enregistre dans votre navigateur les outils nécessaires au traitement de vos documents. Cela évite de les télécharger à chaque utilisation.
                   <br />
+                  <br />
                   Lors de votre première utilisation, le chargement peut donc être un peu plus long. Ces fichiers occupent toutefois de l&apos;espace sur votre appareil.
+                  <br />
                   <br />
                   Vous pouvez les supprimer à tout moment si vous ne souhaitez plus utiliser Rature.
                 </p>
