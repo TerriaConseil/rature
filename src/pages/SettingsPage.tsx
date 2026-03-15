@@ -68,7 +68,7 @@ export function SettingsPage() {
                   <br />
                   <br />
                   Nous travaillons à élargir la compatibilité à d'autres formats (Word, Excel,…).
-                  Un format vous manque ? N'hésitez pas à nous <a href="mailto:contact@rature.fr" className="underline underline-offset-4">écrire</a> pour nous le signaler.
+                  Un format vous manque ? N'hésitez pas à nous envoyer vos suggestions : <a href="mailto:contact@rature.fr" className="underline underline-offset-4">contact@rature.fr</a>
                   <br />
                   <br />
                   Vos retours orientent directement notre feuille de route.
