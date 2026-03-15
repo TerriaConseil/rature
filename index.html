@@ -5,12 +5,48 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
+    <link rel="canonical" href="https://rature.fr/">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rature - Anonymisation de documents</title>
+    <meta name="robots" content="index, follow">
+    <title>Rature | Anonymisation de PDF 100% locale et sécurisée</title>
+    <meta name="description" content="Anonymisez vos documents PDF directement dans votre navigateur, sans envoi de données. Rature protège vos informations confidentielles avant tout partage avec une IA.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Rature | Anonymisez vos PDF avant de les confier à une IA">
+    <meta property="og:description" content="Outil d'anonymisation de documents PDF, 100% local. Aucune donnée ne quitte votre navigateur. Idéal pour juristes, DPO et avocats.">
+    <meta property="og:url" content="https://rature.fr/">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:site_name" content="Rature">
+    <meta name="twitter:title" content="Rature | Anonymisation de PDF, 100% dans le navigateur">
+    <meta name="twitter:description" content="Protégez vos données confidentielles avant de partager vos PDF avec un agent IA. Anonymisation locale, sans serveur, sans compromis.">
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Rature",
+        "description": "Outil d'anonymisation de documents PDF fonctionnant 100% dans le navigateur. Aucune donnée ne quitte votre poste.",
+        "applicationCategory": "SecurityApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR"
+        },
+        "audience": {
+          "@type": "Audience",
+          "audienceType": "Juristes, DPO, Avocats, Professionnels de la conformité, Consultants"
+        },
+        "featureList": [
+          "Anonymisation de PDF 100% locale",
+          "Aucun envoi de données vers un serveur",
+          "Fonctionne dans le navigateur (WebAssembly/WebGPU)",
+          "Compatible avec tout agent IA"
+        ]
+      }
+    </script>
   </body>
 </html>
