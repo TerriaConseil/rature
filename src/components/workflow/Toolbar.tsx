@@ -1,6 +1,5 @@
 import {
   ArrowLeft,
-  RotateCcw,
   ZoomIn,
   ZoomOut,
   ChevronLeft,
@@ -25,7 +24,6 @@ interface ToolbarProps {
   onNextPage: () => void
   onZoomIn: () => void
   onZoomOut: () => void
-  onRescan: () => void
   onExport: () => void
 }
 
@@ -41,7 +39,6 @@ export function Toolbar({
   onNextPage,
   onZoomIn,
   onZoomOut,
-  onRescan,
   onExport,
 }: ToolbarProps) {
   return (
@@ -132,13 +129,6 @@ export function Toolbar({
       </div>
 
       <div className="w-px h-5 bg-border-theme" />
-
-      {mode === 'edition' && (
-        <Button variant="secondary" size="sm" onClick={onRescan}>
-          <RotateCcw size={13} />
-          Ré-analyser
-        </Button>
-      )}
 
       <Button size="sm" onClick={onExport}>
         <Download size={13} />

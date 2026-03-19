@@ -110,9 +110,6 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         onNextPage={() => setCurrentPage(p => Math.min(p + 1, pageCount))}
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
-        onRescan={() => {
-          setSelectedEntityId(null);
-        }}
         onExport={() => setShowExport(true)}
       />
 
