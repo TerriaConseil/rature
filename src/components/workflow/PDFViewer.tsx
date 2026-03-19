@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { ScanLine } from 'lucide-react';
+import { ScanLine, MessageSquarePlus } from 'lucide-react';
 
 import { DocumentSearchBar } from '@/components/workflow/DocumentSearchBar.tsx';
+import { FeedbackModal } from '@/components/workflow/FeedbackModal.tsx';
 import { SelectionPopover } from '@/components/workflow/SelectionPopover.tsx';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { useDocumentSearch } from '@/hooks/useDocumentSearch.ts';
@@ -36,6 +37,7 @@ export function PDFViewer({
   const { modelName, addEntity } = useAnonymization();
   const { extractedText } = usePdfProcessing();
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   const pageContent = extractedText[currentPage - 1] ?? extractedText[0];
   const pageEntities = entities.filter(e => e.page === currentPage).sort((a, b) => a.start - b.start);
@@ -109,6 +111,7 @@ export function PDFViewer({
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden relative">
+      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
       <DocumentSearchBar
         open={searchOpen}
         query={searchQuery}
@@ -193,6 +196,14 @@ export function PDFViewer({
           </div>
         )}
       </div>
+
+      <button
+        onClick={() => setFeedbackOpen(true)}
+        className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-fg-muted hover:text-fg bg-card border border-border-theme hover:border-border-strong shadow-sm transition-all duration-200 cursor-pointer"
+      >
+        <MessageSquarePlus size={13} />
+        <span>Feedback</span>
+      </button>
     </div>
   );
 }
