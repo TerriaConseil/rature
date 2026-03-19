@@ -46,9 +46,14 @@ export function DocumentSearchBar({
           <p className="max-w-0 group-hover:max-w-2xl transition-all duration-200 overflow-hidden">
             <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">Rechercher dans le document</span>
           </p>
-          <kbd className="ml-0.5 px-1.5 py-0.5 text-[10px] font-mono leading-none bg-white dark:bg-[#1a1a24] border border-border rounded shadow-sm text-fg-muted">
-            {isMac ? '⌘F' : 'Ctrl F'}
-          </kbd>
+          <p className="ml-0.5 flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 text-[10px] font-mono leading-none bg-white dark:bg-[#1a1a24] border border-border rounded shadow-sm text-fg-muted">
+              {isMac ? '⌘' : 'Ctrl'}
+            </kbd>
+            <kbd className="px-1.5 py-0.5 text-[10px] font-mono leading-none bg-white dark:bg-[#1a1a24] border border-border rounded shadow-sm text-fg-muted">
+              F
+            </kbd>
+          </p>
         </Button>
       </div>
 
