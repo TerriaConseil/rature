@@ -3,6 +3,7 @@ import { ScanLine, MessageSquarePlus } from 'lucide-react';
 
 import { DocumentSearchBar } from '@/components/workflow/DocumentSearchBar.tsx';
 import { FeedbackModal } from '@/components/workflow/FeedbackModal.tsx';
+import { PageThumbnailPanel } from '@/components/workflow/PageThumbnailPanel.tsx';
 import { SelectionPopover } from '@/components/workflow/SelectionPopover.tsx';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { useDocumentSearch } from '@/hooks/useDocumentSearch.ts';
@@ -35,7 +36,7 @@ export function PDFViewer({
   onPageChange,
 }: PDFViewerProps) {
   const { modelName, addEntity } = useAnonymization();
-  const { extractedText } = usePdfProcessing();
+  const { extractedText, pageCount } = usePdfProcessing();
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
 
@@ -129,6 +130,10 @@ export function PDFViewer({
         onClose={closeSearch}
       />
 
+      <div className="flex-1 flex overflow-hidden">
+      {pageCount > 1 && (
+        <PageThumbnailPanel currentPage={currentPage} entities={entities} onPageChange={onPageChange} />
+      )}
       <div className="flex-1 overflow-auto bg-surface-subtle flex justify-center py-16 px-4">
         <div
           className="bg-white dark:bg-[#2a2a36] rounded-lg shadow-lg w-full max-w-2xl min-h-210.5 p-12 relative self-start"
@@ -195,6 +200,7 @@ export function PDFViewer({
             />
           </div>
         )}
+      </div>
       </div>
 
       <button

@@ -3,6 +3,7 @@ import { type PDFDocument } from 'mupdf';
 import { Toolbar } from '@/components/workflow/Toolbar.tsx';
 import { PDFViewer } from '@/components/workflow/PDFViewer.tsx';
 import { PDFPageRenderer } from '@/components/workflow/PDFPageRenderer.tsx';
+import { PageThumbnailPanel } from '@/components/workflow/PageThumbnailPanel.tsx';
 import { DetectionSidebar } from '@/components/workflow/DetectionSidebar.tsx';
 import { ExportModal } from '@/components/workflow/ExportModal.tsx';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
@@ -147,7 +148,10 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
           </div>
         </div>
       ) : (
-        <PDFPageRenderer pageIndex={currentPage - 1} zoom={zoom} pdfDocument={redactedDocument} />
+        <div className="flex flex-1 overflow-hidden">
+          <PageThumbnailPanel currentPage={currentPage} redactedDocument={redactedDocument} onPageChange={setCurrentPage} />
+          <PDFPageRenderer pageIndex={currentPage - 1} zoom={zoom} pdfDocument={redactedDocument} />
+        </div>
       )}
 
       {showExport && (
