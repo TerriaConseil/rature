@@ -1,6 +1,7 @@
 import * as RadixAlertDialog from '@radix-ui/react-alert-dialog';
-import { cn } from '@/lib/utils.ts';
 import type { ComponentProps } from 'react';
+
+import { cn } from '@/lib/utils.ts';
 
 export const AlertDialog = RadixAlertDialog.Root;
 export const AlertDialogTrigger = RadixAlertDialog.Trigger;

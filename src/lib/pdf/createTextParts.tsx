@@ -172,6 +172,8 @@ export function createTextParts({
               entityId={entity.id}
               entityText={entity.text}
               instanceCount={instanceCounts?.get(entity.text) ?? 1}
+              highlighted={isSelected}
+              onOpen={isSelected ? undefined : () => onEntityClick(entity.id)}
               onDeleteOne={onDeleteOne}
               onDeleteAll={onDeleteAll}
             />
