@@ -43,6 +43,11 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
     if (highlightedEntityText === name) setHighlightedEntityText(null);
   };
 
+  const deleteEntityById = (id: string) => {
+    setEntities(entities.filter(e => e.id !== id));
+    if (selectedEntityId === id) setSelectedEntityId(null);
+  };
+
   const handleHighlightAll = (text: string | null) => {
     setHighlightedEntityText(prev => (prev === text ? null : text));
   };
@@ -125,6 +130,8 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
             onEntityClick={handleEntitySelect}
             onEntityUpdate={handleEntityUpdate}
             onPageChange={setCurrentPage}
+            onEntityDeleteOne={deleteEntityById}
+            onEntityDeleteAll={deleteEntity}
           />
           <DetectionSidebar
             currentPage={currentPage}

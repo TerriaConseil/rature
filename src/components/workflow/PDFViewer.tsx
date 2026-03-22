@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ScanLine, MessageSquarePlus } from 'lucide-react';
 
+import { DeleteEntityDialog } from '@/components/workflow/DeleteEntityDialog.tsx';
 import { DocumentSearchBar } from '@/components/workflow/DocumentSearchBar.tsx';
 import { FeedbackModal } from '@/components/workflow/FeedbackModal.tsx';
 import { PageThumbnailPanel } from '@/components/workflow/PageThumbnailPanel.tsx';
@@ -23,6 +24,8 @@ interface PDFViewerProps {
   onEntityClick: (id: string) => void;
   onEntityUpdate: (entityId: string, updates: Partial<GroupedEntity>) => void;
   onPageChange: (page: number) => void;
+  onEntityDeleteOne?: (id: string) => void;
+  onEntityDeleteAll?: (text: string) => void;
 }
 
 export function PDFViewer({
@@ -34,11 +37,39 @@ export function PDFViewer({
   onEntityClick,
   onEntityUpdate,
   onPageChange,
+  onEntityDeleteOne,
+  onEntityDeleteAll,
 }: PDFViewerProps) {
   const { modelName, addEntity } = useAnonymization();
   const { extractedText, pageCount } = usePdfProcessing();
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+
+  type DeleteConfirm = { entityId: string; entityText: string; count: number } | null;
+  const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirm>(null);
+
+  const instanceCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const e of entities) map.set(e.text, (map.get(e.text) ?? 0) + 1);
+    return map;
+  }, [entities]);
+
+  useEffect(() => {
+    if (!onEntityDeleteOne) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'delete') return;
+      if (!selectedEntityId) return;
+
+      const entity = entities.find(en => en.id === selectedEntityId);
+
+      if (!entity) return;
+
+      e.preventDefault();
+      setDeleteConfirm({ entityId: entity.id, entityText: entity.text, count: instanceCounts.get(entity.text) ?? 1 });
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [selectedEntityId, entities, instanceCounts, onEntityDeleteOne]);
 
   const pageContent = extractedText[currentPage - 1] ?? extractedText[0];
   const pageEntities = entities.filter(e => e.page === currentPage).sort((a, b) => a.start - b.start);
@@ -108,6 +139,9 @@ export function PDFViewer({
     isDragging: !!dragState,
     focusedMatchStart,
     dimEntities: !selection && searchMatches.length > 0,
+    onDeleteOne: onEntityDeleteOne,
+    onDeleteAll: onEntityDeleteAll,
+    instanceCounts,
   });
 
   return (
@@ -210,6 +244,15 @@ export function PDFViewer({
         <MessageSquarePlus size={13} />
         <span>Feedback</span>
       </button>
+
+      <DeleteEntityDialog
+        open={!!deleteConfirm}
+        onOpenChange={open => !open && setDeleteConfirm(null)}
+        entityText={deleteConfirm?.entityText ?? ''}
+        instanceCount={deleteConfirm?.count ?? 1}
+        onDeleteOne={() => { onEntityDeleteOne?.(deleteConfirm!.entityId); setDeleteConfirm(null); }}
+        onDeleteAll={() => { onEntityDeleteAll?.(deleteConfirm!.entityText); setDeleteConfirm(null); }}
+      />
     </div>
   );
 }

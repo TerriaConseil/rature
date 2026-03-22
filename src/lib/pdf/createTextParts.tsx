@@ -3,6 +3,7 @@ import { NER_MODELS, type NERModel } from '@/models/utils.ts';
 import { cn } from '@/lib/utils.ts';
 import type { EntityMatch } from '@/lib/entity-expansion.ts';
 import type { GroupedEntity } from '@/types/index.ts';
+import { EntityActionsMenu } from '@/components/workflow/EntityActionsMenu.tsx';
 
 const PENDING_ID = '__pending__';
 
@@ -34,6 +35,9 @@ export type CreateTextPartsParams = {
   isDragging?: boolean;
   focusedMatchStart?: number;
   dimEntities?: boolean;
+  onDeleteOne?: (id: string) => void;
+  onDeleteAll?: (text: string) => void;
+  instanceCounts?: Map<string, number>;
 };
 
 export function createTextParts({
@@ -49,6 +53,9 @@ export function createTextParts({
   isDragging,
   focusedMatchStart,
   dimEntities,
+  onDeleteOne,
+  onDeleteAll,
+  instanceCounts,
 }: CreateTextPartsParams): ReactNode[] {
   type SpanItem =
     | { kind: 'entity'; data: GroupedEntity }
@@ -134,8 +141,7 @@ export function createTextParts({
           {...(overlapsFocused ? { 'data-search-match': 'focused' } : {})}
           onClick={() => !isDragging && onEntityClick(entity.id)}
           className={cn(
-            'cursor-pointer px-0.5 transition-all duration-150',
-            isSelected ? 'inline-block relative group' : 'inline',
+            'inline-block relative group/ent cursor-pointer px-0.5 transition-all duration-150',
             overlapsFocused
               ? 'bg-accent/10 border-b-2 border-dashed border-accent dark:bg-accent/15'
               : overlapsSearch
@@ -151,15 +157,24 @@ export function createTextParts({
             <>
               <span
                 aria-label="Étendre à gauche"
-                className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-4 rounded-sm bg-accent cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-4 rounded-sm bg-accent cursor-ew-resize opacity-0 group-hover/ent:opacity-100 transition-opacity duration-200 z-10"
                 onMouseDown={e => onDragStart(e, entity.id, 'left')}
               />
               <span
                 aria-label="Étendre à droite"
-                className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-4 rounded-sm bg-accent cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-4 rounded-sm bg-accent cursor-ew-resize opacity-0 group-hover/ent:opacity-100 transition-opacity duration-200 z-10"
                 onMouseDown={e => onDragStart(e, entity.id, 'right')}
               />
             </>
+          )}
+          {onDeleteOne && onDeleteAll && (
+            <EntityActionsMenu
+              entityId={entity.id}
+              entityText={entity.text}
+              instanceCount={instanceCounts?.get(entity.text) ?? 1}
+              onDeleteOne={onDeleteOne}
+              onDeleteAll={onDeleteAll}
+            />
           )}
           {entity.text}
         </span>
