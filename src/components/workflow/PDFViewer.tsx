@@ -1,8 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
-import { ScanLine, MessageSquarePlus } from 'lucide-react';
+import { MessageSquarePlus } from 'lucide-react';
+
+import { ActionsIsland } from '@/components/workflow/ActionsIsland.tsx';
 
 import { DeleteEntityDialog } from '@/components/workflow/DeleteEntityDialog.tsx';
 import { DocumentSearchBar } from '@/components/workflow/DocumentSearchBar.tsx';
+import { EmptyPDFPage } from '@/components/workflow/EmptyPDFPage.tsx';
 import { FeedbackModal } from '@/components/workflow/FeedbackModal.tsx';
 import { PageThumbnailPanel } from '@/components/workflow/PageThumbnailPanel.tsx';
 import { SelectionPopover } from '@/components/workflow/SelectionPopover.tsx';
@@ -13,7 +16,7 @@ import { useTextSelection } from '@/hooks/useTextSelection.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 import { createTextParts } from '@/lib/pdf/createTextParts.tsx';
 import { cn } from '@/lib/utils.ts';
-import type { GroupedEntity } from '@/types/index.ts';
+import type { GroupedEntity, WorkflowMode } from '@/types/index.ts';
 
 interface PDFViewerProps {
   currentPage: number;
@@ -26,6 +29,8 @@ interface PDFViewerProps {
   onPageChange: (page: number) => void;
   onEntityDeleteOne?: (id: string) => void;
   onEntityDeleteAll?: (text: string) => void;
+  mode: WorkflowMode;
+  onModeChange: (mode: WorkflowMode) => void;
 }
 
 export function PDFViewer({
@@ -39,6 +44,8 @@ export function PDFViewer({
   onPageChange,
   onEntityDeleteOne,
   onEntityDeleteAll,
+  mode,
+  onModeChange,
 }: PDFViewerProps) {
   const { modelName, addEntity } = useAnonymization();
   const { extractedText, pageCount } = usePdfProcessing();
@@ -168,11 +175,13 @@ export function PDFViewer({
       {pageCount > 1 && (
         <PageThumbnailPanel currentPage={currentPage} entities={entities} onPageChange={onPageChange} />
       )}
+      <div className="flex-1 relative flex flex-col overflow-hidden">
+      <ActionsIsland mode={mode} onModeChange={onModeChange} />
       <div className="flex-1 overflow-auto bg-surface-subtle flex justify-center py-16 px-4">
         <div
-          className="bg-white dark:bg-[#2a2a36] rounded-lg shadow-lg w-full max-w-2xl min-h-210.5 p-12 relative self-start"
+          className="bg-white dark:bg-[#2a2a36] rounded-lg w-full max-w-2xl min-h-210.5 p-12 relative self-start"
           style={{
-            boxShadow: '0 4px 32px rgb(0 0 0 / 0.12)',
+            boxShadow: '0 2px 8px rgb(0 0 0 / 0.07)',
             zoom: zoom / 100,
           }}
         >
@@ -189,36 +198,7 @@ export function PDFViewer({
               isEmptyPage && 'flex items-center justify-center min-h-[70vh]',
             )}
           >
-            {isEmptyPage ? (
-              <div className="flex flex-col items-center justify-center text-center max-w-xs gap-5 select-none">
-                <div className="relative flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-100 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700">
-                  <ScanLine
-                    size={28}
-                    strokeWidth={1.5}
-                    className="text-gray-400 dark:text-gray-500"
-                  />
-                  <span className="absolute -bottom-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-teal-500/15 ring-2 ring-white dark:ring-[#2a2a36]">
-                    <span className="block h-1.5 w-1.5 rounded-full bg-teal-500" />
-                  </span>
-                </div>
-
-                <div className="flex flex-col items-center gap-2">
-                  <p className="text-sm font-bold text-gray-500 dark:text-gray-400 tracking-wide">
-                    Page non traitée
-                  </p>
-                  <p className="text-[12px] leading-relaxed text-fg-muted max-w-55">
-                    Cette page semble être une image scannée. La reconnaissance optique de caractères (OCR) sera disponible prochainement.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 rounded-full border border-teal-200 dark:border-teal-800/60 bg-teal-50 dark:bg-teal-950/30 px-3 py-2 text-sm font-medium text-teal-600 dark:text-teal-400 tracking-wide">
-                  <p className="flex items-center justify-center h-4 w-4">
-                    <span className="block h-1.5 w-1.5 rounded-full bg-teal-500" />
-                  </p>
-                  <span>Bientôt disponible</span>
-                </div>
-              </div>
-            ) : textParts}
+            {isEmptyPage ? <EmptyPDFPage /> : textParts}
           </div>
         </div>
 
@@ -234,6 +214,7 @@ export function PDFViewer({
             />
           </div>
         )}
+      </div>
       </div>
       </div>
 

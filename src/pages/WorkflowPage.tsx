@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { type PDFDocument } from 'mupdf';
+
+import { ActionsIsland } from '@/components/workflow/ActionsIsland.tsx';
 import { Toolbar } from '@/components/workflow/Toolbar.tsx';
 import { PDFViewer } from '@/components/workflow/PDFViewer.tsx';
 import { PDFPageRenderer } from '@/components/workflow/PDFPageRenderer.tsx';
@@ -110,7 +112,6 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         totalPages={pageCount}
         zoom={zoom}
         mode={mode}
-        onModeChange={handleModeChange}
         onBack={handleBackClick}
         onPrevPage={() => setCurrentPage(p => Math.max(p - 1, 1))}
         onNextPage={() => setCurrentPage(p => Math.min(p + 1, pageCount))}
@@ -132,6 +133,8 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
             onPageChange={setCurrentPage}
             onEntityDeleteOne={deleteEntityById}
             onEntityDeleteAll={deleteEntity}
+            mode={mode}
+            onModeChange={handleModeChange}
           />
           <DetectionSidebar
             currentPage={currentPage}
@@ -157,7 +160,10 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
       ) : (
         <div className="flex flex-1 overflow-hidden">
           <PageThumbnailPanel currentPage={currentPage} redactedDocument={redactedDocument} onPageChange={setCurrentPage} />
-          <PDFPageRenderer pageIndex={currentPage - 1} zoom={zoom} pdfDocument={redactedDocument} />
+          <div className="flex-1 relative flex flex-col overflow-hidden">
+            <PDFPageRenderer pageIndex={currentPage - 1} zoom={zoom} pdfDocument={redactedDocument} />
+            <ActionsIsland mode={mode} onModeChange={handleModeChange} />
+          </div>
         </div>
       )}
 

@@ -5,8 +5,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Download,
-  Pencil,
-  Eye,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button.tsx';
 import { cn } from '@/lib/utils.ts';
@@ -18,7 +16,6 @@ interface ToolbarProps {
   totalPages: number
   zoom: number
   mode: WorkflowMode
-  onModeChange: (mode: WorkflowMode) => void
   onBack: () => void
   onPrevPage: () => void
   onNextPage: () => void
@@ -33,7 +30,6 @@ export function Toolbar({
   totalPages,
   zoom,
   mode,
-  onModeChange,
   onBack,
   onPrevPage,
   onNextPage,
@@ -64,29 +60,6 @@ export function Toolbar({
       <span className="text-sm font-medium text-fg truncate max-w-50" title={fileName}>
         {fileName}
       </span>
-
-      <div className="flex items-center rounded-lg border border-border-theme bg-surface-subtle p-0.5 gap-0.5">
-        <button
-          onClick={() => onModeChange('edition')}
-          className={cn(
-            'flex items-center gap-1.5 h-6 px-2.5 rounded-md text-xs font-medium transition-all duration-200 cursor-pointer',
-            mode === 'edition' ? 'bg-card text-fg shadow-sm' : 'text-fg-muted hover:text-fg',
-          )}
-        >
-          <Pencil size={12} />
-          <span>Édition</span>
-        </button>
-        <button
-          onClick={() => onModeChange('preview')}
-          className={cn(
-            'flex items-center gap-1.5 h-6 px-2.5 rounded-md text-xs font-medium transition-all duration-200 cursor-pointer',
-            mode === 'preview' ? 'bg-accent text-white shadow-sm' : 'text-fg-muted hover:text-fg',
-          )}
-        >
-          <Eye size={12} />
-          <span>Aperçu</span>
-        </button>
-      </div>
 
       <div className="flex-1" />
 

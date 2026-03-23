@@ -100,12 +100,13 @@ export function PDFPageRenderer({ pageIndex, zoom, pdfDocument: propDocument }: 
       <img
         src={imageUrl!}
         alt={`Page ${pageIndex + 1}`}
-        className="shadow-xl rounded self-start"
+        className="rounded self-start"
         style={{
           width: cssSize?.width,
           height: cssSize?.height,
           maxWidth: '100%',
           display: 'block',
+          boxShadow: '0 2px 8px rgb(0 0 0 / 0.07)',
         }}
         draggable={false}
       />
