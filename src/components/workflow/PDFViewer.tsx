@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { MessageSquarePlus } from 'lucide-react';
 
+import { ActionsIsland } from '@/components/workflow/ActionsIsland.tsx';
+
 import { DeleteEntityDialog } from '@/components/workflow/DeleteEntityDialog.tsx';
 import { DocumentSearchBar } from '@/components/workflow/DocumentSearchBar.tsx';
 import { EmptyPDFPage } from '@/components/workflow/EmptyPDFPage.tsx';
@@ -14,7 +16,7 @@ import { useTextSelection } from '@/hooks/useTextSelection.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 import { createTextParts } from '@/lib/pdf/createTextParts.tsx';
 import { cn } from '@/lib/utils.ts';
-import type { GroupedEntity } from '@/types/index.ts';
+import type { GroupedEntity, WorkflowMode } from '@/types/index.ts';
 
 interface PDFViewerProps {
   currentPage: number;
@@ -27,6 +29,8 @@ interface PDFViewerProps {
   onPageChange: (page: number) => void;
   onEntityDeleteOne?: (id: string) => void;
   onEntityDeleteAll?: (text: string) => void;
+  mode: WorkflowMode;
+  onModeChange: (mode: WorkflowMode) => void;
 }
 
 export function PDFViewer({
@@ -40,6 +44,8 @@ export function PDFViewer({
   onPageChange,
   onEntityDeleteOne,
   onEntityDeleteAll,
+  mode,
+  onModeChange,
 }: PDFViewerProps) {
   const { modelName, addEntity } = useAnonymization();
   const { extractedText, pageCount } = usePdfProcessing();
@@ -169,11 +175,13 @@ export function PDFViewer({
       {pageCount > 1 && (
         <PageThumbnailPanel currentPage={currentPage} entities={entities} onPageChange={onPageChange} />
       )}
+      <div className="flex-1 relative flex flex-col overflow-hidden">
+      <ActionsIsland mode={mode} onModeChange={onModeChange} />
       <div className="flex-1 overflow-auto bg-surface-subtle flex justify-center py-16 px-4">
         <div
-          className="bg-white dark:bg-[#2a2a36] rounded-lg shadow-lg w-full max-w-2xl min-h-210.5 p-12 relative self-start"
+          className="bg-white dark:bg-[#2a2a36] rounded-lg w-full max-w-2xl min-h-210.5 p-12 relative self-start"
           style={{
-            boxShadow: '0 4px 32px rgb(0 0 0 / 0.12)',
+            boxShadow: '0 2px 8px rgb(0 0 0 / 0.07)',
             zoom: zoom / 100,
           }}
         >
@@ -206,6 +214,7 @@ export function PDFViewer({
             />
           </div>
         )}
+      </div>
       </div>
       </div>
 
