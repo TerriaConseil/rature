@@ -11,6 +11,12 @@ interface HomePageProps {
   onFileSelect: () => void
 }
 
+const BADGES = [
+  { icon: Laptop, key: 'home.badges.local' },
+  { icon: WandSparkles, key: 'home.badges.detection' },
+  { icon: WifiOff, key: 'home.badges.noServer' },
+] as const;
+
 export function HomePage({ onFileSelect }: HomePageProps) {
   const { t } = useTranslation();
   const { setFile } = usePdfProcessing();
@@ -24,47 +30,78 @@ export function HomePage({ onFileSelect }: HomePageProps) {
     <div className="flex flex-col justify-between flex-1 h-full">
       <Navbar />
 
-      <section className="flex-1 mx-auto h-full w-full max-w-300 px-6 pt-56 pb-16 flex flex-col gap-16 items-center">
-        <h1 className="text-center text-5xl lg:text-6xl font-extrabold text-fg tracking-tight leading-[1.1]">
-          <span className="text-accent">{t('home.title')}</span>
-          <br/>
-          {t('home.subtitle')}
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        aria-hidden="true"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(13, 148, 136, 0.7) 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+        }}
+      />
+
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        aria-hidden="true"
+        style={{
+          background: 'radial-gradient(ellipse 65% 65% at 50% 50%, transparent 35%, var(--surface) 100%)',
+        }}
+      />
+
+      <section className="relative z-10 flex-1 mx-auto h-full w-full max-w-4xl px-6 pt-52 pb-16 flex flex-col gap-10 items-center">
+
+        <h1
+          className="text-center tracking-tight leading-[1.05]"
+          style={{ animation: 'fade-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) both' }}
+        >
+          <span
+            className="block text-accent text-6xl lg:text-7xl font-extrabold"
+            style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+          >
+            {t('home.title')}
+          </span>
+          <span className="block text-5xl lg:text-6xl font-extrabold text-fg mt-2">
+            {t('home.subtitle')}
+          </span>
         </h1>
 
-        <div className="grid grid-cols-2 items-center gap-16">
-          <p className="text-lg text-fg-muted leading-relaxed max-w-lg">
-            <Trans
-              i18nKey="home.description"
-              components={{
-                logo: <RatureLogo size="lg" />,
-                bold: <span className="font-bold" />,
-                accent: <span className="text-accent font-bold" />,
-                br: <br />,
-              }}
-            />
-          </p>
-
-          <div
-            className="border border-border-theme bg-card"
-            style={{ boxShadow: '0 4px 24px 0 rgb(0 0 0 / 0.06)' }}
-          >
-            <DropZone onFileSelect={handleFileSelected} />
-          </div>
-          <ul className="flex items-center gap-4 col-span-2 justify-center">
-            <li className="flex items-center gap-2 bg-neutral-300 text-neutral-600 px-4 py-2 font-medium">
-              <Laptop size={20} />
-              {t('home.badges.local')}
-            </li>
-            <li className="flex items-center gap-2 bg-neutral-300 text-neutral-600 px-4 py-2 font-medium">
-              <WandSparkles size={20} />
-              {t('home.badges.detection')}
-            </li>
-            <li className="flex items-center gap-2 bg-neutral-300 text-neutral-600 px-4 py-2 font-medium">
-              <WifiOff size={20} />
-              {t('home.badges.noServer')}
-            </li>
-          </ul>
+        <div
+          className="w-full backdrop-blur-xs bg-transparent shadow-2xl my-4 hover:shadow-xl transition-shadow duration-300"
+          style={{
+            animation: 'fade-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both',
+          }}
+        >
+          <DropZone onFileSelect={handleFileSelected} />
         </div>
+
+        <ul
+          className="flex items-center gap-4 flex-wrap justify-center"
+          style={{ animation: 'fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both' }}
+        >
+          {BADGES.map(({ icon: Icon, key }) => (
+            <li
+              key={key}
+              className="flex items-center gap-2 text-sm font-medium text-fg-muted bg-surface-subtle border border-border-theme px-3 py-2"
+            >
+              <Icon size={16} className="text-accent shrink-0" />
+              {t(key)}
+            </li>
+          ))}
+        </ul>
+
+        <p
+          className="text-center text-base text-fg-muted leading-relaxed"
+          style={{ animation: 'fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both' }}
+        >
+          <Trans
+            i18nKey="home.description"
+            components={{
+              logo: <RatureLogo size="lg" />,
+              bold: <span className="font-bold text-fg" />,
+              accent: <span className="text-accent font-bold" />,
+              br: <br />,
+            }}
+          />
+        </p>
       </section>
 
       <div className="fixed inset-0 z-100 flex items-center justify-center bg-surface p-8 md:hidden">

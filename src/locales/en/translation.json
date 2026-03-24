@@ -8,7 +8,7 @@
   "home": {
     "title": "Anonymize your PDFs",
     "subtitle": "before sending them to an AI",
-    "description": "<logo /> automatically detects and masks sensitive data (names, addresses, emails, phone numbers, etc.) directly <bold>in your browser</bold>.<br />Your documents <accent>never leave</accent> your computer.",
+    "description": "<logo /> automatically detects and masks sensitive data:<br />names, addresses, emails, phone numbers, etc.<br />directly <bold>in your browser</bold>.<br />Your documents <accent>never leave</accent> your computer.",
     "descriptionBrowser": "in your browser",
     "descriptionNeverLeave": "never leave",
     "badges": {

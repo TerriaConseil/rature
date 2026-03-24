@@ -8,7 +8,7 @@
   "home": {
     "title": "Anonymisez vos PDF",
     "subtitle": "avant de les envoyer à une IA",
-    "description": "<logo /> détecte et masque automatiquement les données sensibles (noms, adresses, emails, téléphones, etc.) directement <bold>dans votre navigateur</bold>.<br />Vos documents <accent>ne quittent jamais</accent> votre ordinateur.",
+    "description": "<logo /> détecte et masque automatiquement les données sensibles :<br />noms, adresses, emails, téléphones, etc.<br />directement <bold>dans votre navigateur</bold>.<br />Vos documents <accent>ne quittent jamais</accent> votre ordinateur.",
     "descriptionBrowser": "dans votre navigateur",
     "descriptionNeverLeave": "ne quittent jamais",
     "badges": {

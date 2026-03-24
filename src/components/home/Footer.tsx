@@ -7,7 +7,8 @@ export function Footer() {
   const { t } = useTranslation();
 
   return (
-    <footer className="border-t border-border-theme py-8">
+    <footer className="sticky bottom-0 border-t border-border-theme py-8 bg-surface/30 backdrop-blur-md z-20">
+      <div className="absolute -top-16 left-0 right-0 h-16 pointer-events-none" />
       <div className="mx-auto max-w-300 px-6 flex flex-wrap items-center justify-center gap-3">
         <p className="text-sm text-fg/70">
           © {new Date().getFullYear()} Terria Conseil
