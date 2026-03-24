@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, CheckSquare, Square, Trash2, ChevronRight, ChevronLeft, ScanEye } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { CUSTOM_ENTITY_TYPES, type GroupedEntity } from '@/types/index.ts';
 import { cn } from '@/lib/utils.ts';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
@@ -76,6 +77,7 @@ export function DetectionSidebar({
   onEntitySelect,
   onHighlightAll,
 }: DetectionSidebarProps) {
+  const { t } = useTranslation();
   const { modelName, modelTokens } = useAnonymization();
   const { pageCount } = usePdfProcessing();
   const [search, setSearch] = useState('');
@@ -154,13 +156,13 @@ export function DetectionSidebar({
     <aside className="w-90 shrink-0 border-l border-border-theme bg-card flex flex-col overflow-hidden">
       <div className="px-4 py-3 border-b border-border-theme shrink-0">
         <div className="flex items-center justify-between mb-1">
-          <h2 className="text-sm font-semibold text-fg">Entités détectées</h2>
+          <h2 className="text-sm font-semibold text-fg">{t('sidebar.title')}</h2>
           <span className="text-xs text-fg-muted bg-surface-subtle rounded-full px-2 py-0.5">
-            {entities.length} entités · {pageCount} page{pageCount > 1 ? 's' : ''}
+            {t('sidebar.entityCount', { count: entities.length })} · {t('sidebar.pageCount', { count: pageCount })}
           </span>
         </div>
         <p className="text-xs text-fg-subtle">
-          {includedCount} sélectionnée{includedCount !== 1 ? 's' : ''} pour occultation
+          {t('sidebar.selected', { count: includedCount })}
         </p>
       </div>
 
@@ -169,7 +171,7 @@ export function DetectionSidebar({
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-fg-subtle pointer-events-none" />
           <input
             type="text"
-            placeholder="Rechercher une entité..."
+            placeholder={t('sidebar.search')}
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full h-8 pl-8 pr-3 text-xs rounded-lg border border-border-theme bg-surface text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-2 focus:ring-accent"
@@ -186,7 +188,7 @@ export function DetectionSidebar({
                 : 'bg-surface-subtle text-fg-muted hover:bg-border-theme',
             )}
           >
-            Tous
+            {t('sidebar.filterAll')}
           </button>
           {allTypes.map(type => {
             const meta = NER_MODELS[modelName].entities[type];
@@ -217,14 +219,14 @@ export function DetectionSidebar({
             onClick={onSelectAll}
             className="text-xs text-fg-muted hover:text-accent transition-colors cursor-pointer"
           >
-            Tout sélectionner
+            {t('sidebar.selectAll')}
           </button>
           <span className="text-fg-subtle">·</span>
           <button
             onClick={onDeselectAll}
             className="text-xs text-fg-muted hover:text-fg transition-colors cursor-pointer"
           >
-            Tout désélectionner
+            {t('sidebar.deselectAll')}
           </button>
         </div>
       </div>
@@ -324,14 +326,14 @@ export function DetectionSidebar({
                               'p-1 rounded transition-colors cursor-pointer',
                               isHighlightedAll ? 'text-accent' : 'text-fg-muted hover:text-fg',
                             )}
-                            title="Surligner toutes les occurrences"
+                            title={t('sidebar.highlightAll')}
                           >
                             <ScanEye size={13} />
                           </button>
                           <button
                             onClick={() => handlePrevInstance(entity.text)}
                             className="p-1 rounded text-fg-muted hover:text-fg transition-colors cursor-pointer"
-                            title="Occurrence précédente"
+                            title={t('sidebar.prevOccurrence')}
                           >
                             <ChevronLeft size={13} />
                           </button>
@@ -341,7 +343,7 @@ export function DetectionSidebar({
                           <button
                             onClick={() => handleNextInstance(entity.text)}
                             className="p-1 rounded text-fg-muted hover:text-fg transition-colors cursor-pointer"
-                            title="Occurrence suivante"
+                            title={t('sidebar.nextOccurrence')}
                           >
                             <ChevronRight size={13} />
                           </button>
@@ -354,7 +356,7 @@ export function DetectionSidebar({
                           'w-6 h-6 flex items-center justify-center rounded-[5px] text-fg-subtle hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all cursor-pointer',
                           !isSelected && 'opacity-0 group-hover:opacity-100 transition-opacity',
                         )}
-                        title="Supprimer"
+                        title={t('sidebar.delete')}
                       >
                         <Trash2 size={12} />
                       </button>
@@ -370,12 +372,12 @@ export function DetectionSidebar({
 
         {filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="text-sm text-fg-muted">Aucune entité trouvée</p>
+            <p className="text-sm text-fg-muted">{t('sidebar.noEntities')}</p>
             <button
               onClick={() => { setSearch(''); setFilterType('all'); }}
               className="mt-2 text-xs text-accent hover:underline cursor-pointer"
             >
-              Réinitialiser les filtres
+              {t('sidebar.resetFilters')}
             </button>
           </div>
         )}

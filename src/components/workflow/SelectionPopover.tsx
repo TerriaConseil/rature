@@ -1,5 +1,6 @@
 import { X, Tag, Layers, Plus } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button.tsx';
 import { cn } from '@/lib/utils.ts';
@@ -21,6 +22,7 @@ export function SelectionPopover({
   onCreateAll,
   onDismiss,
 }: SelectionPopoverProps) {
+  const { t } = useTranslation();
   const firstButtonRef = useRef<HTMLButtonElement>(null);
 
   const hasMultipleMatches = matchCount > 1;
@@ -72,13 +74,13 @@ export function SelectionPopover({
           <div className="flex items-center gap-1.5">
             <Tag size={11} className="text-accent" strokeWidth={2.5} />
             <span className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-fg-muted">
-              Ajouter comme entité
+              {t('selectionPopover.addAsEntity')}
             </span>
           </div>
           <button
             onClick={onDismiss}
             className="w-5 h-5 flex items-center justify-center rounded-md text-fg-subtle hover:text-fg hover:bg-surface-subtle transition-all duration-100 cursor-pointer"
-            aria-label="Fermer"
+            aria-label={t('selectionPopover.close')}
           >
             <X size={11} strokeWidth={2.5} />
           </button>
@@ -98,7 +100,7 @@ export function SelectionPopover({
             <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-accent/8 border border-accent/20 dark:bg-accent/10">
               <Layers size={10} className="text-accent shrink-0" strokeWidth={2.5} />
               <span className="text-[11px] font-medium text-accent leading-tight">
-                {matchCount} occurrence{matchCount > 1 ? 's' : ''} trouvée{matchCount > 1 ? 's' : ''} dans le document
+                {t('selectionPopover.occurrences', { count: matchCount })}
               </span>
             </div>
           </div>
@@ -111,16 +113,16 @@ export function SelectionPopover({
             <>
               <Button ref={firstButtonRef} size="md" onClick={onCreateAll} className="w-full justify-center gap-1.5">
                 <Layers size={13} strokeWidth={2.5} />
-                Ajouter tout ({matchCount})
+                {t('selectionPopover.addAll', { count: matchCount })}
               </Button>
               <Button size="md" variant="secondary" onClick={onCreate} className="w-full justify-center gap-1.5">
                 <Plus size={13} strokeWidth={2.5} />
-                Ajouter uniquement celui-ci
+                {t('selectionPopover.addOneOnly')}
               </Button>
             </>
           ) : (
             <Button ref={firstButtonRef} size="md" onClick={onCreate} className="w-full justify-center">
-              Ajouter
+              {t('selectionPopover.add')}
             </Button>
           )}
         </div>

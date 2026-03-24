@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { X, Download, CheckCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button.tsx';
 import type { GroupedEntity } from '@/types/index.ts';
 
@@ -12,22 +13,8 @@ interface ExportModalProps {
 
 type ReplaceMode = 'redacted' | 'pseudonym';
 
-const REPLACE_OPTIONS = [
-  {
-    value: 'redacted' as const,
-    label: '[OCCULTÉ]',
-    desc: 'Remplace le texte par un marqueur générique',
-    disabled: false,
-  },
-  {
-    value: 'pseudonym' as const,
-    label: 'Pseudonyme',
-    desc: 'Remplace par un identifiant fictif cohérent',
-    disabled: true,
-  },
-] as const;
-
 export function ExportModal({ entities, fileName, onClose, onDownload }: ExportModalProps) {
+  const { t } = useTranslation();
   const [replaceMode, setReplaceMode] = useState<ReplaceMode>('redacted');
   const [removeMetadata, setRemoveMetadata] = useState(true);
   const [done, setDone] = useState(false);
@@ -35,6 +22,11 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
 
   const includedCount = entities.filter(e => e.included).length;
   const totalPages = Math.max(...entities.map(e => e.page));
+
+  const replaceOptions: Array<{ value: ReplaceMode; label: string; desc: string; disabled: boolean }> = [
+    { value: 'redacted', label: t('export.redactedLabel'), desc: t('export.redactedDesc'), disabled: false },
+    { value: 'pseudonym', label: t('export.pseudonymLabel'), desc: t('export.pseudonymDesc'), disabled: true },
+  ];
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -61,7 +53,7 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
     >
       <div className="w-full max-w-md rounded-2xl border border-border-theme bg-card shadow-2xl">
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-theme">
-          <h2 className="text-base font-semibold text-fg">Exporter le PDF anonymisé</h2>
+          <h2 className="text-base font-semibold text-fg">{t('export.title')}</h2>
           <button
             onClick={onClose}
             className="flex items-center justify-center w-8 h-8 rounded-[7px] text-fg-muted hover:text-fg hover:bg-surface-subtle transition-all cursor-pointer"
@@ -75,17 +67,17 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
             <div className="px-6 py-5 space-y-5">
               <div className="rounded-xl bg-surface-subtle border border-border-theme p-4 space-y-1">
                 <p className="text-sm text-fg">
-                  <span className="font-semibold text-accent">{includedCount} entité{includedCount !== 1 ? 's' : ''}</span>{' '}
-                  seront occultées sur{' '}
-                  <span className="font-semibold">{totalPages} page{totalPages !== 1 ? 's' : ''}</span>
+                  <span className="font-semibold text-accent">{t('export.entityCount', { count: includedCount })}</span>{' '}
+                  {t('export.willBeRedacted')}{' '}
+                  <span className="font-semibold">{t('export.pageCount', { count: totalPages })}</span>
                 </p>
                 <p className="text-xs text-fg-muted truncate">{fileName}</p>
               </div>
 
               <div className="space-y-2">
-                <p className="text-xs font-medium text-fg-muted uppercase tracking-wider">Mode de remplacement</p>
+                <p className="text-xs font-medium text-fg-muted uppercase tracking-wider">{t('export.replaceMode')}</p>
                 <div className="space-y-2">
-                  {REPLACE_OPTIONS.map(opt => (
+                  {replaceOptions.map(opt => (
                     <label
                       key={opt.value}
                       className={[
@@ -109,7 +101,7 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
                           <p className="text-sm font-medium text-fg">{opt.label}</p>
                           {opt.disabled && (
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium tracking-wider uppercase bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800">
-                              Bientôt disponible
+                              {t('export.comingSoon')}
                             </span>
                           )}
                         </div>
@@ -129,10 +121,10 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
                 />
                 <div>
                   <p className="text-sm font-medium text-fg group-hover:text-accent transition-colors">
-                    Supprimer les métadonnées
+                    {t('export.removeMetadata')}
                   </p>
                   <p className="text-xs text-fg-muted">
-                    Auteur, date de création, propriétés du document original
+                    {t('export.removeMetadataDesc')}
                   </p>
                 </div>
               </label>
@@ -140,7 +132,7 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
 
             <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border-theme">
               <Button variant="secondary" onClick={onClose} disabled={isDownloading}>
-                Annuler
+                {t('export.cancel')}
               </Button>
               <Button onClick={handleDownload} disabled={isDownloading}>
                 {isDownloading ? (
@@ -152,7 +144,7 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
                 ) : (
                   <>
                     <Download size={15} />
-                    Télécharger le PDF
+                    {t('export.download')}
                   </>
                 )}
               </Button>
@@ -164,13 +156,13 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
               <CheckCircle size={28} strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-base font-semibold text-fg mb-1">Document exporté avec succès</p>
+              <p className="text-base font-semibold text-fg mb-1">{t('export.successTitle')}</p>
               <p className="text-sm text-fg-muted">
-                Votre PDF anonymisé a été téléchargé.
+                {t('export.successDesc')}
               </p>
             </div>
             <Button variant="secondary" onClick={onClose}>
-              Fermer
+              {t('export.close')}
             </Button>
           </div>
         )}

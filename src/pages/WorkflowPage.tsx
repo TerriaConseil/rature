@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { type PDFDocument } from 'mupdf';
+import { useTranslation } from 'react-i18next';
 
 import { ActionsIsland } from '@/components/workflow/ActionsIsland.tsx';
 import { Toolbar } from '@/components/workflow/Toolbar.tsx';
@@ -19,6 +20,7 @@ interface WorkflowPageProps {
 };
 
 export function WorkflowPage({ onBack }: WorkflowPageProps) {
+  const { t } = useTranslation();
   const { nerEntities: entities, reset: resetEntities, setNerEntities: setEntities } = useAnonymization();
   const { file, pageCount, reset: resetPdfDocument } = usePdfProcessing();
   const [mode, setMode] = useState<WorkflowMode>('edition');
@@ -101,7 +103,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   };
 
   if (!file) {
-    return <div>No file selected!</div>;
+    return <div>{t('errors.noFile')}</div>;
   }
 
   return (

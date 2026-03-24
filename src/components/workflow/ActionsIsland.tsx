@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils.ts";
 import type { WorkflowMode } from "@/types/index.ts";
 import { Eye, Pencil } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ActionsIslandProps {
   mode: WorkflowMode
@@ -8,6 +9,7 @@ interface ActionsIslandProps {
 }
 
 export function ActionsIsland({ mode, onModeChange }: ActionsIslandProps) {
+  const { t } = useTranslation();
   return (
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center rounded-xl border border-border-theme bg-card p-1 gap-0.5" style={{ boxShadow: '0 8px 32px rgb(0 0 0 / 0.18), 0 2px 8px rgb(0 0 0 / 0.1)' }}>
       <button
@@ -18,7 +20,7 @@ export function ActionsIsland({ mode, onModeChange }: ActionsIslandProps) {
         )}
       >
         <Pencil size={14} />
-        <span>Édition</span>
+        <span>{t('actions.edition')}</span>
       </button>
       <button
         onClick={() => onModeChange('preview')}
@@ -28,7 +30,7 @@ export function ActionsIsland({ mode, onModeChange }: ActionsIslandProps) {
         )}
       >
         <Eye size={14} />
-        <span>Aperçu</span>
+        <span>{t('actions.preview')}</span>
       </button>
     </div>
   );

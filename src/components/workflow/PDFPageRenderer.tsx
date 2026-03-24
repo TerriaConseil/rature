@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ColorSpace, type PDFDocument } from 'mupdf';
+import { useTranslation } from 'react-i18next';
 
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 
@@ -10,6 +11,7 @@ interface PDFPageRendererProps {
 }
 
 export function PDFPageRenderer({ pageIndex, zoom, pdfDocument: propDocument }: PDFPageRendererProps) {
+  const { t } = useTranslation();
   const { pdfDocument: contextDocument } = usePdfProcessing();
   const pdfDocument = propDocument ?? contextDocument;
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -58,7 +60,7 @@ export function PDFPageRenderer({ pageIndex, zoom, pdfDocument: propDocument }: 
     } catch (err) {
       if (cancelled) return;
       console.error('MuPDF render error:', err);
-      setError('Impossible de rendre cette page.');
+      setError(t('pdf.renderError'));
       setIsLoading(false);
     }
 
@@ -99,7 +101,7 @@ export function PDFPageRenderer({ pageIndex, zoom, pdfDocument: propDocument }: 
     <div className="flex-1 overflow-auto bg-[#e8e8ec] dark:bg-[#0e0e14] flex justify-center py-16 px-4">
       <img
         src={imageUrl!}
-        alt={`Page ${pageIndex + 1}`}
+        alt={t('pdf.pageAlt', { page: pageIndex + 1 })}
         className="rounded self-start"
         style={{
           width: cssSize?.width,

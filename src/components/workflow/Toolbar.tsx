@@ -6,6 +6,7 @@ import {
   ChevronRight,
   Download,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button.tsx';
 import { cn } from '@/lib/utils.ts';
 import type { WorkflowMode } from '@/types/index.ts';
@@ -37,6 +38,7 @@ export function Toolbar({
   onZoomOut,
   onExport,
 }: ToolbarProps) {
+  const { t } = useTranslation();
   return (
     <div className={cn(
       'h-14 border-b flex items-center gap-3 px-4 shrink-0 transition-all duration-300 relative overflow-hidden',
@@ -52,7 +54,7 @@ export function Toolbar({
         className="flex items-center gap-1.5 text-sm text-fg-muted hover:text-fg transition-colors cursor-pointer"
       >
         <ArrowLeft size={15} />
-        <span className="hidden sm:inline">Retour</span>
+        <span className="hidden sm:inline">{t('toolbar.back')}</span>
       </button>
 
       <div className="w-px h-5 bg-border-theme" />
@@ -105,7 +107,7 @@ export function Toolbar({
 
       <Button size="sm" onClick={onExport}>
         <Download size={13} />
-        Exporter le PDF
+        {t('toolbar.export')}
       </Button>
     </div>
   );

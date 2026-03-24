@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { MessageSquarePlus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { ActionsIsland } from '@/components/workflow/ActionsIsland.tsx';
 
@@ -47,6 +48,7 @@ export function PDFViewer({
   mode,
   onModeChange,
 }: PDFViewerProps) {
+  const { t } = useTranslation();
   const { modelName, addEntity } = useAnonymization();
   const { extractedText, pageCount } = usePdfProcessing();
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
@@ -186,7 +188,7 @@ export function PDFViewer({
           }}
         >
           <div className="absolute top-3 right-4 text-xs text-gray-400 tabular-nums">
-            Page {currentPage}
+            {t('pdf.page', { page: currentPage })}
           </div>
 
           <div
@@ -223,7 +225,7 @@ export function PDFViewer({
         className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-fg-muted hover:text-fg bg-card border border-border-theme hover:border-border-strong shadow-sm transition-all duration-200 cursor-pointer"
       >
         <MessageSquarePlus size={13} />
-        <span>Feedback</span>
+        <span>{t('feedback.title')}</span>
       </button>
 
       <DeleteEntityDialog

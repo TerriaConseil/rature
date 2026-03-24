@@ -1,6 +1,9 @@
 import { ScanLine } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function EmptyPDFPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col items-center justify-center text-center max-w-xs gap-5 select-none">
       <div className="relative flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-100 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700">
@@ -16,10 +19,10 @@ export function EmptyPDFPage() {
 
       <div className="flex flex-col items-center gap-2">
         <p className="text-sm font-bold text-gray-500 dark:text-gray-400 tracking-wide">
-          Page non traitée
+          {t('emptyPage.title')}
         </p>
         <p className="text-[12px] leading-relaxed text-fg-muted max-w-55">
-          Cette page semble être une image scannée. La reconnaissance optique de caractères (OCR) sera disponible prochainement.
+          {t('emptyPage.description')}
         </p>
       </div>
 
@@ -27,7 +30,7 @@ export function EmptyPDFPage() {
         <p className="flex items-center justify-center h-4 w-4">
           <span className="block h-1.5 w-1.5 rounded-full bg-teal-500" />
         </p>
-        <span>Bientôt disponible</span>
+        <span>{t('emptyPage.comingSoon')}</span>
       </div>
     </div>
   );

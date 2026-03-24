@@ -1,15 +1,21 @@
 import { CheckSquare, ExternalLink, Moon, PauseCircle, PlayCircle, RefreshCcw, Sun, Trash2 } from "lucide-react";
 import { Link } from "react-router";
+import { Trans, useTranslation } from "react-i18next";
 
 import { Footer } from "@/components/home/Footer.tsx";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher.tsx";
 import { Navbar } from "@/components/Navbar.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { useTheme } from "@/hooks/useTheme.tsx";
 import { NER_MODELS } from "@/models/utils.ts";
 
+const bold = <span className="font-bold" />;
+const italic = <span className="italic" />;
+
 export function SettingsPage() {
   const { theme, toggleTheme } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <div className="flex flex-col justify-between flex-1 h-full">
@@ -17,7 +23,7 @@ export function SettingsPage() {
 
       <section className="flex-1 mx-auto h-full w-full max-w-300 px-6 pt-40 pb-16">
         <h1 className="flex items-baseline justify-center gap-3 text-center text-4xl font-extrabold tracking-tight leading-[1.1] mb-8">
-          Paramètres
+          {t('settings.title')}
         </h1>
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-4">
@@ -25,53 +31,42 @@ export function SettingsPage() {
               className="p-6 border border-border-theme bg-card"
               style={{ boxShadow: '0 4px 24px 0 rgb(0 0 0 / 0.06)' }}
             >
-              <h3 className="text-2xl font-extrabold">Documents</h3>
+              <h3 className="text-2xl font-extrabold">{t('settings.documents.title')}</h3>
               <div className="mt-6">
-                <p className="text-md font-bold">Modèle de détection</p>
+                <p className="text-md font-bold">{t('settings.documents.model.title')}</p>
                 <p className="mt-1 text-fg-muted">
-                  Pour détecter automatiquement les informations sensibles dans vos documents, Rature s'appuie sur un modèle
-                  de <span className="font-bold">reconnaissance d'entités nommées (NER)</span>. Contrairement aux grands modèles
-                  de langage (LLM) qui alimentent des outils comme <span className="italic">ChatGPT</span>, ces modèles sont beaucoup plus légers. Cela permet
-                  de les exécuter entièrement dans votre navigateur, sans envoyer vos données à un serveur.
+                  <Trans i18nKey="settings.documents.model.description1" components={{ bold, italic }} />
                   <br />
                   <br />
-                  Aujourd'hui, le modèle utilisé détecte 4 types d'entités : les <span className="font-bold">personnes</span>,
-                  les <span className="font-bold">organisations</span>, les <span className="font-bold">lieux</span>, ainsi qu'une
-                  catégorie <span className="font-bold">divers</span> pour les entités identifiées mais non classifiées avec certitude.
+                  <Trans i18nKey="settings.documents.model.description2" components={{ bold }} />
                   <br />
                   <br />
-                  Prochainement, vous pourrez choisir parmi plusieurs modèles afin d'affiner la détection selon vos besoins.
+                  {t('settings.documents.model.description3')}
                 </p>
                 <div className="mt-4 w-full flex items-center justify-between">
                   <p className="flex items-center gap-2 text-md font-medium">
                     <CheckSquare size="16" className="text-accent" />
                     BERT Base NER
-                    <Badge variant="accent" >Modèle actuel</Badge>
+                    <Badge variant="accent">{t('settings.documents.model.current')}</Badge>
                   </p>
                   <a href={NER_MODELS.bertBaseNer.url} target="_blank" rel="noopener noreferrer">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="ml-auto"
-                    >
+                    <Button size="sm" variant="secondary" className="ml-auto">
                       <ExternalLink size={14} />
-                      En savoir plus
+                      {t('settings.documents.model.learnMore')}
                     </Button>
                   </a>
                 </div>
               </div>
               <div className="mt-6">
-                <p className="text-md font-bold">Documents supportés</p>
+                <p className="text-md font-bold">{t('settings.documents.supported.title')}</p>
                 <p className="mt-1 text-fg-muted">
-                  Rature prend actuellement en charge les fichiers PDF contenant du texte sélectionnable.
-                  Les scans et les photos de documents ne sont pas encore supportés.
+                  {t('settings.documents.supported.description1')}
                   <br />
                   <br />
-                  Nous travaillons à élargir la compatibilité à d'autres formats (Word, Excel,…).
-                  Un format vous manque ? N'hésitez pas à nous envoyer vos suggestions : <a href="mailto:contact@rature.fr" className="underline underline-offset-4">contact@rature.fr</a>
+                  {t('settings.documents.supported.description2')} <a href="mailto:contact@rature.fr" className="underline underline-offset-4">contact@rature.fr</a>
                   <br />
                   <br />
-                  Vos retours orientent directement notre feuille de route.
+                  {t('settings.documents.supported.feedback')}
                 </p>
               </div>
             </div>
@@ -79,27 +74,29 @@ export function SettingsPage() {
               className="p-6 border border-border-theme bg-card"
               style={{ boxShadow: '0 4px 24px 0 rgb(0 0 0 / 0.06)' }}
             >
-              <h3 className="text-2xl font-bold">Confidentialité</h3>
+              <h3 className="text-2xl font-bold">{t('settings.privacy.title')}</h3>
               <div className="mt-6">
-                <p className="text-md font-bold">Statistiques du produit</p>
+                <p className="text-md font-bold">{t('settings.privacy.stats.title')}</p>
                 <p className="mt-1 text-fg-muted">
-                  Nous allons mettre en place des statistiques sur l'utilisation du produit Rature.
+                  {t('settings.privacy.stats.description1')}
                   <br />
                   <br />
-                  Ces statistiques seront complètement anonymes et concerneront uniquement l'utilisation des fonctionnalités de Rature,
-                  conformément à notre <Link to="/privacy-policy" className="underline underline-offset-4">politique de confidentialité</Link>.
+                  <Trans
+                    i18nKey="settings.privacy.stats.description2"
+                    components={{ link: <Link to="/privacy-policy" className="underline underline-offset-4" /> }}
+                  />
                   <br />
                   <br />
-                  Vous pourrez vous désinscrire complètement de ces statistiques depuis cette page.
+                  {t('settings.privacy.stats.description3')}
                 </p>
                 <div className="mt-4 flex items-center gap-2">
                   <Button size="lg" variant="secondary" className="w-full flex-1 transition-all" disabled>
                     <PlayCircle size={20} />
-                    Inscription
+                    {t('settings.privacy.stats.subscribe')}
                   </Button>
                   <Button size="lg" variant="primary" className="w-full flex-1 transition-all">
                     <PauseCircle size={20} />
-                    Désinscription
+                    {t('settings.privacy.stats.unsubscribe')}
                   </Button>
                 </div>
               </div>
@@ -110,10 +107,12 @@ export function SettingsPage() {
               className="p-6 border border-border-theme bg-card"
               style={{ boxShadow: '0 4px 24px 0 rgb(0 0 0 / 0.06)' }}
             >
-              <h3 className="text-2xl font-extrabold">Apparence</h3>
+              <h3 className="text-2xl font-extrabold">{t('settings.appearance.title')}</h3>
               <div className="mt-6">
-                <p className="text-md font-bold">Thème</p>
-                <p className="mt-1 text-fg-muted">Vous êtes plutôt <span className="font-medium">clair</span> ou <span className="font-medium">obscur</span> ?</p>
+                <p className="text-md font-bold">{t('settings.appearance.theme.title')}</p>
+                <p className="mt-1 text-fg-muted">
+                  <Trans i18nKey="settings.appearance.theme.description" components={{ bold: <span className="font-medium" /> }} />
+                </p>
                 <div className="mt-4 flex items-center gap-2">
                   <Button
                     size="lg"
@@ -122,7 +121,7 @@ export function SettingsPage() {
                     className="w-full flex-1 transition-all"
                   >
                     <Sun size={20} />
-                    Lumineux
+                    {t('settings.appearance.theme.light')}
                   </Button>
                   <Button
                     size="lg"
@@ -131,69 +130,63 @@ export function SettingsPage() {
                     className="w-full flex-1 transition-all"
                   >
                     <Moon size={20} />
-                    Sombre
+                    {t('settings.appearance.theme.dark')}
                   </Button>
                 </div>
               </div>
               <div className="mt-6">
-                <p className="text-md font-bold">Langue (Language)</p>
+                <p className="text-md font-bold">{t('settings.appearance.language.title')}</p>
                 <p className="mt-1 text-fg-muted">
-                  Notre interface est disponible uniquement en Français pour le moment.
-                  <br />
-                  <span className="font-medium">Our interface is only available in French for now.</span>
+                  {t('settings.appearance.language.description')}
                 </p>
-                <Button size="lg" variant="secondary" className="mt-4 w-full transition-all">
-                  <span>🇫🇷</span>
-                  <span>Français</span>
-                </Button>
+                <LanguageSwitcher variant="full" className="mt-4" />
               </div>
             </div>
             <div
               className="p-6 border border-border-theme bg-card"
               style={{ boxShadow: '0 4px 24px 0 rgb(0 0 0 / 0.06)' }}
             >
-              <h3 className="text-2xl font-bold">Gestion du cache</h3>
+              <h3 className="text-2xl font-bold">{t('settings.cache.title')}</h3>
               <div className="mt-6">
-                <p className="text-md font-bold">Fichiers mis en cache</p>
+                <p className="text-md font-bold">{t('settings.cache.files.title')}</p>
                 <p className="mt-1 text-fg-muted">
-                  Rature enregistre dans votre navigateur les outils nécessaires au traitement de vos documents. Cela évite de les télécharger à chaque utilisation.
+                  {t('settings.cache.files.description1')}
                   <br />
                   <br />
-                  Lors de votre première utilisation, le chargement peut donc être un peu plus long. Ces fichiers occupent toutefois de l&apos;espace sur votre appareil.
+                  {t('settings.cache.files.description2')}
                   <br />
                   <br />
-                  Vous pouvez les supprimer à tout moment si vous ne souhaitez plus utiliser Rature.
+                  {t('settings.cache.files.description3')}
                 </p>
                 <div className="mt-4 flex items-center gap-2">
                   <div className="w-full flex-1 p-4 bg-gray-100">
-                    <p className="text-fg-muted font-medium text-sm">Taille totale sur le disque</p>
-                    <p className="mt-2 text-fg font-bold text-xl">0 octets</p>
+                    <p className="text-fg-muted font-medium text-sm">{t('settings.cache.totalSize')}</p>
+                    <p className="mt-2 text-fg font-bold text-xl">{t('settings.cache.totalSizeValue')}</p>
                   </div>
                   <div className="w-full flex-1 p-4 bg-gray-100">
-                    <p className="text-fg-muted font-medium text-sm">Nombre de fichiers</p>
+                    <p className="text-fg-muted font-medium text-sm">{t('settings.cache.fileCount')}</p>
                     <p className="mt-2 text-fg font-bold text-xl">0</p>
                   </div>
                 </div>
                 <div className="mt-2 flex items-center gap-2">
                   <Button size="lg" variant="secondary" className="w-full flex-1" disabled>
                     <RefreshCcw size={20} />
-                    Rafraîchir le cache
+                    {t('settings.cache.refresh')}
                   </Button>
                   <Button size="lg" variant="secondary" className="w-full flex-1" disabled>
                     <Trash2 size={20} />
-                    Supprimer le cache
+                    {t('settings.cache.delete')}
                   </Button>
                 </div>
               </div>
               <div className="mt-6">
-                <p className="text-md font-bold">Données du site</p>
+                <p className="text-md font-bold">{t('settings.cache.siteData.title')}</p>
                 <p className="mt-1 text-fg-muted">
-                  Vous pouvez également supprimer toutes les données de Rature, y compris les fichiers en cache et les paramètres du site.
-                  Cette action aura pour effet de recharger la page et remettra Rature à son état d'origine.
+                  {t('settings.cache.siteData.description')}
                 </p>
                 <Button size="lg" variant="secondary" className="mt-4 w-full flex-1" disabled>
                   <Trash2 size={20} />
-                  Supprimer toutes les données
+                  {t('settings.cache.siteData.deleteAll')}
                 </Button>
               </div>
             </div>

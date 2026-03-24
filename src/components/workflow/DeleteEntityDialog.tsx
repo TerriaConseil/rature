@@ -1,4 +1,5 @@
 import { Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -26,10 +27,11 @@ export function DeleteEntityDialog({
   onDeleteOne,
   onDeleteAll,
 }: DeleteEntityDialogProps) {
+  const { t } = useTranslation();
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
-        <AlertDialogTitle>Supprimer l&apos;entité ?</AlertDialogTitle>
+        <AlertDialogTitle>{t('delete.title')}</AlertDialogTitle>
         <AlertDialogDescription asChild>
           <div className="mt-2 mb-5">
             <span className="inline-block px-2 py-0.5 rounded-md bg-surface-subtle border border-border-theme text-fg font-medium text-xs max-w-full truncate">
@@ -42,7 +44,7 @@ export function DeleteEntityDialog({
           <AlertDialogAction asChild>
             <Button variant="secondary" size="sm" className="w-full justify-start gap-2" onClick={onDeleteOne}>
               <Trash2 size={13} />
-              Supprimer cette occurrence
+              {t('delete.deleteOne')}
             </Button>
           </AlertDialogAction>
 
@@ -50,7 +52,7 @@ export function DeleteEntityDialog({
             <AlertDialogAction asChild>
               <Button variant="destructive" size="sm" className="w-full justify-start gap-2" onClick={onDeleteAll}>
                 <Trash2 size={13} />
-                Tout supprimer
+                {t('delete.deleteAll')}
                 <span className="ml-auto opacity-70 font-normal">×{instanceCount}</span>
               </Button>
             </AlertDialogAction>
@@ -58,7 +60,7 @@ export function DeleteEntityDialog({
 
           <AlertDialogCancel asChild>
             <Button variant="ghost" size="sm" className="w-full text-fg-muted">
-              Annuler
+              {t('delete.cancel')}
             </Button>
           </AlertDialogCancel>
         </div>
