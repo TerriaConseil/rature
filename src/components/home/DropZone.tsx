@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { FileText, Upload } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils.ts';
 
 interface DropZoneProps {
@@ -7,6 +8,7 @@ interface DropZoneProps {
 }
 
 export function DropZone({ onFileSelect }: DropZoneProps) {
+  const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -76,7 +78,7 @@ export function DropZone({ onFileSelect }: DropZoneProps) {
 
       <div className="text-center space-y-1">
         <p className="text-sm font-bold text-neutral-800 group-hover:text-neutral-100 dark:text-neutral-100 group-hover:dark:text-neutral-800">
-          {isDragging ? 'Déposez votre PDF ici' : 'Déposez votre PDF ou cliquez pour importer'}
+          {isDragging ? t('dropzone.drop') : t('dropzone.idle')}
         </p>
       </div>
     </div>

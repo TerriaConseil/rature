@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { X, MessageSquarePlus, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { RatureLogo } from '@/components/RatureLogo.tsx';
 
@@ -23,6 +24,7 @@ function GithubIcon({ size = 20 }: { size?: number }) {
 }
 
 export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
+  const { t } = useTranslation();
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -40,7 +42,7 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
     >
       <div className="w-full max-w-sm rounded-2xl border border-border-theme bg-card shadow-2xl">
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-theme">
-          <h2 className="text-base font-semibold text-fg">Feedback</h2>
+          <h2 className="text-base font-semibold text-fg">{t('feedback.title')}</h2>
           <button
             onClick={onClose}
             className="flex items-center justify-center w-8 h-8 rounded-[7px] text-fg-muted hover:text-fg hover:bg-surface-subtle transition-all cursor-pointer"
@@ -51,7 +53,7 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
 
         <div className="px-6 py-5 space-y-3">
           <p className="text-sm text-fg-muted">
-            Vous avez trouvé un bug ou une idée à partager ?
+            {t('feedback.description')}
           </p>
           <a
             href="https://github.com/TerriaConseil/rature/issues/new?template=bug_report.md"
@@ -64,8 +66,8 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
               <GithubIcon size={18} />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-fg">Ouvrir une issue GitHub</p>
-              <p className="text-xs text-fg-muted">Si vous avez trouvé un bug</p>
+              <p className="text-sm font-medium text-fg">{t('feedback.githubIssue')}</p>
+              <p className="text-xs text-fg-muted">{t('feedback.githubIssueSub')}</p>
             </div>
             <ChevronRight size={14} className="text-fg-subtle shrink-0" />
           </a>
@@ -80,8 +82,8 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
               <GithubIcon size={18} />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-fg">Ouvrir une demande sur GitHub</p>
-              <p className="text-xs text-fg-muted">Si vous avez une idée en tête</p>
+              <p className="text-sm font-medium text-fg">{t('feedback.githubRequest')}</p>
+              <p className="text-xs text-fg-muted">{t('feedback.githubRequestSub')}</p>
             </div>
             <ChevronRight size={14} className="text-fg-subtle shrink-0" />
           </a>
@@ -97,15 +99,15 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
               <MessageSquarePlus size={18} />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-fg">Suggérer sur Fider</p>
-              <p className="text-xs text-fg-muted">Si vous n'avez pas de compte GitHub</p>
+              <p className="text-sm font-medium text-fg">{t('feedback.fider')}</p>
+              <p className="text-xs text-fg-muted">{t('feedback.fiderSub')}</p>
             </div>
             <ChevronRight size={14} className="text-fg-subtle shrink-0" />
           </a>
         </div>
 
         <div className="px-6 py-4 border-t border-border-theme">
-          <p className="text-xs text-fg-subtle text-center">Merci de contribuer à <RatureLogo size="sm" /></p>
+          <p className="text-xs text-fg-subtle text-center">{t('feedback.thanks')} <RatureLogo size="sm" /></p>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { type RefObject } from 'react';
 import { Search, ChevronUp, ChevronDown, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button.tsx';
 import { cn } from '@/lib/utils.ts';
 import type { EntityMatch } from '@/lib/entity-expansion.ts';
@@ -33,18 +34,19 @@ export function DocumentSearchBar({
   onKeyDown,
   onClose,
 }: DocumentSearchBarProps) {
+  const { t } = useTranslation();
   return (
     <>
       <div className="absolute top-4 right-2 flex items-center justify-end px-4 h-8 bg-transparent shrink-0">
         <Button
           onClick={onOpen}
-          title="Rechercher dans le document"
+          title={t('search.buttonTitle')}
           variant="secondary"
           className={cn("group", open && 'hidden')}
         >
           <Search size={16} className="group-hover:text-accent transition-colors duration-300 shrink-0" />
           <p className="max-w-0 group-hover:max-w-2xl transition-all duration-200 overflow-hidden">
-            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">Rechercher dans le document</span>
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">{t('search.buttonTitle')}</span>
           </p>
           <p className="ml-0.5 flex items-center gap-1">
             <kbd className="px-1.5 py-0.5 text-[10px] font-mono leading-none bg-white dark:bg-[#1a1a24] border border-border rounded shadow-sm text-fg-muted">
@@ -77,21 +79,21 @@ export function DocumentSearchBar({
           value={query}
           onChange={e => onQueryChange(e.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="Rechercher dans le document…"
+          placeholder={t('search.placeholder')}
           className="w-52 text-sm bg-transparent outline-none text-fg placeholder:text-fg-muted caret-accent"
         />
         {debouncedQuery.length >= 3 && (
           <span className="text-xs text-fg-muted tabular-nums font-mono shrink-0 min-w-14 text-right">
             {matches.length > 0
               ? `${matchIndex + 1} / ${matches.length}`
-              : 'Aucun'}
+              : t('search.none')}
           </span>
         )}
         <div className="flex items-center gap-0.5 ml-0.5">
           <button
             onClick={() => onNavigate('prev')}
             disabled={matches.length === 0}
-            aria-label="Occurrence précédente"
+            aria-label={t('search.prevOccurrence')}
             className="p-1 rounded-lg hover:bg-surface-subtle disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             <ChevronUp className="w-3.5 h-3.5" />
@@ -99,14 +101,14 @@ export function DocumentSearchBar({
           <button
             onClick={() => onNavigate('next')}
             disabled={matches.length === 0}
-            aria-label="Occurrence suivante"
+            aria-label={t('search.nextOccurrence')}
             className="p-1 rounded-lg hover:bg-surface-subtle disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             <ChevronDown className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={onClose}
-            aria-label="Fermer la recherche"
+            aria-label={t('search.close')}
             className="p-1 rounded-lg hover:bg-surface-subtle transition-colors ml-0.5"
           >
             <X className="w-3.5 h-3.5 text-fg-muted" />

@@ -1,4 +1,5 @@
 import { MoreHorizontal, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import {
   DropdownMenu,
@@ -28,12 +29,13 @@ export function EntityActionsMenu({
   onDeleteOne,
   onDeleteAll,
 }: EntityActionsMenuProps) {
+  const { t } = useTranslation();
   return (
     <DropdownMenu onOpenChange={open => open && onOpen?.()}>
       <DropdownMenuTrigger asChild>
         <span
           role="button"
-          aria-label="Actions sur l'entité"
+          aria-label={t('entityActions.ariaLabel')}
           onMouseDown={e => e.stopPropagation()}
           onClick={e => e.stopPropagation()}
           className={cn(
@@ -52,7 +54,7 @@ export function EntityActionsMenu({
           onSelect={() => onDeleteOne(entityId)}
         >
           <Trash2 size={13} />
-          Supprimer cette occurrence
+          {t('entityActions.deleteOne')}
         </DropdownMenuItem>
 
         {instanceCount > 1 && (
@@ -64,7 +66,7 @@ export function EntityActionsMenu({
             >
               <Trash2 size={13} />
               <span>
-                Tout supprimer
+                {t('entityActions.deleteAll')}
                 <span className="ml-1.5 text-xs opacity-60">×{instanceCount}</span>
               </span>
             </DropdownMenuItem>

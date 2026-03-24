@@ -1,0 +1,393 @@
+{
+  "nav": {
+    "toggleTheme": "Basculer le thème",
+    "anonymize": "Anonymiser",
+    "settings": "Paramètres",
+    "about": "À propos"
+  },
+  "home": {
+    "title": "Anonymisez vos PDF",
+    "subtitle": "avant de les envoyer à une IA",
+    "description": "<logo /> détecte et masque automatiquement les données sensibles (noms, adresses, emails, téléphones, etc.) directement <bold>dans votre navigateur</bold>.<br />Vos documents <accent>ne quittent jamais</accent> votre ordinateur.",
+    "descriptionBrowser": "dans votre navigateur",
+    "descriptionNeverLeave": "ne quittent jamais",
+    "badges": {
+      "local": "100% local",
+      "detection": "Détection automatique",
+      "noServer": "Aucun serveur"
+    },
+    "mobile": {
+      "title": "Version desktop recommandée",
+      "description": "est optimisé pour une utilisation sur écran large. Veuillez accéder à l'application depuis un ordinateur."
+    }
+  },
+  "dropzone": {
+    "drop": "Déposez votre PDF ici",
+    "idle": "Déposez votre PDF ou cliquez pour importer"
+  },
+  "footer": {
+    "source": "Code source",
+    "privacy": "Politique de confidentialité"
+  },
+  "loading": {
+    "title": "Analyse en cours",
+    "step0": "Chargement du modèle de détection...",
+    "step1": "Lecture du document...",
+    "step2": "Détection des entités nommées...",
+    "step3": "Finalisation...",
+    "entityAnalysis": "Analyse des entités",
+    "page": "Page",
+    "wordsAnalyzed": "~{{count}} mots analysés",
+    "modelDownload": "Téléchargement du modèle",
+    "cachedNote": "Mis en cache après le premier chargement",
+    "loadingFromCache": "Chargement depuis le cache..."
+  },
+  "toolbar": {
+    "back": "Retour",
+    "export": "Exporter le PDF"
+  },
+  "sidebar": {
+    "title": "Entités détectées",
+    "entityCount_one": "{{count}} entité",
+    "entityCount_other": "{{count}} entités",
+    "pageCount_one": "{{count}} page",
+    "pageCount_other": "{{count}} pages",
+    "selected_one": "{{count}} sélectionnée pour occultation",
+    "selected_other": "{{count}} sélectionnées pour occultation",
+    "search": "Rechercher une entité...",
+    "filterAll": "Tous",
+    "selectAll": "Tout sélectionner",
+    "deselectAll": "Tout désélectionner",
+    "noEntities": "Aucune entité trouvée",
+    "resetFilters": "Réinitialiser les filtres",
+    "highlightAll": "Surligner toutes les occurrences",
+    "prevOccurrence": "Occurrence précédente",
+    "nextOccurrence": "Occurrence suivante",
+    "delete": "Supprimer"
+  },
+  "export": {
+    "title": "Exporter le PDF anonymisé",
+    "entityCount_one": "{{count}} entité",
+    "entityCount_other": "{{count}} entités",
+    "willBeRedacted": "seront occultées sur",
+    "pageCount_one": "{{count}} page",
+    "pageCount_other": "{{count}} pages",
+    "replaceMode": "Mode de remplacement",
+    "redactedLabel": "[OCCULTÉ]",
+    "redactedDesc": "Remplace le texte par un marqueur générique",
+    "pseudonymLabel": "Pseudonyme",
+    "pseudonymDesc": "Remplace par un identifiant fictif cohérent",
+    "comingSoon": "Bientôt disponible",
+    "removeMetadata": "Supprimer les métadonnées",
+    "removeMetadataDesc": "Auteur, date de création, propriétés du document original",
+    "cancel": "Annuler",
+    "download": "Télécharger le PDF",
+    "successTitle": "Document exporté avec succès",
+    "successDesc": "Votre PDF anonymisé a été téléchargé.",
+    "close": "Fermer"
+  },
+  "entityActions": {
+    "ariaLabel": "Actions sur l'entité",
+    "deleteOne": "Supprimer cette occurrence",
+    "deleteAll": "Tout supprimer"
+  },
+  "emptyPage": {
+    "title": "Page non traitée",
+    "description": "Cette page semble être une image scannée. La reconnaissance optique de caractères (OCR) sera disponible prochainement.",
+    "comingSoon": "Bientôt disponible"
+  },
+  "selectionPopover": {
+    "addAsEntity": "Ajouter comme entité",
+    "close": "Fermer",
+    "occurrences_one": "{{count}} occurrence trouvée dans le document",
+    "occurrences_other": "{{count}} occurrences trouvées dans le document",
+    "addAll": "Ajouter tout ({{count}})",
+    "addOneOnly": "Ajouter uniquement celui-ci",
+    "add": "Ajouter"
+  },
+  "pdf": {
+    "expandLeft": "Étendre à gauche",
+    "expandRight": "Étendre à droite",
+    "page": "Page {{page}}",
+    "renderError": "Impossible de rendre cette page.",
+    "pageAlt": "Page {{page}}"
+  },
+  "errors": {
+    "noFile": "Aucun fichier sélectionné !"
+  },
+  "feedback": {
+    "title": "Feedback",
+    "description": "Vous avez trouvé un bug ou une idée à partager ?",
+    "githubIssue": "Ouvrir une issue GitHub",
+    "githubIssueSub": "Si vous avez trouvé un bug",
+    "githubRequest": "Ouvrir une demande sur GitHub",
+    "githubRequestSub": "Si vous avez une idée en tête",
+    "fider": "Suggérer sur Fider",
+    "fiderSub": "Si vous n'avez pas de compte GitHub",
+    "thanks": "Merci de contribuer à"
+  },
+  "delete": {
+    "title": "Supprimer l'entité ?",
+    "deleteOne": "Supprimer cette occurrence",
+    "deleteAll": "Tout supprimer",
+    "cancel": "Annuler"
+  },
+  "actions": {
+    "edition": "Édition",
+    "preview": "Aperçu"
+  },
+  "search": {
+    "buttonTitle": "Rechercher dans le document",
+    "placeholder": "Rechercher dans le document…",
+    "none": "Aucun",
+    "prevOccurrence": "Occurrence précédente",
+    "nextOccurrence": "Occurrence suivante",
+    "close": "Fermer la recherche"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "documents": {
+      "title": "Documents",
+      "model": {
+        "title": "Modèle de détection",
+        "description1": "Pour détecter automatiquement les informations sensibles dans vos documents, Rature s'appuie sur un modèle de <bold>reconnaissance d'entités nommées (NER)</bold>. Contrairement aux grands modèles de langage (LLM) qui alimentent des outils comme <italic>ChatGPT</italic>, ces modèles sont beaucoup plus légers. Cela permet de les exécuter entièrement dans votre navigateur, sans envoyer vos données à un serveur.",
+        "description2": "Aujourd'hui, le modèle utilisé détecte 4 types d'entités : les <bold>personnes</bold>, les <bold>organisations</bold>, les <bold>lieux</bold>, ainsi qu'une catégorie <bold>divers</bold> pour les entités identifiées mais non classifiées avec certitude.",
+        "description3": "Prochainement, vous pourrez choisir parmi plusieurs modèles afin d'affiner la détection selon vos besoins.",
+        "current": "Modèle actuel",
+        "learnMore": "En savoir plus"
+      },
+      "supported": {
+        "title": "Documents supportés",
+        "description1": "Rature prend actuellement en charge les fichiers PDF contenant du texte sélectionnable. Les scans et les photos de documents ne sont pas encore supportés.",
+        "description2": "Nous travaillons à élargir la compatibilité à d'autres formats (Word, Excel,…). Un format vous manque ? N'hésitez pas à nous envoyer vos suggestions :",
+        "feedback": "Vos retours orientent directement notre feuille de route."
+      }
+    },
+    "privacy": {
+      "title": "Confidentialité",
+      "stats": {
+        "title": "Statistiques du produit",
+        "description1": "Nous allons mettre en place des statistiques sur l'utilisation du produit Rature.",
+        "description2": "Ces statistiques seront complètement anonymes et concerneront uniquement l'utilisation des fonctionnalités de Rature, conformément à notre <link>politique de confidentialité</link>.",
+        "description3": "Vous pourrez vous désinscrire complètement de ces statistiques depuis cette page.",
+        "subscribe": "Inscription",
+        "unsubscribe": "Désinscription"
+      }
+    },
+    "appearance": {
+      "title": "Apparence",
+      "theme": {
+        "title": "Thème",
+        "description": "Vous êtes plutôt <bold>clair</bold> ou <bold>obscur</bold> ?",
+        "light": "Lumineux",
+        "dark": "Sombre"
+      },
+      "language": {
+        "title": "Langue",
+        "description": "Choisissez la langue de l'interface."
+      }
+    },
+    "cache": {
+      "title": "Gestion du cache",
+      "files": {
+        "title": "Fichiers mis en cache",
+        "description1": "Rature enregistre dans votre navigateur les outils nécessaires au traitement de vos documents. Cela évite de les télécharger à chaque utilisation.",
+        "description2": "Lors de votre première utilisation, le chargement peut donc être un peu plus long. Ces fichiers occupent toutefois de l'espace sur votre appareil.",
+        "description3": "Vous pouvez les supprimer à tout moment si vous ne souhaitez plus utiliser Rature."
+      },
+      "totalSize": "Taille totale sur le disque",
+      "totalSizeValue": "0 octets",
+      "fileCount": "Nombre de fichiers",
+      "refresh": "Rafraîchir le cache",
+      "delete": "Supprimer le cache",
+      "siteData": {
+        "title": "Données du site",
+        "description": "Vous pouvez également supprimer toutes les données de Rature, y compris les fichiers en cache et les paramètres du site. Cette action aura pour effet de recharger la page et remettra Rature à son état d'origine.",
+        "deleteAll": "Supprimer toutes les données"
+      }
+    }
+  },
+  "about": {
+    "title": "À propos de",
+    "observation": {
+      "title": "Le constat",
+      "description": "Utiliser des outils IA implique souvent de partager des documents contenant des informations sensibles : noms, prénoms, adresses, emails ou encore des données client."
+    },
+    "manual": {
+      "title": "La solution manuelle",
+      "description": "Une solution consiste à anonymiser les documents <underline>à la main</underline> : chercher chaque information sensible, les masquer une par une, vérifier et revérifier.",
+      "note": "C'est long, fastidieux et source d'erreur."
+    },
+    "solution": {
+      "title": "résoud ce problème",
+      "p1": "L'outil détecte et masque <bold>automatiquement</bold> les données sensibles dans vos documents afin que vous puissiez les partager ou les analyser en toute sécurité.",
+      "p2": "Contrairement à de nombreux services en ligne, <app/> fonctionne entièrement dans votre navigateur : vos fichiers ne sont jamais envoyés à un serveur et ne quittent jamais votre appareil.",
+      "p3": "Le projet suit une philosophie simple : vous devez pouvoir utiliser des outils IA sans compromettre la confidentialité de vos données."
+    },
+    "cta": {
+      "button": "Essayez",
+      "buttonSuffix": "maintenant !",
+      "sub": "C'est gratuit, illimité et sécurisé."
+    },
+    "howItWorks": {
+      "title": "Comment ça marche ?",
+      "step1": {
+        "title": "1. Importez votre PDF",
+        "description": "Glissez simplement votre document dans l'application. Le traitement commence immédiatement dans votre navigateur."
+      },
+      "step2": {
+        "title": "2. Détection automatique des données sensibles",
+        "description": "analyse le document et identifie les informations potentiellement sensibles : noms, adresses, emails, numéros de téléphone, identifiants, etc."
+      },
+      "step3": {
+        "title": "3. Éditez les éléments détectés",
+        "description": "Les données repérées sont mises en évidence dans le document. Vous pouvez rapidement vérifier et ajuster ce qui doit être anonymisé (Un double-clic pour masquer/ajouter)."
+      },
+      "step4": {
+        "title": "4. Vérifier les ratures",
+        "description": "En un clic, vous pouvez prévisualiser le document anonymisé."
+      },
+      "step5": {
+        "title": "5. Exportez votre PDF anonymisé",
+        "description": "Téléchargez votre document anonymisé et utilisez-le en toute sécurité : partage, analyse par une IA, archivage, etc."
+      },
+      "localNote": "Tout le processus se déroule <bold>100 % localement dans votre navigateur</bold>.",
+      "noLeave": "Vos fichiers ne quittent jamais votre ordinateur."
+    },
+    "openSource": {
+      "title": "Open source et transparent",
+      "isOpenSource": "est un projet <underline>open source</underline>.",
+      "viewCode": "Consulter le code sur GitHub",
+      "sourceDesc": "Le code source est public. Il peut être consulté et vérifié. Cette transparence est essentielle pour un outil qui traite des documents potentiellement sensibles.",
+      "sourceDesc2": "Vous pouvez consulter la manière dont les fichiers sont analysés, comment les entités sont détectées dans le texte et comment l'anonymisation est appliquée.",
+      "devNote": "Vous êtes développeur ?",
+      "devContrib": "Les <githubLink>contributions</githubLink> au projet sont les bienvenues !",
+      "nonDevNote": "Vous n'êtes pas développeur ?",
+      "nonDevContrib": "<fiderLink>Suggérez-nous des améliorations</fiderLink> et nous examinerons la faisabilité !",
+      "philosophy": "Nous sommes convaincus que les outils de confidentialité doivent être <bold>ouverts et vérifiables pour être dignes de confiance</bold>."
+    }
+  },
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "lastUpdated": "Dernière mise à jour : 24/03/2026",
+    "s1": {
+      "title": "1. Présentation",
+      "p1": "Rature est un outil permettant d'anonymiser des documents PDF en masquant les informations sensibles avant leur partage.",
+      "p2": "La protection de la vie privée est un principe fondamental du projet. L'outil a été conçu pour fonctionner <bold>sans collecte de données personnelles et sans transfert de documents vers un serveur</bold>."
+    },
+    "s2": {
+      "title": "2. Traitement des documents",
+      "p1": "Tous les documents sont traités <bold>localement dans votre navigateur</bold>.",
+      "p2": "Cela signifie que :",
+      "li1": "Les fichiers PDF <bold>ne sont jamais envoyés à un serveur</bold>.",
+      "li2": "Aucun document <bold>n'est stocké</bold>.",
+      "li3": "Aucun contenu de document <bold>n'est analysé ou conservé par un serveur</bold>.",
+      "p3": "Le traitement est effectué directement sur votre appareil."
+    },
+    "s3": {
+      "title": "3. Données collectées",
+      "p1": "Rature ne collecte <bold>aucune donnée personnelle</bold>.",
+      "p2": "Aucun élément contenu dans les documents que vous utilisez avec l'outil n'est transmis, enregistré ou analysé par un serveur. Le service peut uniquement mesurer <bold>des informations techniques anonymes liées au fonctionnement de l'application</bold>, telles que :",
+      "li1": "<bold>Pages vues</bold> (les pages que vous avez consulté).",
+      "li2": "<bold>Visiteurs</bold> (appareil, navigateur et système d'exploitation).",
+      "li3": "<bold>Lieu</bold> (ville, région et pays).",
+      "li4": "<bold>Provenance</bold> (depuis quel site vous avez atteint Rature).",
+      "li5": "Les <bold>erreurs techniques</bold> (ex. : échec de l'anonymisation, pour le débogage).",
+      "p3": "<bold>Ces informations ne permettent en aucun cas d'identifier un utilisateur ou un document.</bold>"
+    },
+    "s4": {
+      "title": "4. Cookies et traceurs",
+      "p1": "Rature <bold>n'utilise aucun cookie</bold> et n'installe aucun traceur sur votre appareil."
+    },
+    "s5": {
+      "title": "5. Vos droits",
+      "s5_1": {
+        "title": "5.1 Engagement de transparence",
+        "p1": "Même si Rature ne collecte aucune donnée personnelle identifiable, nous nous engageons à respecter les principes du <bold>Règlement Général sur la Protection des Données (RGPD)</bold> et à vous informer de vos droits. Les sections suivantes détaillent ces droits, ainsi que les mesures techniques et organisationnelles mises en place pour protéger vos données."
+      },
+      "s5_2": {
+        "title": "5.2 Vos droits",
+        "p1": "Conformément au RGPD et aux autres lois applicables, vous disposez des droits suivants concernant vos données personnelles :",
+        "li1": "<bold>Droit d'accès</bold> : Vous pouvez nous demander si des données vous concernant sont traitées et obtenir une copie de ces données.",
+        "li2": "<bold>Droit de rectification</bold> : Vous pouvez demander la correction de données inexactes ou incomplètes.",
+        "li3": "<bold>Droit à l'effacement</bold> (\"droit à l'oubli\") : Vous pouvez demander la suppression de vos données dans certains cas (ex. : données traitées illégalement).",
+        "li4": "<bold>Droit à la limitation du traitement</bold> : Vous pouvez demander la suspension du traitement de vos données dans des cas spécifiques.",
+        "li5": "<bold>Droit à la portabilité</bold> : Vous pouvez recevoir vos données dans un format structuré et les transmettre à un autre service.",
+        "li6": "<bold>Droit d'opposition</bold> : Vous pouvez vous opposer au traitement de vos données pour des motifs légitimes."
+      },
+      "s5_3": {
+        "title": "5.3 Comment exercer vos droits ?",
+        "p1": "Bien que Rature ne collecte <bold>aucune donnée personnelle identifiable</bold>, vous pouvez nous contacter via :",
+        "li1": "Le dépôt GitHub du projet : <githubLink>github.com/TerriaConseil/rature</githubLink>",
+        "li2": "L'adresse email dédiée : <mailLink>contact@rature.fr</mailLink>",
+        "p2": "Nous nous engageons à répondre à votre demande sous <bold>un mois</bold> (délai pouvant être prolongé de deux mois en cas de complexité)."
+      },
+      "s5_4": {
+        "title": "5.4 Droit d'introduire une réclamation",
+        "p1": "Si vous estimez que vos droits ne sont pas respectés, vous pouvez introduire une réclamation auprès de la <bold>CNIL</bold> (Commission Nationale de l'Informatique et des Libertés) :"
+      }
+    },
+    "s6": {
+      "title": "6. Open source et transparence",
+      "p1": "Rature est un projet <bold>open source</bold>. Le code source est publiquement accessible pour permettre :",
+      "li1": "La vérification du traitement des documents.",
+      "li2": "L'audit du fonctionnement de l'application.",
+      "li3": "La contribution au projet.",
+      "p2": "🔗 <bold>Lien vers le dépôt GitHub</bold> : <githubLink>github.com/TerriaConseil/rature</githubLink>"
+    },
+    "s7": {
+      "title": "7. Hébergement",
+      "p1": "Rature est un service <bold>100% client-side</bold> : le traitement des documents s'effectue <bold>uniquement dans votre navigateur</bold>, sans envoi ni stockage sur un serveur. Cependant, pour rendre l'outil accessible en ligne, le site web est hébergé par un <bold>prestataire technique tiers</bold>.",
+      "s7_1": {
+        "title": "7.1 Prestataire d'hébergement",
+        "p1": "Le site est actuellement hébergé par :",
+        "provider": "🏢 <bold>OVH Cloud</bold>",
+        "address": "📍 2 rue Kellermann, 59100 Roubaix, France",
+        "website": "🔗 <bold>Site web</bold> : <hostLink>www.ovhcloud.com</hostLink>",
+        "p2": "Ce prestataire agit en tant que <bold>sous-traitant</bold> au sens du RGPD (article 28) et n'a accès <bold>qu'aux données techniques minimales</bold> nécessaires au fonctionnement du service."
+      },
+      "s7_2": {
+        "title": "7.2 Changement de prestataire",
+        "p1": "En cas de changement de prestataire d'hébergement :",
+        "li1": "Nous vous en informerons via une mise à jour de cette <bold>politique de confidentialité</bold>.",
+        "li2": "Les données techniques précédemment collectées seront <bold>supprimées</bold> chez l'ancien prestataire avant la migration."
+      }
+    },
+    "s8": {
+      "title": "8. Sécurité",
+      "p1": "L'architecture de Rature a été conçue pour limiter les risques liés aux documents sensibles :",
+      "li1": "Traitement <bold>100% local</bold> dans le navigateur.",
+      "li2": "<bold>Aucun transfert</bold> de fichiers vers un serveur.",
+      "li3": "<bold>Aucun stockage</bold> de documents.",
+      "p2": "Recommandations pour une sécurité optimale :",
+      "rec1": "Utilisez un <bold>navigateur à jour</bold> (ex. : Firefox, Chrome).",
+      "rec2": "Évitez les <bold>extensions non vérifiées</bold> qui pourraient accéder aux données.",
+      "rec3": "Vérifiez le <bold>résultat de l'anonymisation</bold> avant de partager le document."
+    },
+    "s9": {
+      "title": "9. Clause de non-responsabilité",
+      "p1": "Rature fournit un outil d'anonymisation <bold>sans garantie absolue</bold>. L'utilisateur reste responsable :",
+      "li1": "De la <bold>vérification du résultat</bold> (ex. : absence de données résiduelles dans le PDF anonymisé).",
+      "li2": "Du <bold>respect des lois applicables</bold> à ses documents (ex. : droit d'auteur, secret professionnel).",
+      "li3": "De l'utilisation de l'outil dans un <bold>environnement sécurisé</bold> (ex. : navigateur à jour, réseau non compromis)."
+    },
+    "s10": {
+      "title": "10. Contact",
+      "p1": "Pour toute question relative à cette politique ou au fonctionnement de Rature :",
+      "email": "📧 <bold>Email</bold> : <mailLink>contact@rature.fr</mailLink>",
+      "github": "🔗 <bold>Dépôt GitHub</bold> : <githubLink>github.com/TerriaConseil/rature</githubLink>"
+    },
+    "s11": {
+      "title": "11. Modification et notification des modifications",
+      "p1": "Cette politique de confidentialité peut être mise à jour pour refléter :",
+      "li1": "Les évolutions du service.",
+      "li2": "Les changements législatifs ou réglementaires.",
+      "li3": "Les retours des utilisateurs ou des autorités de protection des données.",
+      "howTitle": "Comment êtes-vous informé des modifications ?",
+      "how1": "La <bold>version en vigueur</bold> est toujours disponible sur cette page, avec la date de dernière mise à jour.",
+      "how2": "En cas de <bold>modification substantielle</bold> (ex. : changement de prestataire d'hébergement, ajout d'une collecte de données), nous vous en informerons via :",
+      "how2a": "Une <bold>bannière sur le site</bold> lors de votre prochaine visite.",
+      "how2b": "Un <bold>email</bold> si vous avez fourni une adresse de contact (ex. : pour contribuer au projet)."
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { BookOpen, CheckCircle, Cpu, ExternalLink, HardDriveDownload, ScanEye } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useNERWorker } from '@/hooks/useNERWorker.ts';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
@@ -11,16 +12,10 @@ interface LoadingPageProps {
   onComplete: () => void;
 }
 
-const STEPS = [
-  'Chargement du modèle de détection...',
-  'Lecture du document...',
-  'Détection des entités nommées...',
-  'Finalisation...',
-];
-
 const STEP_ICONS = [Cpu, BookOpen, ScanEye, CheckCircle];
 
 export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
+  const { t, i18n } = useTranslation();
   const { downloadProgress, processingProgress, modelTokens, status: workerStatus, error, initialize, processText, terminate } = useNERWorker();
   const { setModelTokens, setNerEntities } = useAnonymization();
   const { file, pageCount, processingStatus: pdfProcessingStatus, processFile } = usePdfProcessing();
@@ -126,10 +121,11 @@ export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
   }, [stepIndex]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!file) {
-    return <div>No file selected!</div>;
+    return <div>{t('errors.noFile')}</div>;
   }
 
   const StepIcon = STEP_ICONS[iconStep];
+  const steps = [t('loading.step0'), t('loading.step1'), t('loading.step2'), t('loading.step3')];
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-10 px-6">
@@ -151,7 +147,7 @@ export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
       </div>
 
       <div className="text-center space-y-2 max-w-sm">
-        <h2 className="text-xl font-semibold text-fg">Analyse en cours</h2>
+        <h2 className="text-xl font-semibold text-fg">{t('loading.title')}</h2>
         <p
           className="text-sm text-fg-muted truncate max-w-xs mx-auto animate-in fade-in duration-500"
           title={file.name}
@@ -162,7 +158,7 @@ export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
 
       <div className="w-full max-w-xs space-y-3">
         <div className="flex items-center justify-center gap-2">
-          {STEPS.map((_, i) => (
+          {steps.map((_, i) => (
             <span
               key={i}
               className={[
@@ -190,7 +186,7 @@ export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
           key={stepIndex}
           className="text-xs text-fg-subtle text-center h-4 animate-in fade-in slide-in-from-bottom-1 duration-300"
         >
-          {STEPS[stepIndex]}
+          {steps[stepIndex]}
         </p>
       </div>
 
@@ -199,11 +195,11 @@ export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
           <div className="rounded-xl border border-border-theme bg-surface-subtle p-3 space-y-2">
             <div className="flex items-center gap-1.5 text-fg-muted">
               <ScanEye size={12} strokeWidth={1.5} />
-              <span className="text-xs">Analyse des entités</span>
+              <span className="text-xs">{t('loading.entityAnalysis')}</span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-xs text-fg-muted">Page</span>
+              <span className="text-xs text-fg-muted">{t('loading.page')}</span>
               <span
                 className="text-sm font-medium text-fg tabular-nums animate-in fade-in duration-200"
               >
@@ -223,7 +219,7 @@ export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
 
             <div className="flex items-center justify-between">
               <span className="text-xs text-fg-subtle">
-                ~{processingProgress ? (processingProgress.chunksProcessed * 150).toLocaleString('fr-FR') : '0'} mots analysés
+                {t('loading.wordsAnalyzed', { count: processingProgress ? (processingProgress.chunksProcessed * 150).toLocaleString(i18n.language) : '0' })}
               </span>
               <span className="text-xs text-accent font-medium tabular-nums">
                 {processingProgress ? Math.round((processingProgress.chunksProcessed / processingProgress.totalChunks) * 100) : 0}%
@@ -240,7 +236,7 @@ export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
               <>
                 <div className="flex items-center gap-1.5 text-fg-muted">
                   <HardDriveDownload size={12} strokeWidth={1.5} />
-                  <span className="text-xs">Téléchargement du modèle</span>
+                  <span className="text-xs">{t('loading.modelDownload')}</span>
                 </div>
 
                 <p className="flex items-center gap-2 text-xs font-mono text-fg-subtle" title={downloadProgress.modelName}>
@@ -265,13 +261,13 @@ export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
                 </div>
 
                 <p className="text-[10px] text-fg-subtle/60">
-                  Mis en cache après le premier chargement
+                  {t('loading.cachedNote')}
                 </p>
               </>
             ) : (
               <div className="flex items-center gap-2 text-fg-muted">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse shrink-0" />
-                <span className="text-xs">Chargement depuis le cache...</span>
+                <span className="text-xs">{t('loading.loadingFromCache')}</span>
               </div>
             )}
           </div>

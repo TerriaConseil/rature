@@ -1,4 +1,5 @@
 import { Laptop, WandSparkles, WifiOff } from 'lucide-react';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { DropZone } from '@/components/home/DropZone.tsx';
 import { Footer } from '@/components/home/Footer.tsx';
@@ -11,6 +12,7 @@ interface HomePageProps {
 }
 
 export function HomePage({ onFileSelect }: HomePageProps) {
+  const { t } = useTranslation();
   const { setFile } = usePdfProcessing();
 
   const handleFileSelected = (file: File) => {
@@ -24,16 +26,22 @@ export function HomePage({ onFileSelect }: HomePageProps) {
 
       <section className="flex-1 mx-auto h-full w-full max-w-300 px-6 pt-56 pb-16 flex flex-col gap-16 items-center">
         <h1 className="text-center text-5xl lg:text-6xl font-extrabold text-fg tracking-tight leading-[1.1]">
-          <span className="text-accent">Anonymisez vos PDF</span>
+          <span className="text-accent">{t('home.title')}</span>
           <br/>
-          avant de les envoyer à une IA
+          {t('home.subtitle')}
         </h1>
 
         <div className="grid grid-cols-2 items-center gap-16">
           <p className="text-lg text-fg-muted leading-relaxed max-w-lg">
-            <RatureLogo size="lg" /> détecte et masque automatiquement les données sensibles (noms, adresses, emails, téléphones, etc.)
-            directement <span className="font-bold">dans votre navigateur</span>.<br />
-            Vos documents <span className="text-accent font-bold">ne quittent jamais</span> votre ordinateur.
+            <Trans
+              i18nKey="home.description"
+              components={{
+                logo: <RatureLogo size="lg" />,
+                bold: <span className="font-bold" />,
+                accent: <span className="text-accent font-bold" />,
+                br: <br />,
+              }}
+            />
           </p>
 
           <div
@@ -45,15 +53,15 @@ export function HomePage({ onFileSelect }: HomePageProps) {
           <ul className="flex items-center gap-4 col-span-2 justify-center">
             <li className="flex items-center gap-2 bg-neutral-300 text-neutral-600 px-4 py-2 font-medium">
               <Laptop size={20} />
-              100% local
+              {t('home.badges.local')}
             </li>
             <li className="flex items-center gap-2 bg-neutral-300 text-neutral-600 px-4 py-2 font-medium">
               <WandSparkles size={20} />
-              Détection automatique
+              {t('home.badges.detection')}
             </li>
             <li className="flex items-center gap-2 bg-neutral-300 text-neutral-600 px-4 py-2 font-medium">
               <WifiOff size={20} />
-              Aucun serveur
+              {t('home.badges.noServer')}
             </li>
           </ul>
         </div>
@@ -62,10 +70,9 @@ export function HomePage({ onFileSelect }: HomePageProps) {
       <div className="fixed inset-0 z-100 flex items-center justify-center bg-surface p-8 md:hidden">
         <div className="text-center max-w-sm">
           <p className="text-3xl mb-4">🖥️</p>
-          <h2 className="text-xl font-bold text-fg mb-2">Version desktop recommandée</h2>
+          <h2 className="text-xl font-bold text-fg mb-2">{t('home.mobile.title')}</h2>
           <p className="text-sm text-fg-muted">
-            <span className="bg-neutral-800 text-neutral-100 px-2 py-1 font-bold [font-variant:small-caps]">rature</span> est optimisé pour une utilisation sur écran large.
-            Veuillez accéder à l'application depuis un ordinateur.
+            <span className="bg-neutral-800 text-neutral-100 px-2 py-1 font-bold [font-variant:small-caps]">rature</span> {t('home.mobile.description')}
           </p>
         </div>
       </div>

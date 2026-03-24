@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { NER_MODELS, type NERModel } from '@/models/utils.ts';
+import i18n from '@/lib/i18n.ts';
 import { cn } from '@/lib/utils.ts';
 import type { EntityMatch } from '@/lib/entity-expansion.ts';
 import type { GroupedEntity } from '@/types/index.ts';
@@ -156,12 +157,12 @@ export function createTextParts({
           {isSelected && onDragStart && (
             <>
               <span
-                aria-label="Étendre à gauche"
+                aria-label={i18n.t('pdf.expandLeft')}
                 className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-4 rounded-sm bg-accent cursor-ew-resize opacity-0 group-hover/ent:opacity-100 transition-opacity duration-200 z-10"
                 onMouseDown={e => onDragStart(e, entity.id, 'left')}
               />
               <span
-                aria-label="Étendre à droite"
+                aria-label={i18n.t('pdf.expandRight')}
                 className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-4 rounded-sm bg-accent cursor-ew-resize opacity-0 group-hover/ent:opacity-100 transition-opacity duration-200 z-10"
                 onMouseDown={e => onDragStart(e, entity.id, 'right')}
               />
