@@ -53,10 +53,7 @@ export function HomePage({ onFileSelect }: HomePageProps) {
           className="text-center tracking-tight leading-[1.05]"
           style={{ animation: 'fade-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) both' }}
         >
-          <span
-            className="block text-accent text-6xl lg:text-7xl font-extrabold"
-            style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
-          >
+          <span className="block text-accent text-6xl lg:text-7xl font-extrabold">
             {t('home.title')}
           </span>
           <span className="block text-5xl lg:text-6xl font-extrabold text-fg mt-2">
