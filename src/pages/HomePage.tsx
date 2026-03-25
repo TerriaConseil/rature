@@ -6,11 +6,9 @@ import { Footer } from '@/components/home/Footer.tsx';
 import { Navbar } from '@/components/Navbar.tsx';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 import { RatureLogo } from '@/components/RatureLogo.tsx';
-import type { NERModel } from '@/models/utils.ts';
 
 interface HomePageProps {
-  onFileSelect: () => void
-  onModelSelect: (model: NERModel) => void
+  onFileSelect: () => void;
 }
 
 const BADGES = [
@@ -19,7 +17,7 @@ const BADGES = [
   { icon: WifiOff, key: 'home.badges.noServer' },
 ] as const;
 
-export function HomePage({ onFileSelect, onModelSelect }: HomePageProps) {
+export function HomePage({ onFileSelect }: HomePageProps) {
   const { t } = useTranslation();
   const { setFile } = usePdfProcessing();
 
@@ -69,7 +67,7 @@ export function HomePage({ onFileSelect, onModelSelect }: HomePageProps) {
             animation: 'fade-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both',
           }}
         >
-          <DropZone onFileSelect={handleFileSelected} onModelSelect={onModelSelect} />
+          <DropZone onFileSelect={handleFileSelected} />
         </div>
 
         <ul

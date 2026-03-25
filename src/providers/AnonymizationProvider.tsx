@@ -9,7 +9,7 @@ type AnonymizationProviderProps = {
 };
 
 export function AnonymizationProvider({ children }: AnonymizationProviderProps) {
-  const [modelName] = useState<NERModel>(NER_MODELS_NAMES[0]);
+  const [modelName, setModel] = useState<NERModel>(NER_MODELS_NAMES[0]);
   const [modelTokens, setModelTokens] = useState<string[]>([]);
   const [nerEntities, setNerEntities] = useState<GroupedEntity[]>([]);
 
@@ -34,8 +34,9 @@ export function AnonymizationProvider({ children }: AnonymizationProviderProps) 
         addEntity,
         removeEntity,
         reset,
-        setModelTokens,
+        setModel,
         setNerEntities,
+        setModelTokens,
       }}
     >
       {children}

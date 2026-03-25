@@ -10,6 +10,7 @@ interface AnonymizationContextValue {
   addEntity: (entity: GroupedEntity) => void;
   removeEntity: (entityId: GroupedEntity["id"]) => void;
   reset: () => void;
+  setModel: (modelName: NERModel) => void;
   setModelTokens: (tokens: string[]) => void;
   setNerEntities: (entities: GroupedEntity[]) => void;
 };
@@ -21,6 +22,7 @@ export const AnonymizationContext = createContext<AnonymizationContextValue>({
   addEntity: () => {},
   removeEntity: () => {},
   reset: () => {},
+  setModel: () => {},
   setModelTokens: () => {},
   setNerEntities: () => {},
 });

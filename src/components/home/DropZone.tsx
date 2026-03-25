@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ChevronDown, ExternalLink, RotateCcw } from 'lucide-react';
 
 import { Button } from '@/components/ui/button.tsx';
+import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { cn } from '@/lib/utils.ts';
 import {
   DEFAULT_FEATURES,
@@ -15,7 +16,7 @@ import {
   type Speed,
   type Focus,
 } from '@/models/nerModelFeatures.ts';
-import { NER_MODELS, type NERModel } from '@/models/utils.ts';
+import { NER_MODELS, NER_MODELS_NAMES } from '@/models/utils.ts';
 
 const TEXT_LINES = [
   { width: '85%' },
@@ -28,8 +29,7 @@ const TEXT_LINES = [
 ];
 
 interface DropZoneProps {
-  onFileSelect: (file: File) => void
-  onModelSelect: (model: NERModel) => void
+  onFileSelect: (file: File) => void;
 }
 
 interface FeatureChipProps<T extends string> {
@@ -58,8 +58,9 @@ function FeatureChip<T extends string>({ option, selected, onSelect }: FeatureCh
   );
 }
 
-export function DropZone({ onFileSelect, onModelSelect }: DropZoneProps) {
+export function DropZone({ onFileSelect }: DropZoneProps) {
   const { t } = useTranslation();
+  const { modelName, setModel } = useAnonymization();
   const [isDragging, setIsDragging] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
@@ -78,10 +79,6 @@ export function DropZone({ onFileSelect, onModelSelect }: DropZoneProps) {
   const activeSpeed = SPEED_OPTIONS.find(o => o.value === features.speed)!;
   const activeFocus = FOCUS_OPTIONS.find(o => o.value === features.focus)!;
   const activeFeatures = [activeLanguage, activeSpeed, activeFocus];
-
-  useEffect(() => {
-    onModelSelect(resolvedModel);
-  }, [resolvedModel, onModelSelect]);
 
   const handleFile = useCallback(
     (file: File) => {
@@ -105,9 +102,28 @@ export function DropZone({ onFileSelect, onModelSelect }: DropZoneProps) {
     if (file) handleFile(file);
   };
 
-  const setLanguage = (language: Language) => setFeatures(f => ({ ...f, language }));
-  const setSpeed = (speed: Speed) => setFeatures(f => ({ ...f, speed }));
-  const setFocus = (focus: Focus) => setFeatures(f => ({ ...f, focus }));
+  useEffect(() => {
+    if (modelName === resolvedModel) return;
+
+    setModel(resolvedModel);
+  }, [modelName, resolvedModel, setModel]);
+
+  const setLanguage = (language: Language) => {
+    setFeatures(f => ({ ...f, language }));
+  };
+
+  const setSpeed = (speed: Speed) => {
+    setFeatures(f => ({ ...f, speed }));
+  };
+
+  const setFocus = (focus: Focus) => {
+    setFeatures(f => ({ ...f, focus }));
+  };
+
+  const resetFeatures = () => {
+    setModel(NER_MODELS_NAMES[0]);
+    setFeatures(DEFAULT_FEATURES);
+  };
 
   const isActive = isDragging || isHovering;
 
@@ -406,7 +422,7 @@ export function DropZone({ onFileSelect, onModelSelect }: DropZoneProps) {
               <div className="pt-1 flex justify-end">
                 <Button
                   variant="ghost"
-                  onClick={() => setFeatures(DEFAULT_FEATURES)}
+                  onClick={resetFeatures}
                 >
                   <RotateCcw size={11} />
                   {t('dropzone.reset')}
