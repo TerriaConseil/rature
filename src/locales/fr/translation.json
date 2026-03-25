@@ -43,7 +43,8 @@
     "focus_general": "Général",
     "focus_pii": "Données personnelles",
     "selectedModel": "Modèle sélectionné",
-    "learnMore": "En savoir plus"
+    "learnMore": "En savoir plus",
+    "reset": "Réinitialiser"
   },
   "footer": {
     "source": "Code source",

@@ -43,7 +43,8 @@
     "focus_general": "General",
     "focus_pii": "PII & Legal",
     "selectedModel": "Selected model",
-    "learnMore": "Learn more"
+    "learnMore": "Learn more",
+    "reset": "Reset to defaults"
   },
   "footer": {
     "source": "Source code",

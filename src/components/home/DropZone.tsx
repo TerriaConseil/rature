@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, ExternalLink } from 'lucide-react';
+import { ChevronDown, ExternalLink, RotateCcw } from 'lucide-react';
 
 import { cn } from '@/lib/utils.ts';
 import {
@@ -258,11 +258,10 @@ export function DropZone({ onFileSelect, onModelSelect }: DropZoneProps) {
                 key={isAdvanced ? 'advanced' : 'standard'}
                 className={cn(
                   'inline-flex items-center px-1.5 py-px rounded-full text-[9px] font-bold uppercase tracking-widest transition-colors duration-300',
-                  isActive
-                    ? 'bg-white/25 text-white'
-                    : isAdvanced
-                      ? 'bg-accent/15 text-accent'
-                      : 'bg-neutral-100 dark:bg-neutral-800 text-fg-muted',
+                  isAdvanced && isActive && 'bg-accent text-white dark:bg-neutral-800/10 dark:text-accent',
+                  isAdvanced && !isActive && 'bg-accent/15 text-accent',
+                  !isAdvanced && isActive && 'bg-white/20 text-white/85 dark:bg-neutral-900/20 dark:text-neutral-900/75',
+                  !isAdvanced && !isActive && 'bg-neutral-100 dark:bg-neutral-800 text-fg-muted',
                 )}
                 style={{ animation: 'fade-up 0.15s ease both' }}
               >
@@ -401,6 +400,19 @@ export function DropZone({ onFileSelect, onModelSelect }: DropZoneProps) {
                 ))}
               </div>
             </div>
+
+            {isAdvanced && (
+              <div className="pt-1 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setFeatures(DEFAULT_FEATURES)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-fg-muted border border-border-theme hover:border-accent/60 hover:text-accent transition-all duration-200"
+                >
+                  <RotateCcw size={11} />
+                  {t('dropzone.reset')}
+                </button>
+              </div>
+            )}
 
           </div>
         </div>
