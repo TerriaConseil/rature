@@ -3,7 +3,6 @@ import {
   BertBaseMerModel,
   CamembertNerPiiModel,
   DistilbertBaseMultiCasedNerModel,
-  NERmembert24Entities,
   NERmemberta4Entities,
   NERmembertLarge4Entities,
 } from "@/models/index.ts";
@@ -23,8 +22,6 @@ async function initializePipeline(modelName: NERModel = 'bertBaseNer', preferred
       nerPipeline = new CamembertNerPiiModel();
     } else if (modelName === 'distilbertBaseMultiCasedNer') {
       nerPipeline = new DistilbertBaseMultiCasedNerModel();
-    } else if (modelName === 'nermembert24Entities') {
-      nerPipeline = new NERmembert24Entities();
     } else if (modelName === 'nermembertLarge4Entities') {
       nerPipeline = new NERmembertLarge4Entities();
     } else if (modelName === 'nermemberta4Entities') {
