@@ -23,7 +23,27 @@
   },
   "dropzone": {
     "drop": "Déposez votre PDF ici",
-    "idle": "Déposez votre PDF ou cliquez pour importer"
+    "idle": "Déposez votre PDF ou cliquez pour importer",
+    "steps": "Les étapes de traitement :",
+    "step1": "1. Le modèle est téléchargé",
+    "step2": "2. Le texte du document est extrait",
+    "step3": "3. Les données sensibles sont analysées",
+    "step4": "4. Les entités détectées sont masquées",
+    "standard": "Mode standard",
+    "advanced": "Mode avancé",
+    "language": "Langue",
+    "speed": "Vitesse",
+    "focus": "Type d'entités",
+    "lang_english": "Anglais",
+    "lang_french": "Français",
+    "lang_multilingual": "Multilingue",
+    "speed_fast": "Rapide",
+    "speed_balanced": "Équilibré",
+    "speed_accurate": "Précis",
+    "focus_general": "Général",
+    "focus_pii": "Données personnelles",
+    "selectedModel": "Modèle sélectionné",
+    "learnMore": "En savoir plus"
   },
   "footer": {
     "source": "Code source",

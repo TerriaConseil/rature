@@ -8,7 +8,7 @@ import type { AppPage } from '@/types/index.ts';
 
 export default function App() {
   const [page, setPage] = useState<AppPage>('home');
-  const [modelName] = useState<NERModel>(NER_MODELS_NAMES[0]);
+  const [modelName, setModelName] = useState<NERModel>(NER_MODELS_NAMES[0]);
 
   const handleFileSelected = useCallback(() => {
     setPage('loading');
@@ -25,7 +25,7 @@ export default function App() {
   return (
     <>
       {page === 'home' && (
-        <HomePage onFileSelect={handleFileSelected} />
+        <HomePage onFileSelect={handleFileSelected} onModelSelect={setModelName} />
       )}
 
       {page === 'loading' && (
