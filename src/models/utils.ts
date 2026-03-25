@@ -36,7 +36,7 @@ export const NER_MODELS: NERModelMeta = {
   bertBaseNer: {
     label: 'BERT Base NER',
     url: 'https://huggingface.co/dslim/bert-base-NER',
-    size: '430 MB',
+    size: '411 MB',
     language: 'English',
     entities: {
       DATE: {
@@ -114,7 +114,7 @@ export const NER_MODELS: NERModelMeta = {
   camembertNerPii: {
     label: 'CamemBERT NER PII',
     url: 'https://huggingface.co/Anonym-IA/V2-camembert-ner-pii-onnx-fp32',
-    size: '440 MB',
+    size: '425 MB',
     language: 'Français',
     entities: {
       ACCOUNTNUMBER: {
@@ -409,7 +409,7 @@ export const NER_MODELS: NERModelMeta = {
   nermembertLarge4Entities: {
     label: 'NERmembert Large 4 entities',
     url: 'https://huggingface.co/CATIE-AQ/NERmembert-large-4entities',
-    size: '1.4 GB',
+    size: '1.28 GB',
     language: 'Français',
     entities: {
       DATE: {
@@ -487,7 +487,7 @@ export const NER_MODELS: NERModelMeta = {
   nermemberta4Entities: {
     label: 'NERmemberta 4 entities',
     url: 'https://huggingface.co/CATIE-AQ/NERmemberta-4entities',
-    size: '440 MB',
+    size: '423 MB',
     language: 'Français',
     entities: {
       DATE: {
@@ -565,7 +565,7 @@ export const NER_MODELS: NERModelMeta = {
   distilbertBaseMultiCasedNer: {
     label: 'DistilBERT Base Muti NER',
     url: 'https://huggingface.co/Davlan/distilbert-base-multilingual-cased-ner-hrl',
-    size: '250 MB',
+    size: '514 MB',
     language: 'Multilingue',
     entities: {
       DATE: {
