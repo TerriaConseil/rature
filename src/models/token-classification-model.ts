@@ -22,6 +22,7 @@ type PartOfWordStrategy = 'none' | 'double-sharp-tokens' | 'bio-tagging' | 'mixe
 type InitOptions = {
   aggregationStrategy: AggregationStrategy;
   partOfWordStrategy: PartOfWordStrategy;
+  ignoredLabels?: string[];
 };
 
 type Candidate = NERPipelineEntity & { position: number };
@@ -41,14 +42,16 @@ export class TokenClassificationModel {
   private local: boolean;
   private aggregationStrategy: AggregationStrategy;
   private partOfWordStrategy: PartOfWordStrategy;
+  private ignoredLabels: string[];
 
   constructor(model: string, initOptions?: InitOptions) {
-    const options = initOptions || { aggregationStrategy: 'none', partOfWordStrategy: 'double-sharp-tokens' };
+    const options = initOptions || { aggregationStrategy: 'none', partOfWordStrategy: 'double-sharp-tokens', ignoredLabels: [] };
 
     this.model = model;
     this.local = model.startsWith('/local-models');
     this.aggregationStrategy = options.aggregationStrategy;
     this.partOfWordStrategy = options.partOfWordStrategy;
+    this.ignoredLabels = options.ignoredLabels || [];
 
     console.log(`TokenClassificationModel instantiated with ${model}`);
   }
@@ -79,7 +82,9 @@ export class TokenClassificationModel {
     }
 
     // @ts-expect-error id2label should exist on model config
-    const modelLabels: string[] = Object.values(this.classifier.model.config.id2label).filter((token) => token !== 'O');
+    const modelLabels: string[] = (Object.values(this.classifier.model.config.id2label) as string[])
+      .filter((token) => token !== 'O')
+      .filter((token) => !this.ignoredLabels.includes(token));
     const modelTokens = Array.from(new Set(modelLabels.map((label) => label.replace(/(B|I)-/, ''))));
 
     return {
@@ -151,7 +156,7 @@ export class TokenClassificationModel {
     const totalPages = this.textGroupedByPage.length;
 
     if (totalSize <= this.MAX_CHUNK_LENGTH) {
-      rawEntities = await this.classifier(this.fullText, { ignore_labels: [] }) as NERPipelineEntity[];
+      rawEntities = await this.classifier(this.fullText, { ignore_labels: this.ignoredLabels }) as NERPipelineEntity[];
       onProgress?.({ chunksProcessed: 1, totalChunks: 1, totalPages });
     } else {
       const nbTurns = Math.ceil(totalSize / this.MAX_CHUNK_LENGTH);
@@ -162,7 +167,7 @@ export class TokenClassificationModel {
 
         const partOfText = splittedText.slice(offset, limit).join(' ');
 
-        const results = (await this.classifier(partOfText, { ignore_labels: [] })) as NERPipelineEntity[];
+        const results = (await this.classifier(partOfText, { ignore_labels: this.ignoredLabels })) as NERPipelineEntity[];
 
         if (rawEntities.length > 0) {
           const lastIndex = rawEntities[rawEntities.length - 1].index;

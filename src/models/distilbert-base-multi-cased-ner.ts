@@ -4,7 +4,8 @@ export class DistilbertBaseMultiCasedNerModel extends TokenClassificationModel {
   constructor(){
     super('vgorce/distilbert-base-multi-cased-ner', {
       aggregationStrategy: 'none',
-      partOfWordStrategy: 'bio-tagging',
+      partOfWordStrategy: 'mixed',
+      ignoredLabels: ['B-DATE', 'I-DATE'],
     });
   }
 }
