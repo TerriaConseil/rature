@@ -25,6 +25,7 @@ type NERModelMeta = {
   [key in NERModel]: {
     label: string;
     url: string;
+    size: string;
     entities: {
       [key: string]: EntityMeta;
     };
@@ -35,6 +36,7 @@ export const NER_MODELS: NERModelMeta = {
   bertBaseNer: {
     label: 'BERT Base NER',
     url: 'https://huggingface.co/dslim/bert-base-NER',
+    size: '430 MB',
     entities: {
       DATE: {
         label: "Date",
@@ -111,6 +113,7 @@ export const NER_MODELS: NERModelMeta = {
   camembertNerPii: {
     label: 'CamemBERT NER PII',
     url: 'https://huggingface.co/Anonym-IA/V2-camembert-ner-pii-onnx-fp32',
+    size: '440 MB',
     entities: {
       ACCOUNTNUMBER: {
         label: "N° de compte",
@@ -404,6 +407,7 @@ export const NER_MODELS: NERModelMeta = {
   nermembert24Entities: {
     label: 'NERmembert2 4 entities',
     url: 'https://huggingface.co/CATIE-AQ/NERmembert2-4entities',
+    size: '440 MB',
     entities: {
       DATE: {
         label: "Date",
@@ -480,6 +484,7 @@ export const NER_MODELS: NERModelMeta = {
   nermembertLarge4Entities: {
     label: 'NERmembert Large 4 entities',
     url: 'https://huggingface.co/CATIE-AQ/NERmembert-large-4entities',
+    size: '1.4 GB',
     entities: {
       DATE: {
         label: "Date",
@@ -556,6 +561,7 @@ export const NER_MODELS: NERModelMeta = {
   nermemberta4Entities: {
     label: 'NERmemberta 4 entities',
     url: 'https://huggingface.co/CATIE-AQ/NERmemberta-4entities',
+    size: '440 MB',
     entities: {
       DATE: {
         label: "Date",
@@ -632,6 +638,7 @@ export const NER_MODELS: NERModelMeta = {
   distilbertBaseMultiCasedNer: {
     label: 'DistilBERT Base Muti NER',
     url: 'https://huggingface.co/Davlan/distilbert-base-multilingual-cased-ner-hrl',
+    size: '250 MB',
     entities: {
       DATE: {
         label: "Date",

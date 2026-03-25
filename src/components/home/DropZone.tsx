@@ -280,6 +280,17 @@ export function DropZone({ onFileSelect, onModelSelect }: DropZoneProps) {
                 {modelMeta.label}
               </span>
 
+              <span
+                key={resolvedModel + '-size'}
+                className={cn(
+                  'text-[11px] font-medium tabular-nums transition-colors duration-300',
+                  isActive ? 'text-white/60 dark:text-neutral-700' : 'text-fg-muted',
+                )}
+                style={{ animation: 'fade-up 0.18s ease both' }}
+              >
+                {modelMeta.size}
+              </span>
+
               <a
                 href={modelMeta.url}
                 target="_blank"
