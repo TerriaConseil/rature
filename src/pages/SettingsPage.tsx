@@ -1,14 +1,14 @@
-import { CheckSquare, ExternalLink, Moon, PauseCircle, PlayCircle, RefreshCcw, Sun, Trash2 } from "lucide-react";
+import { ExternalLink, Moon, PauseCircle, PlayCircle, RefreshCcw, Sun, Trash2 } from "lucide-react";
 import { Link } from "react-router";
 import { Trans, useTranslation } from "react-i18next";
 
 import { Footer } from "@/components/home/Footer.tsx";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher.tsx";
 import { Navbar } from "@/components/Navbar.tsx";
-import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { useTheme } from "@/hooks/useTheme.tsx";
-import { NER_MODELS } from "@/models/utils.ts";
+import { cn } from '@/lib/utils.ts';
+import { NER_MODELS, NER_MODELS_NAMES } from "@/models/utils.ts";
 
 const bold = <span className="font-bold" />;
 const italic = <span className="italic" />;
@@ -36,25 +36,42 @@ export function SettingsPage() {
                 <p className="text-md font-bold">{t('settings.documents.model.title')}</p>
                 <p className="mt-1 text-fg-muted">
                   <Trans i18nKey="settings.documents.model.description1" components={{ bold, italic }} />
-                  <br />
-                  <br />
-                  <Trans i18nKey="settings.documents.model.description2" components={{ bold }} />
-                  <br />
-                  <br />
-                  {t('settings.documents.model.description3')}
                 </p>
-                <div className="mt-4 w-full flex items-center justify-between">
-                  <p className="flex items-center gap-2 text-md font-medium">
-                    <CheckSquare size="16" className="text-accent" />
-                    BERT Base NER
-                    <Badge variant="accent">{t('settings.documents.model.current')}</Badge>
-                  </p>
-                  <a href={NER_MODELS.bertBaseNer.url} target="_blank" rel="noopener noreferrer">
-                    <Button size="sm" variant="secondary" className="ml-auto">
-                      <ExternalLink size={14} />
-                      {t('settings.documents.model.learnMore')}
-                    </Button>
-                  </a>
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  {NER_MODELS_NAMES.map((modelKey) => {
+                    const model = NER_MODELS[modelKey];
+                    return (
+                      <div key={modelKey} className="flex flex-col gap-3 p-4 border border-border-theme bg-background">
+                        <div className="flex items-center justify-between">
+                          <p className="font-semibold text-sm leading-tight">{model.label}</p>
+                          {model.label === 'BERT Base NER' && (
+                            <div className={cn(
+                              'px-2 py-1 rounded-full text-xs font-semibold border',
+                              'bg-transparent text-fg-muted border-border-theme',
+                            )}>
+                              {t('settings.documents.model.table.default')}
+                            </div>
+                          )}
+                        </div>
+                        <ul className="flex flex-col gap-3 text-xs text-fg-muted">
+                          <li className="flex gap-1">
+                            <span className="font-semibold">{t('settings.documents.model.table.language')}</span>
+                            <span>{model.language}</span>
+                          </li>
+                          <li className="flex gap-1">
+                            <span className="font-semibold">{t('settings.documents.model.table.size')}</span>
+                            <span>{model.size}</span>
+                          </li>
+                        </ul>
+                        <a href={model.url} target="_blank" rel="noopener noreferrer" className="mt-auto">
+                          <Button size="sm" variant="ghost" className="w-full">
+                            <ExternalLink size={12} />
+                            {t('settings.documents.model.table.learnMore')}
+                          </Button>
+                        </a>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
               <div className="mt-6">
