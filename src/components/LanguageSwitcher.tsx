@@ -65,9 +65,6 @@ export function LanguageSwitcher({ variant = 'compact', className }: LanguageSwi
             idx === 1 && 'pl-2',
           )}
         >
-          {idx === 1 && (
-            <span className="absolute left-0 top-1/2 -translate-y-1/2 h-3 w-px bg-border-theme" />
-          )}
           <span className="text-[10px] leading-none">{lang.flag}</span>
           <span>{lang.label}</span>
         </button>
