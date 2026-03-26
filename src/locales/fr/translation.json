@@ -191,12 +191,12 @@
     "privacy": {
       "title": "Confidentialité",
       "stats": {
-        "title": "Statistiques du produit",
-        "description1": "Nous allons mettre en place des statistiques sur l'utilisation du produit Rature.",
-        "description2": "Ces statistiques seront complètement anonymes et concerneront uniquement l'utilisation des fonctionnalités de Rature, conformément à notre <link>politique de confidentialité</link>.",
-        "description3": "Vous pourrez vous désinscrire complètement de ces statistiques depuis cette page.",
-        "subscribe": "Inscription",
-        "unsubscribe": "Désinscription"
+        "title": "Analytiques",
+        "description1": "Nous utilisons une instance auto-hébergée d'<umamiLink>Umami Analytics</umamiLink> pour collecter des statistiques d'utilisation anonymes afin d'améliorer Rature. Umami n'utilise pas de cookies, ne collecte aucune donnée personnelle et est entièrement conforme au RGPD.",
+        "description2": "Nous mesurons : les pages consultées, les informations sur l'appareil et le navigateur, la localisation approximative (pays / région) et les sources de trafic. Aucun contenu de document n'est jamais collecté. Consultez notre <policyLink>politique de confidentialité</policyLink> pour plus de détails.",
+        "description3": "Les analytiques sont activées par défaut. Vous pouvez vous désinscrire à tout moment : votre préférence est enregistrée localement dans votre navigateur.",
+        "subscribe": "Activer",
+        "unsubscribe": "Désactiver"
       }
     },
     "appearance": {

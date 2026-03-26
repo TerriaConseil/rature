@@ -1,4 +1,5 @@
 import { ExternalLink, Moon, PauseCircle, PlayCircle, RefreshCcw, Sun, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router";
 import { Trans, useTranslation } from "react-i18next";
 
@@ -16,6 +17,20 @@ const italic = <span className="italic" />;
 export function SettingsPage() {
   const { theme, toggleTheme } = useTheme();
   const { t } = useTranslation();
+
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(
+    () => localStorage.getItem('umami.disabled') !== '1'
+  );
+
+  const handleOptIn = () => {
+    localStorage.removeItem('umami.disabled');
+    setAnalyticsEnabled(true);
+  };
+
+  const handleOptOut = () => {
+    localStorage.setItem('umami.disabled', '1');
+    setAnalyticsEnabled(false);
+  };
 
   return (
     <div className="flex flex-col justify-between flex-1 h-full">
@@ -95,23 +110,40 @@ export function SettingsPage() {
               <div className="mt-6">
                 <p className="text-md font-bold">{t('settings.privacy.stats.title')}</p>
                 <p className="mt-1 text-fg-muted">
-                  {t('settings.privacy.stats.description1')}
+                  <Trans
+                    i18nKey="settings.privacy.stats.description1"
+                    components={{
+                      umamiLink: <a href="https://umami.is/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4" />
+                    }}
+                  />
                   <br />
                   <br />
                   <Trans
                     i18nKey="settings.privacy.stats.description2"
-                    components={{ link: <Link to="/privacy-policy" className="underline underline-offset-4" /> }}
+                    components={{
+                      policyLink: <Link to="/privacy-policy" className="underline underline-offset-4" />
+                    }}
                   />
                   <br />
                   <br />
                   {t('settings.privacy.stats.description3')}
                 </p>
                 <div className="mt-4 flex items-center gap-2">
-                  <Button size="lg" variant="secondary" className="w-full flex-1 transition-all" disabled>
+                  <Button
+                    size="lg"
+                    variant={analyticsEnabled ? 'primary' : 'secondary'}
+                    className="w-full flex-1 transition-all"
+                    onClick={handleOptIn}
+                  >
                     <PlayCircle size={20} />
                     {t('settings.privacy.stats.subscribe')}
                   </Button>
-                  <Button size="lg" variant="primary" className="w-full flex-1 transition-all">
+                  <Button
+                    size="lg"
+                    variant={analyticsEnabled ? 'secondary' : 'primary'}
+                    className="w-full flex-1 transition-all"
+                    onClick={handleOptOut}
+                  >
                     <PauseCircle size={20} />
                     {t('settings.privacy.stats.unsubscribe')}
                   </Button>
