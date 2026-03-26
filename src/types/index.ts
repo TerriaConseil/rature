@@ -1,5 +1,3 @@
-export type AppPage = 'home' | 'loading' | 'workflow';
-
 export const CUSTOM_ENTITY_TYPES = ['R-EMAIL', 'R-DATE', 'R-URL', 'R-ID', 'R-IP'] as const;
 
 export interface NERPipelineEntity {
