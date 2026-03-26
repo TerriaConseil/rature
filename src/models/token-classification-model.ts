@@ -490,7 +490,9 @@ export class TokenClassificationModel {
         }
       } else {
         const [position, currentType] = entity.type.split('-');
-        const isBeginning = position === 'B';
+        const lastEntity = aggregated[aggregated.length - 1];
+
+        const isBeginning = position === 'B' || (position === 'I' && !lastEntity);
 
         if (isBeginning) {
           aggregated.push({
@@ -500,8 +502,6 @@ export class TokenClassificationModel {
 
           continue;
         }
-
-        const lastEntity = aggregated[aggregated.length - 1];
 
         if (currentType === lastEntity.type && lastEntity.end && entity.start === (lastEntity.end + 1)) {
           lastEntity.text = `${lastEntity.text} ${entity.text}`;
