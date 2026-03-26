@@ -9,7 +9,7 @@ export class NERmembertLarge4Entities extends TokenClassificationModel {
     });
 
     // Local
-    // super('/local-models/onnx_NERmembert2-4entities', {
+    // super('/local-models/onnx_NERmembert-large-4entities', {
     //   aggregationStrategy: 'mixed',
     // });
   }

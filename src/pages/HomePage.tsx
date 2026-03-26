@@ -8,7 +8,7 @@ import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 import { RatureLogo } from '@/components/RatureLogo.tsx';
 
 interface HomePageProps {
-  onFileSelect: () => void
+  onFileSelect: () => void;
 }
 
 const BADGES = [
@@ -34,7 +34,7 @@ export function HomePage({ onFileSelect }: HomePageProps) {
         className="fixed inset-0 pointer-events-none z-0"
         aria-hidden="true"
         style={{
-          backgroundImage: 'radial-gradient(circle, rgba(13, 148, 136, 0.7) 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(circle, rgba(13, 148, 136, 0.3) 1px, transparent 1px)',
           backgroundSize: '28px 28px',
         }}
       />

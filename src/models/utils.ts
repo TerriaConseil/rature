@@ -5,7 +5,6 @@ export const NER_MODELS_NAMES = [
   'camembertNerPii',
   'distilbertBaseMultiCasedNer',
   'nermembertLarge4Entities',
-  'nermembert24Entities',
   'nermemberta4Entities',
 ] as const;
 
@@ -25,6 +24,8 @@ type NERModelMeta = {
   [key in NERModel]: {
     label: string;
     url: string;
+    size: string;
+    language: string;
     entities: {
       [key: string]: EntityMeta;
     };
@@ -35,6 +36,8 @@ export const NER_MODELS: NERModelMeta = {
   bertBaseNer: {
     label: 'BERT Base NER',
     url: 'https://huggingface.co/dslim/bert-base-NER',
+    size: '411 MB',
+    language: 'English',
     entities: {
       DATE: {
         label: "Date",
@@ -111,6 +114,8 @@ export const NER_MODELS: NERModelMeta = {
   camembertNerPii: {
     label: 'CamemBERT NER PII',
     url: 'https://huggingface.co/Anonym-IA/V2-camembert-ner-pii-onnx-fp32',
+    size: '425 MB',
+    language: 'Français',
     entities: {
       ACCOUNTNUMBER: {
         label: "N° de compte",
@@ -401,85 +406,11 @@ export const NER_MODELS: NERModelMeta = {
       },
     },
   },
-  nermembert24Entities: {
-    label: 'NERmembert2 4 entities',
-    url: 'https://huggingface.co/CATIE-AQ/NERmembert2-4entities',
-    entities: {
-      DATE: {
-        label: "Date",
-        title: "Dates",
-        dot: COLORS.dot.fuchsia,
-        badge: COLORS.badge.fuchsia,
-        highlight: COLORS.highlight.fuchsia,
-      },
-      EMAIL: {
-        label: "Email",
-        title: "Emails",
-        dot: COLORS.dot.amber,
-        badge: COLORS.badge.amber,
-        highlight: COLORS.highlight.amber,
-      },
-      ID: {
-        label: "ID",
-        title: "ID",
-        dot: COLORS.dot.red,
-        badge: COLORS.badge.red,
-        highlight: COLORS.highlight.red,
-      },
-      IP: {
-        label: "Adresse IP",
-        title: "Adresses IP",
-        dot: COLORS.dot.red,
-        badge: COLORS.badge.red,
-        highlight: COLORS.highlight.red,
-      },
-      LOC: {
-        label: "Lieu",
-        title: "Lieux",
-        dot: COLORS.dot.green,
-        badge: COLORS.badge.green,
-        highlight: COLORS.highlight.green,
-      },
-      MANUAL: {
-        label: "Ajout manuel",
-        title: "Ajouts manuels",
-        dot: COLORS.dot.fuchsia,
-        badge: COLORS.badge.fuchsia,
-        highlight: COLORS.highlight.fuchsia,
-      },
-      MISC: {
-        label: "Autre",
-        title: "Autres",
-        dot: COLORS.dot.purple,
-        badge: COLORS.badge.purple,
-        highlight: COLORS.highlight.purple,
-      },
-      ORG: {
-        label: "Organisation",
-        title: "Organisations",
-        dot: COLORS.dot.teal,
-        badge: COLORS.badge.teal,
-        highlight: COLORS.highlight.teal,
-      },
-      PER: {
-        label: "Personne",
-        title: "Personnes",
-        dot: COLORS.dot.blue,
-        badge: COLORS.badge.blue,
-        highlight: COLORS.highlight.blue,
-      },
-      URL: {
-        label: "URL",
-        title: "Links",
-        dot: COLORS.dot.red,
-        badge: COLORS.badge.red,
-        highlight: COLORS.highlight.red,
-      },
-    },
-  },
   nermembertLarge4Entities: {
     label: 'NERmembert Large 4 entities',
     url: 'https://huggingface.co/CATIE-AQ/NERmembert-large-4entities',
+    size: '1.28 GB',
+    language: 'Français',
     entities: {
       DATE: {
         label: "Date",
@@ -556,6 +487,8 @@ export const NER_MODELS: NERModelMeta = {
   nermemberta4Entities: {
     label: 'NERmemberta 4 entities',
     url: 'https://huggingface.co/CATIE-AQ/NERmemberta-4entities',
+    size: '423 MB',
+    language: 'Français',
     entities: {
       DATE: {
         label: "Date",
@@ -632,6 +565,8 @@ export const NER_MODELS: NERModelMeta = {
   distilbertBaseMultiCasedNer: {
     label: 'DistilBERT Base Muti NER',
     url: 'https://huggingface.co/Davlan/distilbert-base-multilingual-cased-ner-hrl',
+    size: '514 MB',
+    language: 'Multilingue',
     entities: {
       DATE: {
         label: "Date",

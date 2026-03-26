@@ -23,7 +23,28 @@
   },
   "dropzone": {
     "drop": "Drop your PDF here",
-    "idle": "Drop your PDF or click to import"
+    "idle": "Drop your PDF or click to import",
+    "steps": "Processing steps:",
+    "step1": "1. The model is downloaded",
+    "step2": "2. The document's text is extracted",
+    "step3": "3. Sensitive data are processed",
+    "step4": "4. Detected entities are redacted",
+    "standard": "Standard mode",
+    "advanced": "Advanced mode",
+    "language": "Language",
+    "speed": "Speed",
+    "focus": "Entity focus",
+    "lang_english": "English",
+    "lang_french": "French",
+    "lang_multilingual": "Multilingual",
+    "speed_fast": "Fast",
+    "speed_balanced": "Balanced",
+    "speed_accurate": "Accurate",
+    "focus_general": "General",
+    "focus_pii": "PII & Legal",
+    "selectedModel": "Selected model",
+    "learnMore": "Learn more",
+    "reset": "Reset to defaults"
   },
   "footer": {
     "source": "Source code",
@@ -150,11 +171,14 @@
       "title": "Documents",
       "model": {
         "title": "Detection model",
-        "description1": "To automatically detect sensitive information in your documents, Rature relies on a <bold>Named Entity Recognition (NER)</bold> model. Unlike large language models (LLMs) that power tools like <italic>ChatGPT</italic>, these models are much lighter. This allows them to run entirely in your browser, without sending your data to a server.",
-        "description2": "Currently, the model detects 4 entity types: <bold>persons</bold>, <bold>organizations</bold>, <bold>locations</bold>, and a <bold>miscellaneous</bold> category for entities identified but not classified with certainty.",
-        "description3": "Soon, you will be able to choose from several models to refine detection according to your needs.",
-        "current": "Current model",
-        "learnMore": "Learn more"
+        "description1": "To automatically detect sensitive information in your documents, Rature relies on a <bold>Named Entity Recognition (NER)</bold> model. Unlike large language models (LLMs) that power tools like <italic>ChatGPT</italic>, these models are much lighter and run entirely in your browser, without sending your data to a server. Several models are available, choose the one that best fits your language and detection needs.",
+        "table": {
+          "name": "Model",
+          "size": "Size",
+          "language": "Language",
+          "learnMore": "Learn more",
+          "default": "Default"
+        }
       },
       "supported": {
         "title": "Supported documents",

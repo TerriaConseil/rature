@@ -2,20 +2,20 @@ import { BookOpen, CheckCircle, Cpu, ExternalLink, HardDriveDownload, ScanEye } 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useNERWorker } from '@/hooks/useNERWorker.ts';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
-import { CUSTOM_PAGE_SPLIT_TOKEN, NER_MODELS, type NERModel } from '@/models/utils.ts';
+import { useNERWorker } from '@/hooks/useNERWorker.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
+import { CUSTOM_PAGE_SPLIT_TOKEN, NER_MODELS } from '@/models/utils.ts';
 
 interface LoadingPageProps {
-  modelName: NERModel;
   onComplete: () => void;
 }
 
 const STEP_ICONS = [Cpu, BookOpen, ScanEye, CheckCircle];
 
-export function LoadingPage({ modelName, onComplete }: LoadingPageProps) {
+export function LoadingPage({ onComplete }: LoadingPageProps) {
   const { t, i18n } = useTranslation();
+  const { modelName } = useAnonymization();
   const { downloadProgress, processingProgress, modelTokens, status: workerStatus, error, initialize, processText, terminate } = useNERWorker();
   const { setModelTokens, setNerEntities } = useAnonymization();
   const { file, pageCount, processingStatus: pdfProcessingStatus, processFile } = usePdfProcessing();

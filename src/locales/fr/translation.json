@@ -23,7 +23,28 @@
   },
   "dropzone": {
     "drop": "Déposez votre PDF ici",
-    "idle": "Déposez votre PDF ou cliquez pour importer"
+    "idle": "Déposez votre PDF ou cliquez pour importer",
+    "steps": "Les étapes de traitement :",
+    "step1": "1. Le modèle est téléchargé",
+    "step2": "2. Le texte du document est extrait",
+    "step3": "3. Les données sensibles sont analysées",
+    "step4": "4. Les entités détectées sont masquées",
+    "standard": "Mode standard",
+    "advanced": "Mode avancé",
+    "language": "Langue",
+    "speed": "Vitesse",
+    "focus": "Type d'entités",
+    "lang_english": "Anglais",
+    "lang_french": "Français",
+    "lang_multilingual": "Multilingue",
+    "speed_fast": "Rapide",
+    "speed_balanced": "Équilibré",
+    "speed_accurate": "Précis",
+    "focus_general": "Général",
+    "focus_pii": "Données personnelles",
+    "selectedModel": "Modèle sélectionné",
+    "learnMore": "En savoir plus",
+    "reset": "Réinitialiser"
   },
   "footer": {
     "source": "Code source",
@@ -150,11 +171,14 @@
       "title": "Documents",
       "model": {
         "title": "Modèle de détection",
-        "description1": "Pour détecter automatiquement les informations sensibles dans vos documents, Rature s'appuie sur un modèle de <bold>reconnaissance d'entités nommées (NER)</bold>. Contrairement aux grands modèles de langage (LLM) qui alimentent des outils comme <italic>ChatGPT</italic>, ces modèles sont beaucoup plus légers. Cela permet de les exécuter entièrement dans votre navigateur, sans envoyer vos données à un serveur.",
-        "description2": "Aujourd'hui, le modèle utilisé détecte 4 types d'entités : les <bold>personnes</bold>, les <bold>organisations</bold>, les <bold>lieux</bold>, ainsi qu'une catégorie <bold>divers</bold> pour les entités identifiées mais non classifiées avec certitude.",
-        "description3": "Prochainement, vous pourrez choisir parmi plusieurs modèles afin d'affiner la détection selon vos besoins.",
-        "current": "Modèle actuel",
-        "learnMore": "En savoir plus"
+        "description1": "Pour détecter automatiquement les informations sensibles dans vos documents, Rature s'appuie sur un modèle de <bold>reconnaissance d'entités nommées (NER)</bold>. Contrairement aux grands modèles de langage (LLM) qui alimentent des outils comme <italic>ChatGPT</italic>, ces modèles sont beaucoup plus légers et s'exécutent entièrement dans votre navigateur, sans envoyer vos données à un serveur. Plusieurs modèles sont disponibles, choisissez celui qui correspond le mieux à votre langue et à vos besoins de détection.",
+        "table": {
+          "name": "Modèle",
+          "size": "Taille",
+          "language": "Langue",
+          "learnMore": "En savoir plus",
+          "default": "Par défaut"
+        }
       },
       "supported": {
         "title": "Documents supportés",
