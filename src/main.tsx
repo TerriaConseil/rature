@@ -18,10 +18,10 @@ createRoot(root).render(
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/" element={<App />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="*" element={<App />} />
         </Route>
       </Routes>
     </BrowserRouter>

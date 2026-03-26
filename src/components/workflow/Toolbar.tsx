@@ -59,7 +59,7 @@ export function Toolbar({
 
       <div className="w-px h-5 bg-border-theme" />
 
-      <span className="text-sm font-medium text-fg truncate max-w-50" title={fileName}>
+      <span className="text-sm font-medium text-fg" title={fileName}>
         {fileName}
       </span>
 

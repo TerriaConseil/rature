@@ -1,40 +1,30 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
+import { Route, Routes, useNavigate } from 'react-router';
 
 import { HomePage } from '@/pages/HomePage.tsx';
 import { LoadingPage } from '@/pages/LoadingPage.tsx';
 import { WorkflowPage } from '@/pages/WorkflowPage.tsx';
-import type { AppPage } from '@/types/index.ts';
 
 export default function App() {
-  const [page, setPage] = useState<AppPage>('home');
+  const navigate = useNavigate();
 
   const handleFileSelected = useCallback(() => {
-    setPage('loading');
-  }, []);
+    navigate('/processing');
+  }, [navigate]);
 
   const handleLoadingComplete = useCallback(() => {
-    setPage('workflow');
-  }, []);
+    navigate('/preview', { replace: true });
+  }, [navigate]);
 
   const handleBack = useCallback(() => {
-    setPage('home');
-  }, []);
+    navigate('/');
+  }, [navigate]);
 
   return (
-    <>
-      {page === 'home' && (
-        <HomePage onFileSelect={handleFileSelected} />
-      )}
-
-      {page === 'loading' && (
-        <LoadingPage onComplete={handleLoadingComplete} />
-      )}
-
-      {page === 'workflow' && (
-        <WorkflowPage
-          onBack={handleBack}
-        />
-      )}
-    </>
+    <Routes>
+      <Route index element={<HomePage onFileSelect={handleFileSelected} />} />
+      <Route path="processing" element={<LoadingPage onComplete={handleLoadingComplete} />} />
+      <Route path="preview" element={<WorkflowPage onBack={handleBack} />} />
+    </Routes>
   );
 }
