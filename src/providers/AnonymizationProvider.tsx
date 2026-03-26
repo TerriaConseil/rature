@@ -2,14 +2,14 @@ import { useState, type ReactNode } from "react";
 
 import { AnonymizationContext } from "@/context/anonymization.tsx";
 import type { GroupedEntity } from "@/types/index.ts";
-import { NER_MODELS_NAMES, type NERModel } from "@/models/utils.ts";
+import { type NERModel } from "@/models/utils.ts";
 
 type AnonymizationProviderProps = {
   children: ReactNode;
 };
 
 export function AnonymizationProvider({ children }: AnonymizationProviderProps) {
-  const [modelName, setModel] = useState<NERModel>(NER_MODELS_NAMES[0]);
+  const [modelName, setModel] = useState<NERModel>('bertBaseNer');
   const [modelTokens, setModelTokens] = useState<string[]>([]);
   const [nerEntities, setNerEntities] = useState<GroupedEntity[]>([]);
 

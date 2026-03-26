@@ -1,6 +1,7 @@
 import { Globe, Languages, Zap, Scale, Target, ShieldCheck } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
+import i18n from '@/lib/i18n.ts';
 import type { NERModel } from '@/models/utils.ts';
 
 export type Language = 'english' | 'french' | 'multilingual';
@@ -14,9 +15,9 @@ export interface ModelFeatures {
 }
 
 export const DEFAULT_FEATURES: ModelFeatures = {
-  language: 'english',
+  language: i18n.language === 'fr' ? 'french' : 'english',
   speed: 'balanced',
-  focus: 'general',
+  focus: 'pii',
 };
 
 export function resolveModel(features: ModelFeatures): NERModel {
