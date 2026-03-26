@@ -191,12 +191,12 @@
     "privacy": {
       "title": "Privacy",
       "stats": {
-        "title": "Product statistics",
-        "description1": "We will be implementing usage statistics for the Rature product.",
-        "description2": "These statistics will be completely anonymous and will only concern the use of Rature's features, in accordance with our <link>privacy policy</link>.",
-        "description3": "You will be able to fully opt out of these statistics from this page.",
-        "subscribe": "Opt in",
-        "unsubscribe": "Opt out"
+        "title": "Analytics",
+        "description1": "We use a self-hosted instance of <umamiLink>Umami Analytics</umamiLink> to collect anonymous usage statistics to help improve Rature. Umami does not use cookies, does not collect any personal data, and is fully GDPR-compliant.",
+        "description2": "We track: page views, device and browser information, approximate location (country/region), and traffic sources. No document content is ever collected. See our <policyLink>privacy policy</policyLink> for details.",
+        "description3": "Analytics is enabled by default. You can opt out at any time: your preference is saved locally in your browser.",
+        "subscribe": "Enable",
+        "unsubscribe": "Disable"
       }
     },
     "appearance": {
