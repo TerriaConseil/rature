@@ -101,8 +101,8 @@ export class TokenClassificationModel {
     this.rawPipelineEntities = [];
     this.entitiesWithOffset = [];
     this.entities = [];
-    this.fullText = text.replaceAll(CUSTOM_PAGE_SPLIT_TOKEN, ' ');
-    this.textGroupedByPage = text.split(CUSTOM_PAGE_SPLIT_TOKEN);
+    this.fullText = text.replaceAll('…', '...').replaceAll(CUSTOM_PAGE_SPLIT_TOKEN, ' ');
+    this.textGroupedByPage = text.replaceAll('…', '...').split(CUSTOM_PAGE_SPLIT_TOKEN);
 
     // Extract
     this.rawPipelineEntities = await this.extractClassifierEntities(onProgress);
@@ -311,6 +311,11 @@ export class TokenClassificationModel {
         cursor = 0;
         currentPage++;
         originalText = this.textGroupedByPage[currentPage - 1];
+      }
+
+      if (!originalText || currentPage > totalPages) {
+        console.warn('Cursor reached end of text before scanning the whole document.');
+        return entitiesWithOffset;
       }
 
       if (this.isPartOfWord(token)) {
