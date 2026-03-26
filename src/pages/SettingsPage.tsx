@@ -106,6 +106,47 @@ export function SettingsPage() {
               className="p-6 border border-border-theme bg-card"
               style={{ boxShadow: '0 4px 24px 0 rgb(0 0 0 / 0.06)' }}
             >
+              <h3 className="text-2xl font-extrabold">{t('settings.appearance.title')}</h3>
+              <div className="mt-6">
+                <p className="text-md font-bold">{t('settings.appearance.theme.title')}</p>
+                <p className="mt-1 text-fg-muted">
+                  <Trans i18nKey="settings.appearance.theme.description" components={{ bold: <span className="font-medium" /> }} />
+                </p>
+                <div className="mt-4 flex items-center gap-2">
+                  <Button
+                    size="lg"
+                    variant={theme === 'light' ? 'primary' : 'secondary'}
+                    onClick={toggleTheme}
+                    className="w-full flex-1 transition-all"
+                  >
+                    <Sun size={20} />
+                    {t('settings.appearance.theme.light')}
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant={theme === 'dark' ? 'primary' : 'secondary'}
+                    onClick={toggleTheme}
+                    className="w-full flex-1 transition-all"
+                  >
+                    <Moon size={20} />
+                    {t('settings.appearance.theme.dark')}
+                  </Button>
+                </div>
+              </div>
+              <div className="mt-6">
+                <p className="text-md font-bold">{t('settings.appearance.language.title')}</p>
+                <p className="mt-1 text-fg-muted">
+                  {t('settings.appearance.language.description')}
+                </p>
+                <LanguageSwitcher variant="full" className="mt-4" />
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col grow shrink-0 gap-4">
+            <div
+              className="p-6 border border-border-theme bg-card"
+              style={{ boxShadow: '0 4px 24px 0 rgb(0 0 0 / 0.06)' }}
+            >
               <h3 className="text-2xl font-bold">{t('settings.privacy.title')}</h3>
               <div className="mt-6">
                 <p className="text-md font-bold">{t('settings.privacy.stats.title')}</p>
@@ -148,47 +189,6 @@ export function SettingsPage() {
                     {t('settings.privacy.stats.unsubscribe')}
                   </Button>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col grow shrink-0 gap-4">
-            <div
-              className="p-6 border border-border-theme bg-card"
-              style={{ boxShadow: '0 4px 24px 0 rgb(0 0 0 / 0.06)' }}
-            >
-              <h3 className="text-2xl font-extrabold">{t('settings.appearance.title')}</h3>
-              <div className="mt-6">
-                <p className="text-md font-bold">{t('settings.appearance.theme.title')}</p>
-                <p className="mt-1 text-fg-muted">
-                  <Trans i18nKey="settings.appearance.theme.description" components={{ bold: <span className="font-medium" /> }} />
-                </p>
-                <div className="mt-4 flex items-center gap-2">
-                  <Button
-                    size="lg"
-                    variant={theme === 'light' ? 'primary' : 'secondary'}
-                    onClick={toggleTheme}
-                    className="w-full flex-1 transition-all"
-                  >
-                    <Sun size={20} />
-                    {t('settings.appearance.theme.light')}
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant={theme === 'dark' ? 'primary' : 'secondary'}
-                    onClick={toggleTheme}
-                    className="w-full flex-1 transition-all"
-                  >
-                    <Moon size={20} />
-                    {t('settings.appearance.theme.dark')}
-                  </Button>
-                </div>
-              </div>
-              <div className="mt-6">
-                <p className="text-md font-bold">{t('settings.appearance.language.title')}</p>
-                <p className="mt-1 text-fg-muted">
-                  {t('settings.appearance.language.description')}
-                </p>
-                <LanguageSwitcher variant="full" className="mt-4" />
               </div>
             </div>
             <div
