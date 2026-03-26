@@ -222,6 +222,13 @@ export const NER_MODELS: NERModelMeta = {
         badge: COLORS.badge.blue,
         highlight: COLORS.highlight.blue,
       },
+      IBAN: {
+        label: "IBAN",
+        title: "IBAN",
+        dot: COLORS.dot.teal,
+        badge: COLORS.badge.teal,
+        highlight: COLORS.highlight.teal,
+      },
       ID: {
         label: "ID",
         title: "ID",
