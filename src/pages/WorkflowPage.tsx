@@ -96,10 +96,13 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const handleZoomOut = () => setZoom(z => Math.max(z - 25, 50));
 
   const handleBackClick = () => {
-    setRedactedDocument(null);
-    resetEntities();
-    resetPdfDocument();
-    onBack();
+    const confirmationMessage = t('toolbar.confirmBack');
+    if (confirm(confirmationMessage)) {
+      setRedactedDocument(null);
+      resetEntities();
+      resetPdfDocument();
+      onBack();
+    }
   };
 
   if (!file) {

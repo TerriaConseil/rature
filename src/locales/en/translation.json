@@ -65,6 +65,7 @@
   },
   "toolbar": {
     "back": "Back",
+    "confirmBack": "Are you sure? All changes will be lost.",
     "export": "Export PDF"
   },
   "sidebar": {

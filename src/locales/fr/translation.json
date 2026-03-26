@@ -65,6 +65,7 @@
   },
   "toolbar": {
     "back": "Retour",
+    "confirmBack": "Êtes-vous sûr ? Tous les changements seront perdus.",
     "export": "Exporter le PDF"
   },
   "sidebar": {
