@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { type PDFDocument } from 'mupdf';
 import { useTranslation } from 'react-i18next';
+import { Navigate } from 'react-router';
 
 import { ActionsIsland } from '@/components/workflow/ActionsIsland.tsx';
 import { Toolbar } from '@/components/workflow/Toolbar.tsx';
@@ -106,7 +107,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   };
 
   if (!file) {
-    return <div>{t('errors.noFile')}</div>;
+    return <Navigate to="/" />;
   }
 
   return (
