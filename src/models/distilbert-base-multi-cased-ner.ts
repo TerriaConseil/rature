@@ -5,7 +5,6 @@ export class DistilbertBaseMultiCasedNerModel extends TokenClassificationModel {
     super('vgorce/distilbert-base-multi-cased-ner', {
       aggregationStrategy: 'none',
       partOfWordStrategy: 'mixed',
-      ignoredLabels: ['B-DATE', 'I-DATE'],
     });
   }
 }

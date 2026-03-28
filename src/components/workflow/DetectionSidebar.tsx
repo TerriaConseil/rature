@@ -112,11 +112,11 @@ export function DetectionSidebar({
     return matchSearch && matchType;
   });
 
-  const allTypes = [
+  const allTypes = Array.from(new Set([
     'MANUAL',
     ...modelTokens,
     ...CUSTOM_ENTITY_TYPES.map((type) => type.replace('R-', '')),
-  ];
+  ]));
 
   const groupedByName = groupByName(filtered);
 
