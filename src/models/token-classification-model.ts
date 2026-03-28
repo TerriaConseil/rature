@@ -120,6 +120,9 @@ export class TokenClassificationModel {
     // Expand partial matches and deduplicate sub-entities
     this.entities = this.expandAndDeduplicateEntities(this.entities);
 
+    // Deduplicate across labels
+    this.entities = this.deduplicateByLabel(this.entities);
+
     return this.entities;
   }
 
@@ -349,6 +352,32 @@ export class TokenClassificationModel {
     }
 
     return entitiesWithOffset;
+  }
+
+  private deduplicateByLabel(entities: GroupedEntity[]): GroupedEntity[] {
+    const seen = new Map<string, { texts: Set<string>; positions: Set<string> }>();
+    const result: GroupedEntity[] = [];
+
+    for (const entity of entities) {
+      const { type, text, page, start } = entity;
+
+      if (!seen.has(type)) {
+        seen.set(type, { texts: new Set(), positions: new Set() });
+      }
+
+      const seenForType = seen.get(type)!;
+      const posKey = `${page}:${start}`;
+
+      if (seenForType.texts.has(text) || seenForType.positions.has(posKey)) {
+        continue;
+      }
+
+      seenForType.texts.add(text);
+      seenForType.positions.add(posKey);
+      result.push(entity);
+    }
+
+    return result;
   }
 
   private expandAndDeduplicateEntities(entities: GroupedEntity[]): GroupedEntity[] {
