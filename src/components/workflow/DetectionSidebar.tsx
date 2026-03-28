@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Search, CheckSquare, Square, Trash2, ChevronRight, ChevronLeft, ScanEye } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { CUSTOM_ENTITY_TYPES, type GroupedEntity } from '@/types/index.ts';
@@ -20,37 +20,28 @@ type GroupedByNameEntity = {
   }[];
 };
 
-const groupByName = (entities: GroupedEntity[]) => {
-  const groupedByNameEntities: GroupedByNameEntity[] = [];
-  const labeledEntities = entities.filter((entity) => entity.type !== 'O');
-
-  for (const entity of labeledEntities) {
+const groupByName = (entities: GroupedEntity[]): GroupedByNameEntity[] => {
+  const map = new Map<string, GroupedByNameEntity>();
+  for (const entity of entities) {
+    if (entity.type === 'O') continue;
     const { id, page, score, start, end } = entity;
-    const grouped = groupedByNameEntities.find((e) => e.text === entity.text);
-
-    if (grouped) {
-      grouped.instances.push({ id, page, score, start, end });
+    const existing = map.get(entity.text);
+    if (existing) {
+      existing.instances.push({ id, page, score, start, end });
     } else {
-      groupedByNameEntities.push({
+      map.set(entity.text, {
         text: entity.text,
         type: entity.type,
         included: entity.included,
-        instances: [{
-          id: entity.id,
-          page,
-          score,
-          start,
-          end,
-        }],
+        instances: [{ id, page, score, start, end }],
       });
     }
   }
-
-  for (const group of groupedByNameEntities) {
+  const result = Array.from(map.values());
+  for (const group of result) {
     group.instances.sort((a, b) => a.page !== b.page ? a.page - b.page : a.start - b.start);
   }
-
-  return groupedByNameEntities;
+  return result;
 };
 
 interface DetectionSidebarProps {
@@ -66,7 +57,7 @@ interface DetectionSidebarProps {
   onHighlightAll: (text: string | null) => void;
 }
 
-export function DetectionSidebar({
+export const DetectionSidebar = React.memo(function DetectionSidebar({
   entities,
   selectedEntityId,
   highlightedEntityText,
@@ -103,30 +94,37 @@ export function DetectionSidebar({
     selectedEl?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [selectedEntityId]);
 
-  const includedCount = entities.filter(e => e.included).length;
+  const includedCount = useMemo(() => entities.filter(e => e.included).length, [entities]);
 
-  const filtered = entities.filter(e => {
-    const matchSearch = e.text.toLowerCase().includes(search.toLowerCase());
-    const matchType = filterType === 'all' || e.type === filterType;
-
-    return matchSearch && matchType;
-  });
-
-  const allTypes = Array.from(new Set([
+  const allTypes = useMemo(() => Array.from(new Set([
     'MANUAL',
     ...modelTokens,
     ...CUSTOM_ENTITY_TYPES.map((type) => type.replace('R-', '')),
-  ]));
+  ])), [modelTokens]);
 
-  const groupedByName = groupByName(filtered);
+  const countByType = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const e of entities) {
+      if (e.type !== 'O') map.set(e.type, (map.get(e.type) ?? 0) + 1);
+    }
+    return map;
+  }, [entities]);
 
-  const groupedByType = allTypes.reduce<Record<string, GroupedByNameEntity[]>>(
+  const filtered = useMemo(() => entities.filter(e => {
+    const matchSearch = e.text.toLowerCase().includes(search.toLowerCase());
+    const matchType = filterType === 'all' || e.type === filterType;
+    return matchSearch && matchType;
+  }), [entities, search, filterType]);
+
+  const groupedByName = useMemo(() => groupByName(filtered), [filtered]);
+
+  const groupedByType = useMemo(() => allTypes.reduce<Record<string, GroupedByNameEntity[]>>(
     (acc, type) => {
       acc[type] = groupedByName.filter(e => e.type === type);
       return acc;
     },
     {}
-  );
+  ), [allTypes, groupedByName]);
 
   const handleEntityClick = (name: string) => {
     const entity = groupedByName.find((e) => e.text === name);
@@ -192,7 +190,7 @@ export function DetectionSidebar({
           </button>
           {allTypes.map(type => {
             const meta = NER_MODELS[modelName].entities[type];
-            const count = entities.filter(e => e.type === type).length;
+            const count = countByType.get(type) ?? 0;
 
             if (count === 0) return null;
 
@@ -276,6 +274,7 @@ export function DetectionSidebar({
                     key={`${entity.text}-${entity.instances[0].id}`}
                     data-selected={isSelected}
                     onClick={() => handleEntityClick(entity.text)}
+                    style={{ contentVisibility: 'auto', containIntrinsicSize: '0 44px' }}
                     className={cn(
                       'flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-all group',
                       isSelected
@@ -384,4 +383,4 @@ export function DetectionSidebar({
       </div>
     </aside>
   );
-}
+});

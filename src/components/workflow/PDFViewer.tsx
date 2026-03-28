@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { MessageSquarePlus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -34,7 +34,7 @@ interface PDFViewerProps {
   onModeChange: (mode: WorkflowMode) => void;
 }
 
-export function PDFViewer({
+export const PDFViewer = React.memo(function PDFViewer({
   currentPage,
   zoom,
   entities,
@@ -135,7 +135,7 @@ export function PDFViewer({
 
   const isEmptyPage = pageContent.text.trim().length < 15;
 
-  const textParts = createTextParts({
+  const textParts = useMemo(() => createTextParts({
     model: modelName,
     text: pageContent.text,
     entities: displayEntities,
@@ -151,7 +151,11 @@ export function PDFViewer({
     onDeleteOne: onEntityDeleteOne,
     onDeleteAll: onEntityDeleteAll,
     instanceCounts,
-  });
+  }), [
+    modelName, pageContent.text, displayEntities, selectedEntityId, highlightedEntityText,
+    onEntityClick, selection, currentPagePreviewMatches, startDrag, dragState,
+    focusedMatchStart, searchMatches.length, onEntityDeleteOne, onEntityDeleteAll, instanceCounts,
+  ]);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden relative">
@@ -175,7 +179,7 @@ export function PDFViewer({
 
       <div className="flex-1 flex overflow-hidden">
       {pageCount > 1 && (
-        <PageThumbnailPanel currentPage={currentPage} entities={entities} onPageChange={onPageChange} />
+        <PageThumbnailPanel currentPage={currentPage} onPageChange={onPageChange} />
       )}
       <div className="flex-1 relative flex flex-col overflow-hidden">
       <ActionsIsland mode={mode} onModeChange={onModeChange} />
@@ -238,4 +242,4 @@ export function PDFViewer({
       />
     </div>
   );
-}
+});
