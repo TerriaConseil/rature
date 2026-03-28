@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { type PDFDocument } from 'mupdf';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router';
@@ -36,9 +36,10 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
 
   // Stable refs so callbacks don't need entities/currentPage in their dep arrays
   const entitiesRef = useRef(entities);
-  useEffect(() => { entitiesRef.current = entities; }, [entities]);
   const currentPageRef = useRef(currentPage);
-  useEffect(() => { currentPageRef.current = currentPage; }, [currentPage]);
+
+  entitiesRef.current = entities;
+  currentPageRef.current = currentPage;
 
   const toggleEntity = useCallback((name: string) => {
     setEntities(entitiesRef.current.map(e => e.text === name ? { ...e, included: !e.included } : e));
@@ -93,7 +94,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
       setRedactedDocument(null);
       setMode('edition');
     }
-  }, [file]);
+  }, [file, redact]);
 
   const handleZoomIn = useCallback(() => setZoom(z => Math.min(z + 25, 200)), []);
   const handleZoomOut = useCallback(() => setZoom(z => Math.max(z - 25, 50)), []);
