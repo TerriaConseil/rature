@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { type PDFDocument } from 'mupdf';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router';
@@ -12,7 +12,7 @@ import { DetectionSidebar } from '@/components/workflow/DetectionSidebar.tsx';
 import { ExportModal } from '@/components/workflow/ExportModal.tsx';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
-import { redactPDFDocument } from '@/lib/pdf/redactPDF.ts';
+import { useRedactWorker } from '@/hooks/useRedactWorker.ts';
 import { downloadPDFDocument } from '@/lib/pdf/exportPDF.ts';
 import type { GroupedEntity, WorkflowMode } from '@/types/index.ts';
 
@@ -24,6 +24,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const { t } = useTranslation();
   const { nerEntities: entities, reset: resetEntities, setNerEntities: setEntities } = useAnonymization();
   const { file, pageCount, reset: resetPdfDocument } = usePdfProcessing();
+  const { redact } = useRedactWorker();
   const [mode, setMode] = useState<WorkflowMode>('edition');
   const [redactedDocument, setRedactedDocument] = useState<PDFDocument | null>(null);
   const [isRedacting, setIsRedacting] = useState(false);
@@ -33,53 +34,54 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const [highlightedEntityText, setHighlightedEntityText] = useState<string | null>(null);
   const [showExport, setShowExport] = useState(false);
 
-  const toggleEntity = (name: string) => {
-    setEntities(entities.map(e => (e.text === name ? { ...e, included: !e.included } : e)),
-    );
-  };
+  // Stable refs so callbacks don't need entities/currentPage in their dep arrays
+  const entitiesRef = useRef(entities);
+  useEffect(() => { entitiesRef.current = entities; }, [entities]);
+  const currentPageRef = useRef(currentPage);
+  useEffect(() => { currentPageRef.current = currentPage; }, [currentPage]);
 
-  const deleteEntity = (name: string) => {
-    const matchingEntities = entities.filter(e => e.text === name);
-    const ids = matchingEntities.map((e) => e.id);
+  const toggleEntity = useCallback((name: string) => {
+    setEntities(entitiesRef.current.map(e => e.text === name ? { ...e, included: !e.included } : e));
+  }, [setEntities]);
 
-    setEntities(entities.filter(e => !ids.includes(e.id)));
+  const deleteEntity = useCallback((name: string) => {
+    const ids = new Set(entitiesRef.current.filter(e => e.text === name).map(e => e.id));
+    setEntities(entitiesRef.current.filter(e => !ids.has(e.id)));
+    setSelectedEntityId(prev => prev && ids.has(prev) ? null : prev);
+    setHighlightedEntityText(prev => prev === name ? null : prev);
+  }, [setEntities]);
 
-    if (selectedEntityId && ids.includes(selectedEntityId)) setSelectedEntityId(null);
-    if (highlightedEntityText === name) setHighlightedEntityText(null);
-  };
+  const deleteEntityById = useCallback((id: string) => {
+    setEntities(entitiesRef.current.filter(e => e.id !== id));
+    setSelectedEntityId(prev => prev === id ? null : prev);
+  }, [setEntities]);
 
-  const deleteEntityById = (id: string) => {
-    setEntities(entities.filter(e => e.id !== id));
-    if (selectedEntityId === id) setSelectedEntityId(null);
-  };
+  const handleHighlightAll = useCallback((text: string | null) => {
+    setHighlightedEntityText(prev => prev === text ? null : text);
+  }, []);
 
-  const handleHighlightAll = (text: string | null) => {
-    setHighlightedEntityText(prev => (prev === text ? null : text));
-  };
+  const handleEntityUpdate = useCallback((entityId: string, updates: Partial<GroupedEntity>) => {
+    setEntities(entitiesRef.current.map(e => e.id === entityId ? { ...e, ...updates } : e));
+  }, [setEntities]);
 
-  const handleEntityUpdate = (entityId: string, updates: Partial<GroupedEntity>) => {
-    setEntities(entities.map(e => e.id === entityId ? { ...e, ...updates } : e));
-  };
+  const selectAll = useCallback(() => setEntities(entitiesRef.current.map(e => ({ ...e, included: true }))), [setEntities]);
+  const deselectAll = useCallback(() => setEntities(entitiesRef.current.map(e => ({ ...e, included: false }))), [setEntities]);
 
-  const selectAll = () => setEntities(entities.map(e => ({ ...e, included: true })));
-  const deselectAll = () => setEntities(entities.map(e => ({ ...e, included: false })));
-
-  const handleEntitySelect = (id: string) => {
-    setSelectedEntityId(prev => (prev === id ? null : id));
-    const entity = entities.find(e => e.id === id);
-
-    if (entity && entity.page !== currentPage) {
+  const handleEntitySelect = useCallback((id: string) => {
+    setSelectedEntityId(prev => prev === id ? null : id);
+    const entity = entitiesRef.current.find(e => e.id === id);
+    if (entity && entity.page !== currentPageRef.current) {
       setCurrentPage(entity.page);
     }
-  };
+  }, []);
 
-  const handleModeChange = async (newMode: WorkflowMode) => {
+  const handleModeChange = useCallback(async (newMode: WorkflowMode) => {
     if (newMode === 'preview') {
       if (!file) return;
       setIsRedacting(true);
       setMode('preview');
       try {
-        const doc = await redactPDFDocument(file, entities);
+        const doc = await redact(file, entitiesRef.current);
         setRedactedDocument(doc);
       } catch (err) {
         console.error('Redaction failed:', err);
@@ -91,12 +93,12 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
       setRedactedDocument(null);
       setMode('edition');
     }
-  };
+  }, [file]);
 
-  const handleZoomIn = () => setZoom(z => Math.min(z + 25, 200));
-  const handleZoomOut = () => setZoom(z => Math.max(z - 25, 50));
+  const handleZoomIn = useCallback(() => setZoom(z => Math.min(z + 25, 200)), []);
+  const handleZoomOut = useCallback(() => setZoom(z => Math.max(z - 25, 50)), []);
 
-  const handleBackClick = () => {
+  const handleBackClick = useCallback(() => {
     const confirmationMessage = t('toolbar.confirmBack');
     if (confirm(confirmationMessage)) {
       setRedactedDocument(null);
@@ -104,7 +106,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
       resetPdfDocument();
       onBack();
     }
-  };
+  }, [t, resetEntities, resetPdfDocument, onBack]);
 
   if (!file) {
     return <Navigate to="/" />;
@@ -181,7 +183,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
           onDownload={async ({ removeMetadata }) => {
             let doc = redactedDocument;
             if (!doc && file) {
-              doc = await redactPDFDocument(file, entities);
+              doc = await redact(file, entities);
             }
             if (!doc || !file) return;
             downloadPDFDocument(doc, file.name, removeMetadata);
