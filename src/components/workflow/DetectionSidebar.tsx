@@ -206,7 +206,7 @@ export const DetectionSidebar = React.memo(function DetectionSidebar({
                 )}
               >
                 <span className={cn('w-1.5 h-1.5 rounded-full shrink-0', meta.dot)} />
-                {meta.label}
+                {t(`entities.${type}.label`)}
               </button>
             );
           })}
@@ -252,7 +252,7 @@ export const DetectionSidebar = React.memo(function DetectionSidebar({
                 />
                 <span className={cn('w-2 h-2 rounded-full shrink-0', meta.dot)} />
                 <span className="text-xs font-medium text-fg-muted uppercase tracking-wider">
-                  {meta.title}
+                  {t(`entities.${type}.title`)}
                 </span>
                 <span className="text-xs text-fg-subtle">({group.length})</span>
               </button>
