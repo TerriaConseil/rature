@@ -27,6 +27,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const { redact } = useRedactWorker();
   const [mode, setMode] = useState<WorkflowMode>('edition');
   const [redactedDocument, setRedactedDocument] = useState<PDFDocument | null>(null);
+  const [pendingPages, setPendingPages] = useState<Set<number>>(new Set());
   const [isRedacting, setIsRedacting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [zoom, setZoom] = useState(100);
@@ -81,20 +82,36 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
       if (!file) return;
       setIsRedacting(true);
       setMode('preview');
+      setPendingPages(new Set(Array.from({ length: pageCount }, (_, i) => i)));
       try {
-        const doc = await redact(file, entitiesRef.current);
+        const doc = await redact(
+          file,
+          entitiesRef.current,
+          currentPageRef.current - 1,
+          (partialDoc, processedPages) => {
+            setRedactedDocument(partialDoc);
+            setPendingPages(prev => {
+              const next = new Set(prev);
+              for (const p of processedPages) next.delete(p);
+              return next;
+            });
+            setIsRedacting(false);
+          },
+        );
         setRedactedDocument(doc);
+        setPendingPages(new Set());
       } catch (err) {
         console.error('Redaction failed:', err);
         setMode('edition');
-      } finally {
         setIsRedacting(false);
+        setPendingPages(new Set());
       }
     } else {
       setRedactedDocument(null);
+      setPendingPages(new Set());
       setMode('edition');
     }
-  }, [file, redact]);
+  }, [file, pageCount, redact]);
 
   const handleZoomIn = useCallback(() => setZoom(z => Math.min(z + 25, 200)), []);
   const handleZoomOut = useCallback(() => setZoom(z => Math.max(z - 25, 50)), []);
@@ -103,6 +120,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
     const confirmationMessage = t('toolbar.confirmBack');
     if (confirm(confirmationMessage)) {
       setRedactedDocument(null);
+      setPendingPages(new Set());
       resetEntities();
       resetPdfDocument();
       onBack();
@@ -168,8 +186,13 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         </div>
       ) : (
         <div className="flex flex-1 overflow-hidden">
-          <PageThumbnailPanel currentPage={currentPage} redactedDocument={redactedDocument} onPageChange={setCurrentPage} />
+          <PageThumbnailPanel currentPage={currentPage} redactedDocument={redactedDocument} pendingPages={pendingPages} onPageChange={setCurrentPage} />
           <div className="flex-1 relative flex flex-col overflow-hidden">
+            {pendingPages.size > 0 && (
+              <div className="absolute top-0 left-0 right-0 h-0.5 z-10">
+                <div className="h-full bg-accent/60 animate-pulse w-full" />
+              </div>
+            )}
             <PDFPageRenderer pageIndex={currentPage - 1} zoom={zoom} pdfDocument={redactedDocument} />
             <ActionsIsland mode={mode} onModeChange={handleModeChange} />
           </div>
@@ -184,7 +207,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
           onDownload={async ({ removeMetadata }) => {
             let doc = redactedDocument;
             if (!doc && file) {
-              doc = await redact(file, entities);
+              doc = await redact(file, entities, 0, () => {});
             }
             if (!doc || !file) return;
             downloadPDFDocument(doc, file.name, removeMetadata);

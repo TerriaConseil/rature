@@ -10,12 +10,13 @@ interface PageThumbnailItemProps {
   pageIndex: number;
   pdfDocument: PDFDocument;
   isActive: boolean;
+  isPending: boolean;
   onClick: () => void;
 }
 
 const THUMBNAIL_CSS_WIDTH = 160;
 
-function PageThumbnailItem({ pageIndex, pdfDocument, isActive, onClick }: PageThumbnailItemProps) {
+function PageThumbnailItem({ pageIndex, pdfDocument, isActive, isPending, onClick }: PageThumbnailItemProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [aspectRatio, setAspectRatio] = useState(Math.SQRT2); // A4 default fallback
   const prevUrlRef = useRef<string | null>(null);
@@ -101,6 +102,11 @@ function PageThumbnailItem({ pageIndex, pdfDocument, isActive, onClick }: PageTh
         ) : (
           <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse" />
         )}
+        {isPending && (
+          <div className="absolute inset-0 bg-surface/60 dark:bg-[#121218]/60 backdrop-blur-[1px] flex items-center justify-center">
+            <div className="w-3 h-3 rounded-full border-2 border-accent border-t-transparent animate-spin" />
+          </div>
+        )}
       </div>
 
       <span
@@ -120,9 +126,10 @@ interface PageThumbnailPanelProps {
   onPageChange: (page: number) => void;
   entities?: GroupedEntity[];
   redactedDocument?: PDFDocument | null;
+  pendingPages?: Set<number>;
 }
 
-export function PageThumbnailPanel({ currentPage, onPageChange, entities, redactedDocument }: PageThumbnailPanelProps) {
+export function PageThumbnailPanel({ currentPage, onPageChange, entities, redactedDocument, pendingPages }: PageThumbnailPanelProps) {
   const { pdfDocument, pageCount, file } = usePdfProcessing();
   const [computedDoc, setComputedDoc] = useState<PDFDocument | null>(null);
 
@@ -155,6 +162,7 @@ export function PageThumbnailPanel({ currentPage, onPageChange, entities, redact
             pageIndex={i}
             pdfDocument={displayDoc}
             isActive={currentPage === i + 1}
+            isPending={pendingPages?.has(i) ?? false}
             onClick={() => onPageChange(i + 1)}
           />
         ))}
