@@ -224,11 +224,14 @@
       "totalSizeValue": "0 octets",
       "fileCount": "Nombre de fichiers",
       "refresh": "Rafraîchir le cache",
+      "refreshSuccess": "Cache actualisé",
       "delete": "Supprimer le cache",
+      "deleteSuccess": "Cache supprimé",
       "siteData": {
         "title": "Données du site",
         "description": "Vous pouvez également supprimer toutes les données de Rature, y compris les fichiers en cache et les paramètres du site. Cette action aura pour effet de recharger la page et remettra Rature à son état d'origine.",
-        "deleteAll": "Supprimer toutes les données"
+        "deleteAll": "Supprimer toutes les données",
+        "deleteSuccess": "Toutes les données supprimées. Rechargement…"
       }
     }
   },
