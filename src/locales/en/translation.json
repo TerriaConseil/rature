@@ -230,7 +230,8 @@
       "siteData": {
         "title": "Site data",
         "description": "You can also delete all Rature data, including cached files and site settings. This action will reload the page and reset Rature to its original state.",
-        "deleteAll": "Delete all data"
+        "deleteAll": "Delete all data",
+        "deleteSuccess": "All data deleted. Reloading…"
       }
     }
   },

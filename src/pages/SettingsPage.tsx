@@ -57,6 +57,20 @@ export function SettingsPage() {
     getCacheStats().then(setCacheStats).finally(() => setCacheLoading(false));
   }, []);
 
+  const [siteDeleting, setSiteDeleting] = useState(false);
+
+  const handleDeleteSiteData = async () => {
+    setSiteDeleting(true);
+    try {
+      await deleteAllCaches();
+      localStorage.clear();
+      toast.success(t('settings.cache.siteData.deleteSuccess'));
+      setTimeout(() => window.location.reload(), 1500);
+    } finally {
+      setSiteDeleting(false);
+    }
+  };
+
   const handleOptIn = () => {
     localStorage.removeItem('umami.disabled');
     setAnalyticsEnabled(true);
@@ -243,13 +257,13 @@ export function SettingsPage() {
                   {t('settings.cache.files.description3')}
                 </p>
                 <div className="mt-4 flex items-center gap-2">
-                  <div className="w-full flex-1 p-4 bg-gray-100">
+                  <div className="w-full flex-1 p-4 bg-gray-100 dark:bg-gray-800">
                     <p className="text-fg-muted font-medium text-sm">{t('settings.cache.totalSize')}</p>
                     <p className="mt-2 text-fg font-bold text-xl">
                       {cacheStats ? formatFileSize(cacheStats.totalBytes) : '—'}
                     </p>
                   </div>
-                  <div className="w-full flex-1 p-4 bg-gray-100">
+                  <div className="w-full flex-1 p-4 bg-gray-100 dark:bg-gray-800">
                     <p className="text-fg-muted font-medium text-sm">{t('settings.cache.fileCount')}</p>
                     <p className="mt-2 text-fg font-bold text-xl">
                       {cacheStats ? cacheStats.fileCount : '—'}
@@ -272,7 +286,7 @@ export function SettingsPage() {
                 <p className="mt-1 text-fg-muted">
                   {t('settings.cache.siteData.description')}
                 </p>
-                <Button size="lg" variant="secondary" className="mt-4 w-full flex-1" disabled>
+                <Button size="lg" variant="destructive" className="mt-4 w-full flex-1" onClick={handleDeleteSiteData} disabled={siteDeleting || cacheLoading || cacheDeleting}>
                   <Trash2 size={20} />
                   {t('settings.cache.siteData.deleteAll')}
                 </Button>
