@@ -37,7 +37,7 @@ export function DocumentSearchBar({
   const { t } = useTranslation();
   return (
     <>
-      <div className="absolute top-4 right-2 flex items-center justify-end px-4 h-8 bg-transparent shrink-0 z-100">
+      <div className="absolute top-4 right-2 flex items-center justify-end px-4 h-8 bg-transparent shrink-0 z-50">
         <Button
           onClick={onOpen}
           title={t('search.buttonTitle')}
