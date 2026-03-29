@@ -1,7 +1,12 @@
 import { ExternalLink, Moon, PauseCircle, PlayCircle, RefreshCcw, Sun, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { Trans, useTranslation } from "react-i18next";
+
+import { toast } from "sonner";
+
+import { type CacheStats, deleteAllCaches, getCacheStats } from "@/lib/cache.ts";
+import { formatFileSize } from "@/lib/formatFileSize.ts";
 
 import { Footer } from "@/components/home/Footer.tsx";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher.tsx";
@@ -21,6 +26,36 @@ export function SettingsPage() {
   const [analyticsEnabled, setAnalyticsEnabled] = useState(
     () => localStorage.getItem('umami.disabled') !== '1'
   );
+
+  const [cacheStats, setCacheStats] = useState<CacheStats | null>(null);
+  const [cacheLoading, setCacheLoading] = useState(false);
+  const [cacheDeleting, setCacheDeleting] = useState(false);
+
+  const handleRefreshCache = async () => {
+    setCacheLoading(true);
+    try {
+      setCacheStats(await getCacheStats());
+      toast.success(t('settings.cache.refreshSuccess'));
+    } finally {
+      setCacheLoading(false);
+    }
+  };
+
+  const handleDeleteCache = async () => {
+    setCacheDeleting(true);
+    try {
+      await deleteAllCaches();
+      setCacheStats({ fileCount: 0, totalBytes: 0 });
+      toast.success(t('settings.cache.deleteSuccess'));
+    } finally {
+      setCacheDeleting(false);
+    }
+  };
+
+  useEffect(() => {
+    setCacheLoading(true);
+    getCacheStats().then(setCacheStats).finally(() => setCacheLoading(false));
+  }, []);
 
   const handleOptIn = () => {
     localStorage.removeItem('umami.disabled');
@@ -210,19 +245,23 @@ export function SettingsPage() {
                 <div className="mt-4 flex items-center gap-2">
                   <div className="w-full flex-1 p-4 bg-gray-100">
                     <p className="text-fg-muted font-medium text-sm">{t('settings.cache.totalSize')}</p>
-                    <p className="mt-2 text-fg font-bold text-xl">{t('settings.cache.totalSizeValue')}</p>
+                    <p className="mt-2 text-fg font-bold text-xl">
+                      {cacheStats ? formatFileSize(cacheStats.totalBytes) : '—'}
+                    </p>
                   </div>
                   <div className="w-full flex-1 p-4 bg-gray-100">
                     <p className="text-fg-muted font-medium text-sm">{t('settings.cache.fileCount')}</p>
-                    <p className="mt-2 text-fg font-bold text-xl">0</p>
+                    <p className="mt-2 text-fg font-bold text-xl">
+                      {cacheStats ? cacheStats.fileCount : '—'}
+                    </p>
                   </div>
                 </div>
                 <div className="mt-2 flex items-center gap-2">
-                  <Button size="lg" variant="secondary" className="w-full flex-1" disabled>
-                    <RefreshCcw size={20} />
+                  <Button size="lg" variant="secondary" className="w-full flex-1" onClick={handleRefreshCache} disabled={cacheLoading || cacheDeleting}>
+                    <RefreshCcw size={20} className={cacheLoading ? 'animate-spin' : ''} />
                     {t('settings.cache.refresh')}
                   </Button>
-                  <Button size="lg" variant="secondary" className="w-full flex-1" disabled>
+                  <Button size="lg" variant="secondary" className="w-full flex-1" onClick={handleDeleteCache} disabled={cacheLoading || cacheDeleting}>
                     <Trash2 size={20} />
                     {t('settings.cache.delete')}
                   </Button>

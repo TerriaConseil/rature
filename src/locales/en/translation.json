@@ -224,7 +224,9 @@
       "totalSizeValue": "0 bytes",
       "fileCount": "Number of files",
       "refresh": "Refresh cache",
+      "refreshSuccess": "Cache refreshed",
       "delete": "Delete cache",
+      "deleteSuccess": "Cache deleted",
       "siteData": {
         "title": "Site data",
         "description": "You can also delete all Rature data, including cached files and site settings. This action will reload the page and reset Rature to its original state.",
