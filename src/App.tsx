@@ -13,7 +13,7 @@ export default function App() {
   }, [navigate]);
 
   const handleLoadingComplete = useCallback(() => {
-    navigate('/preview', { replace: true });
+    navigate('/document/edition', { replace: true });
   }, [navigate]);
 
   const handleBack = useCallback(() => {
@@ -24,7 +24,7 @@ export default function App() {
     <Routes>
       <Route index element={<HomePage onFileSelect={handleFileSelected} />} />
       <Route path="processing" element={<LoadingPage onComplete={handleLoadingComplete} />} />
-      <Route path="preview" element={<WorkflowPage onBack={handleBack} />} />
+      <Route path="document/:mode" element={<WorkflowPage onBack={handleBack} />} />
     </Routes>
   );
 }

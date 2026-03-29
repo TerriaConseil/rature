@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { type PDFDocument } from 'mupdf';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router';
+import { Navigate, useNavigate, useParams } from 'react-router';
 
 import { ActionsIsland } from '@/components/workflow/ActionsIsland.tsx';
 import { Toolbar } from '@/components/workflow/Toolbar.tsx';
@@ -22,10 +22,12 @@ interface WorkflowPageProps {
 
 export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { mode: modeParam } = useParams<{ mode: string }>();
+  const mode: WorkflowMode = modeParam === 'preview' ? 'preview' : 'edition';
   const { nerEntities: entities, reset: resetEntities, setNerEntities: setEntities } = useAnonymization();
   const { file, pageCount, reset: resetPdfDocument } = usePdfProcessing();
   const { redact } = useRedactWorker();
-  const [mode, setMode] = useState<WorkflowMode>('edition');
   const [redactedDocument, setRedactedDocument] = useState<PDFDocument | null>(null);
   const [pendingPages, setPendingPages] = useState<Set<number>>(new Set());
   const [isRedacting, setIsRedacting] = useState(false);
@@ -81,7 +83,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
     if (newMode === 'preview') {
       if (!file) return;
       setIsRedacting(true);
-      setMode('preview');
+      navigate('/document/preview', { replace: true });
       setPendingPages(new Set(Array.from({ length: pageCount }, (_, i) => i)));
       try {
         const doc = await redact(
@@ -102,16 +104,16 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         setPendingPages(new Set());
       } catch (err) {
         console.error('Redaction failed:', err);
-        setMode('edition');
+        navigate('/document/edition', { replace: true });
         setIsRedacting(false);
         setPendingPages(new Set());
       }
     } else {
       setRedactedDocument(null);
       setPendingPages(new Set());
-      setMode('edition');
+      navigate('/document/edition', { replace: true });
     }
-  }, [file, pageCount, redact]);
+  }, [file, navigate, pageCount, redact]);
 
   const handleZoomIn = useCallback(() => setZoom(z => Math.min(z + 25, 200)), []);
   const handleZoomOut = useCallback(() => setZoom(z => Math.max(z - 25, 50)), []);
