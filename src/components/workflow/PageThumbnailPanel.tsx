@@ -47,6 +47,7 @@ function PageThumbnailItem({ pageIndex, pdfDocument, isActive, isPending, onClic
       if (prevUrlRef.current) URL.revokeObjectURL(prevUrlRef.current);
       prevUrlRef.current = url;
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAspectRatio(pageHeight / pageWidth);
       setImageUrl(url);
     } catch (err) {

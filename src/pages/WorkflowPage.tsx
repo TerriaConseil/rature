@@ -41,7 +41,9 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const entitiesRef = useRef(entities);
   const currentPageRef = useRef(currentPage);
 
+  // eslint-disable-next-line react-hooks/refs
   entitiesRef.current = entities;
+  // eslint-disable-next-line react-hooks/refs
   currentPageRef.current = currentPage;
 
   const toggleEntity = useCallback((name: string) => {

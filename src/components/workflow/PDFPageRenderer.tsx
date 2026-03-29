@@ -67,7 +67,7 @@ export function PDFPageRenderer({ pageIndex, zoom, pdfDocument: propDocument }: 
     return () => {
       cancelled = true;
     };
-  }, [pdfDocument, pageIndex, zoom]);
+  }, [pdfDocument, pageIndex, zoom, t]);
 
   useEffect(() => {
     return () => {
