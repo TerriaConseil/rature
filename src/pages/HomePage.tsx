@@ -47,7 +47,7 @@ export function HomePage({ onFileSelect }: HomePageProps) {
         }}
       />
 
-      <section className="relative z-10 flex-1 mx-auto h-full w-full max-w-4xl px-6 pt-52 pb-16 flex flex-col gap-10 items-center">
+      <section className="relative z-10 flex-1 mx-auto h-full w-full max-w-6xl px-6 pt-52 pb-16 flex flex-col gap-10 items-center">
 
         <h1
           className="text-center tracking-tight leading-[1.05]"
@@ -62,7 +62,7 @@ export function HomePage({ onFileSelect }: HomePageProps) {
         </h1>
 
         <div
-          className="w-full backdrop-blur-xs bg-transparent shadow-2xl my-4 hover:shadow-xl transition-shadow duration-300"
+          className="max-w-3xl w-full backdrop-blur-xs bg-transparent shadow-2xl my-4 hover:shadow-xl transition-shadow duration-300"
           style={{
             animation: 'fade-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both',
           }}

@@ -7,8 +7,8 @@
   },
   "home": {
     "title": "Anonymisez vos PDF",
-    "subtitle": "avant de les envoyer à une IA",
-    "description": "<logo /> détecte et masque automatiquement les données sensibles :<br />noms, adresses, emails, téléphones, etc.<br />directement <bold>dans votre navigateur</bold>.<br />Vos documents <accent>ne quittent jamais</accent> votre ordinateur.",
+    "subtitle": "Sans serveur. Confidentialité totale.",
+    "description": "<logo /> détecte et masque automatiquement les noms, adresses,<br />emails, numéros de téléphone et bien plus — directement <bold>dans votre navigateur</bold>.<br />Aucun envoi, aucun serveur : vos documents <accent>ne quittent jamais</accent> votre ordinateur.",
     "descriptionBrowser": "dans votre navigateur",
     "descriptionNeverLeave": "ne quittent jamais",
     "badges": {
@@ -24,11 +24,11 @@
   "dropzone": {
     "drop": "Déposez votre PDF ici",
     "idle": "Déposez votre PDF ou cliquez pour importer",
-    "steps": "Les étapes de traitement :",
-    "step1": "1. Le modèle est téléchargé",
-    "step2": "2. Le texte du document est extrait",
-    "step3": "3. Les données sensibles sont analysées",
-    "step4": "4. Les entités détectées sont masquées",
+    "steps": "Ce qui se passe :",
+    "step1": "1. Le modèle IA se charge dans votre navigateur",
+    "step2": "2. Le texte de votre document est extrait localement",
+    "step3": "3. Les données sensibles sont identifiées automatiquement",
+    "step4": "4. Les entités détectées sont mises en évidence pour révision",
     "standard": "Mode standard",
     "advanced": "Mode avancé",
     "language": "Langue",

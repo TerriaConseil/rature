@@ -7,8 +7,8 @@
   },
   "home": {
     "title": "Anonymize your PDFs",
-    "subtitle": "before sending them to an AI",
-    "description": "<logo /> automatically detects and masks sensitive data:<br />names, addresses, emails, phone numbers, etc.<br />directly <bold>in your browser</bold>.<br />Your documents <accent>never leave</accent> your computer.",
+    "subtitle": "No server. Full privacy.",
+    "description": "<logo /> automatically detects and redacts names, addresses,<br />emails, phone numbers, and more — directly <bold>in your browser</bold>.<br />No upload, no server: your documents <accent>never leave</accent> your device.",
     "descriptionBrowser": "in your browser",
     "descriptionNeverLeave": "never leave",
     "badges": {
@@ -24,11 +24,11 @@
   "dropzone": {
     "drop": "Drop your PDF here",
     "idle": "Drop your PDF or click to import",
-    "steps": "Processing steps:",
-    "step1": "1. The model is downloaded",
-    "step2": "2. The document's text is extracted",
-    "step3": "3. Sensitive data are processed",
-    "step4": "4. Detected entities are redacted",
+    "steps": "What happens next:",
+    "step1": "1. The AI model loads in your browser",
+    "step2": "2. Your document's text is extracted locally",
+    "step3": "3. Sensitive data is identified automatically",
+    "step4": "4. Detected entities are highlighted for your review",
     "standard": "Standard mode",
     "advanced": "Advanced mode",
     "language": "Language",
