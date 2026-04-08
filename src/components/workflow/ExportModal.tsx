@@ -8,7 +8,7 @@ interface ExportModalProps {
   entities: GroupedEntity[]
   fileName: string
   onClose: () => void
-  onDownload: (opts: { removeMetadata: boolean }) => Promise<void>
+  onDownload: (opts: { removeMetadata: boolean; exportFileName: string }) => Promise<void>
 }
 
 type ReplaceMode = 'redacted' | 'pseudonym';
@@ -19,6 +19,12 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
   const [removeMetadata, setRemoveMetadata] = useState(true);
   const [done, setDone] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+
+  const originalBaseName = fileName.replace(/\.pdf$/i, '');
+  const [exportFileName, setExportFileName] = useState(() => t('export.defaultFileName'));
+  const [keepOriginalName, setKeepOriginalName] = useState(false);
+
+  const effectiveFileName = keepOriginalName ? originalBaseName : exportFileName;
 
   const includedCount = entities.filter(e => e.included).length;
   const totalPages = Math.max(...entities.map(e => e.page));
@@ -39,7 +45,7 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
   const handleDownload = async () => {
     setIsDownloading(true);
     try {
-      await onDownload({ removeMetadata });
+      await onDownload({ removeMetadata, exportFileName: effectiveFileName });
       setDone(true);
     } finally {
       setIsDownloading(false);
@@ -72,6 +78,45 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
                   <span className="font-semibold">{t('export.pageCount', { count: totalPages })}</span>
                 </p>
                 <p className="text-xs text-fg-muted truncate">{fileName}</p>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-fg-muted uppercase tracking-wider">{t('export.fileNameLabel')}</p>
+                <div className="space-y-2">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={effectiveFileName}
+                      onChange={e => setExportFileName(e.target.value)}
+                      disabled={keepOriginalName}
+                      className={[
+                        'w-full rounded-xl border border-border-theme bg-surface-subtle px-3 py-2 text-sm text-fg',
+                        'placeholder:text-fg-muted focus:outline-none focus:border-accent/60 transition-colors',
+                        keepOriginalName ? 'opacity-50 cursor-not-allowed' : '',
+                      ].join(' ')}
+                      placeholder={t('export.defaultFileName')}
+                      spellCheck={false}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-fg-muted pointer-events-none select-none">
+                      .pdf
+                    </span>
+                  </div>
+                  <p className="text-xs text-fg-muted">{t('export.fileNameHint')}</p>
+                  <label className="flex items-center gap-3 cursor-pointer group mt-1">
+                    <input
+                      type="checkbox"
+                      checked={keepOriginalName}
+                      onChange={e => setKeepOriginalName(e.target.checked)}
+                      className="w-4 h-4 accent-accent cursor-pointer rounded"
+                    />
+                    <div>
+                      <p className="text-sm font-medium text-fg group-hover:text-accent transition-colors">
+                        {t('export.keepOriginalName')}
+                      </p>
+                      <p className="text-xs text-fg-muted">{t('export.keepOriginalNameDesc')}</p>
+                    </div>
+                  </label>
+                </div>
               </div>
 
               <div className="space-y-2">

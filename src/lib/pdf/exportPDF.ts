@@ -38,7 +38,7 @@ export function downloadPDFDocument(
   const baseName = fileName.replace(/\.pdf$/i, "");
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${baseName}_anonymise.pdf`;
+  a.download = `${baseName}.pdf`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
