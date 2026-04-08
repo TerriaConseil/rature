@@ -208,13 +208,13 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
           entities={entities}
           fileName={file.name}
           onClose={() => setShowExport(false)}
-          onDownload={async ({ removeMetadata }) => {
+          onDownload={async ({ removeMetadata, exportFileName }) => {
             let doc = redactedDocument;
             if (!doc && file) {
               doc = await redact(file, entities, 0, () => {});
             }
             if (!doc || !file) return;
-            downloadPDFDocument(doc, file.name, removeMetadata);
+            downloadPDFDocument(doc, exportFileName, removeMetadata);
           }}
         />
       )}
