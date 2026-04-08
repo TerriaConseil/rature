@@ -25,4 +25,16 @@ export interface GroupedEntity {
   included: boolean;
 };
 
+export interface DetectedImage {
+  id: string;
+  page: number;
+  rect: [number, number, number, number];
+  width: number;
+  height: number;
+  fingerprint: string;
+  included: boolean;
+}
+
+export type ImageRedactionMethod = 'none' | 'pixels' | 'remove';
+
 export type WorkflowMode = 'edition' | 'preview';
