@@ -1,11 +1,15 @@
 import { PDFDocument, type PDFPage, type StructuredText } from "mupdf";
 import { Buffer } from "buffer";
 
+import type { DetectedImage } from "@/types/index.ts";
+import { extractPageImages } from "@/lib/pdf/extractImages.ts";
+
 export interface PDFExtractionResult {
   success: boolean;
   document: PDFDocument | null;
   pageCount: number;
   pages: PageContent[];
+  detectedImages: DetectedImage[];
   metadata?: PDFMetadata;
   error?: string;
 }
@@ -92,6 +96,7 @@ function handlePDFError(error: unknown): PDFExtractionResult {
     text: [],
     pageCount: 0,
     pages: [],
+    detectedImages: [],
   };
 
   if (error instanceof Error) {
@@ -123,8 +128,9 @@ export async function extractTextFromPDF(
     // Get page count
     const pageCount = doc.countPages();
 
-    // Extract text from all pages
+    // Extract text and images from all pages
     const pages: PageContent[] = [];
+    const detectedImages: DetectedImage[] = [];
 
     for (let i = 0; i < pageCount; i++) {
       const page = doc.loadPage(i);
@@ -141,6 +147,10 @@ export async function extractTextFromPDF(
         text: textContent.split('\n').map(line => line.trim()).filter(Boolean).join('\n'),
         wordCount: textContent.split(/\s+/).filter(Boolean).length,
       });
+
+      // Extract images from this page
+      const pageImages = extractPageImages(page, i);
+      detectedImages.push(...pageImages);
     }
 
     // Extract metadata
@@ -151,6 +161,7 @@ export async function extractTextFromPDF(
       document: doc,
       pageCount,
       pages,
+      detectedImages,
       metadata,
     };
   } catch (error) {
