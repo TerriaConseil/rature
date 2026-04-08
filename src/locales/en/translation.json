@@ -23,7 +23,7 @@
   },
   "dropzone": {
     "drop": "Drop your PDF here",
-    "idle": "Drop your PDF or click to import",
+    "idle": "Drop your PDF or click here to import",
     "steps": "What happens next:",
     "step1": "1. The AI model loads in your browser",
     "step2": "2. Your document's text is extracted locally",
@@ -236,52 +236,190 @@
     }
   },
   "entities": {
-    "ACCOUNTNUMBER": { "label": "Account No.", "title": "Account Numbers" },
-    "AGE":           { "label": "Age", "title": "Ages" },
-    "AMOUNT":        { "label": "Amount", "title": "Amounts" },
-    "BITCOINADDRESS": { "label": "BTC Address", "title": "Bitcoin Addresses" },
-    "CODE_POSTAL":   { "label": "Postal Code", "title": "Postal Codes" },
-    "COUNTRY":       { "label": "Country", "title": "Countries" },
-    "CREDITCARD":    { "label": "Credit Card No.", "title": "Credit Card Numbers" },
-    "CURRENCY":      { "label": "Currency", "title": "Currencies" },
-    "DATE":          { "label": "Date", "title": "Dates" },
-    "DOB":           { "label": "Date of Birth", "title": "Dates of Birth" },
-    "EMAIL":         { "label": "Email", "title": "Emails" },
-    "ETHEREUMADDRESS": { "label": "ETH Address", "title": "Ethereum Addresses" },
-    "EYECOLOR":      { "label": "Eye Color", "title": "Eye Colors" },
-    "GENDER":        { "label": "Gender", "title": "Genders" },
-    "HEIGHT":        { "label": "Height", "title": "Heights" },
-    "IBAN":          { "label": "IBAN", "title": "IBANs" },
-    "ID":            { "label": "ID", "title": "IDs" },
-    "IP":            { "label": "IP Address", "title": "IP Addresses" },
-    "JOBAREA":       { "label": "Work Location", "title": "Work Locations" },
-    "JOBTITLE":      { "label": "Job Title", "title": "Job Titles" },
-    "JOBTYPE":       { "label": "Job Type", "title": "Job Types" },
-    "LOC":           { "label": "Location", "title": "Locations" },
-    "MAC":           { "label": "MAC Address", "title": "MAC Addresses" },
-    "MANUAL":        { "label": "Manual", "title": "Manual entries" },
-    "MISC":          { "label": "Other", "title": "Others" },
-    "NOM_PERSONNE":  { "label": "Last Name", "title": "Last Names" },
-    "NOM_SOCIETE":   { "label": "Organization", "title": "Organizations" },
-    "NOM_VOIE":      { "label": "Street Name", "title": "Street Names" },
-    "NUM_DOSSIER":   { "label": "Case No.", "title": "Case Numbers" },
-    "NUM_SECURITE_SOCIALE": { "label": "Social Security", "title": "Social Security Numbers" },
-    "NUMERO_VOIE":   { "label": "Street No.", "title": "Street Numbers" },
-    "ORG":           { "label": "Organization", "title": "Organizations" },
-    "PASSWORD":      { "label": "Password", "title": "Passwords" },
-    "PER":           { "label": "Person", "title": "Persons" },
-    "PRENOM_PERSONNE": { "label": "First Name", "title": "First Names" },
-    "REF_CADASTRALE": { "label": "Land Registry Ref.", "title": "Land Registry References" },
-    "SECONDARYADDRESS": { "label": "Secondary Address", "title": "Secondary Addresses" },
-    "STATE":         { "label": "Region", "title": "Regions" },
-    "TELEPHONE":     { "label": "Phone", "title": "Phone Numbers" },
-    "TIME":          { "label": "Time", "title": "Times" },
-    "URL":           { "label": "URL", "title": "URLs" },
-    "USERAGENT":     { "label": "User Agent", "title": "User Agents" },
-    "USERNAME":      { "label": "Username", "title": "Usernames" },
-    "VEHICLEVIN":    { "label": "Vehicle VIN", "title": "Vehicle VINs" },
-    "VEHICLEVRM":    { "label": "License Plate", "title": "License Plates" },
-    "VILLE":         { "label": "City", "title": "Cities" }
+    "ACCOUNTNUMBER": {
+      "label": "Account No.",
+      "title": "Account Numbers"
+    },
+    "AGE": {
+      "label": "Age",
+      "title": "Ages"
+    },
+    "AMOUNT": {
+      "label": "Amount",
+      "title": "Amounts"
+    },
+    "BITCOINADDRESS": {
+      "label": "BTC Address",
+      "title": "Bitcoin Addresses"
+    },
+    "CODE_POSTAL": {
+      "label": "Postal Code",
+      "title": "Postal Codes"
+    },
+    "COUNTRY": {
+      "label": "Country",
+      "title": "Countries"
+    },
+    "CREDITCARD": {
+      "label": "Credit Card No.",
+      "title": "Credit Card Numbers"
+    },
+    "CURRENCY": {
+      "label": "Currency",
+      "title": "Currencies"
+    },
+    "DATE": {
+      "label": "Date",
+      "title": "Dates"
+    },
+    "DOB": {
+      "label": "Date of Birth",
+      "title": "Dates of Birth"
+    },
+    "EMAIL": {
+      "label": "Email",
+      "title": "Emails"
+    },
+    "ETHEREUMADDRESS": {
+      "label": "ETH Address",
+      "title": "Ethereum Addresses"
+    },
+    "EYECOLOR": {
+      "label": "Eye Color",
+      "title": "Eye Colors"
+    },
+    "GENDER": {
+      "label": "Gender",
+      "title": "Genders"
+    },
+    "HEIGHT": {
+      "label": "Height",
+      "title": "Heights"
+    },
+    "IBAN": {
+      "label": "IBAN",
+      "title": "IBANs"
+    },
+    "ID": {
+      "label": "ID",
+      "title": "IDs"
+    },
+    "IP": {
+      "label": "IP Address",
+      "title": "IP Addresses"
+    },
+    "JOBAREA": {
+      "label": "Work Location",
+      "title": "Work Locations"
+    },
+    "JOBTITLE": {
+      "label": "Job Title",
+      "title": "Job Titles"
+    },
+    "JOBTYPE": {
+      "label": "Job Type",
+      "title": "Job Types"
+    },
+    "LOC": {
+      "label": "Location",
+      "title": "Locations"
+    },
+    "MAC": {
+      "label": "MAC Address",
+      "title": "MAC Addresses"
+    },
+    "MANUAL": {
+      "label": "Manual",
+      "title": "Manual entries"
+    },
+    "MISC": {
+      "label": "Other",
+      "title": "Others"
+    },
+    "NOM_PERSONNE": {
+      "label": "Last Name",
+      "title": "Last Names"
+    },
+    "NOM_SOCIETE": {
+      "label": "Organization",
+      "title": "Organizations"
+    },
+    "NOM_VOIE": {
+      "label": "Street Name",
+      "title": "Street Names"
+    },
+    "NUM_DOSSIER": {
+      "label": "Case No.",
+      "title": "Case Numbers"
+    },
+    "NUM_SECURITE_SOCIALE": {
+      "label": "Social Security",
+      "title": "Social Security Numbers"
+    },
+    "NUMERO_VOIE": {
+      "label": "Street No.",
+      "title": "Street Numbers"
+    },
+    "ORG": {
+      "label": "Organization",
+      "title": "Organizations"
+    },
+    "PASSWORD": {
+      "label": "Password",
+      "title": "Passwords"
+    },
+    "PER": {
+      "label": "Person",
+      "title": "Persons"
+    },
+    "PRENOM_PERSONNE": {
+      "label": "First Name",
+      "title": "First Names"
+    },
+    "REF_CADASTRALE": {
+      "label": "Land Registry Ref.",
+      "title": "Land Registry References"
+    },
+    "SECONDARYADDRESS": {
+      "label": "Secondary Address",
+      "title": "Secondary Addresses"
+    },
+    "STATE": {
+      "label": "Region",
+      "title": "Regions"
+    },
+    "TELEPHONE": {
+      "label": "Phone",
+      "title": "Phone Numbers"
+    },
+    "TIME": {
+      "label": "Time",
+      "title": "Times"
+    },
+    "URL": {
+      "label": "URL",
+      "title": "URLs"
+    },
+    "USERAGENT": {
+      "label": "User Agent",
+      "title": "User Agents"
+    },
+    "USERNAME": {
+      "label": "Username",
+      "title": "Usernames"
+    },
+    "VEHICLEVIN": {
+      "label": "Vehicle VIN",
+      "title": "Vehicle VINs"
+    },
+    "VEHICLEVRM": {
+      "label": "License Plate",
+      "title": "License Plates"
+    },
+    "VILLE": {
+      "label": "City",
+      "title": "Cities"
+    }
   },
   "about": {
     "title": "About",
