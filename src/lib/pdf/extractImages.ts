@@ -1,4 +1,4 @@
-import { ColorSpace, Device, Matrix, type Image, type PDFPage, type Rect } from "mupdf";
+import { Device, Matrix, type Image, type PDFPage, type Rect } from "mupdf";
 
 import type { DetectedImage } from "@/types/index.ts";
 
@@ -95,12 +95,32 @@ export function extractPageImages(page: PDFPage, pageIndex: number): DetectedIma
   return images;
 }
 
-export function extractImageThumbnail(page: PDFPage, rect: Rect, maxSize: number): Uint8Array {
-  const [x0, y0, x1, y1] = rect;
-  const w = x1 - x0;
-  const h = y1 - y0;
-  const scale = Math.min(maxSize / w, maxSize / h, 1);
-  const matrix: Matrix = [scale, 0, 0, scale, -x0 * scale, -y0 * scale];
-  const pixmap = page.toPixmap(matrix, ColorSpace.DeviceRGB, false);
-  return pixmap.asPNG();
+/**
+ * Run the trace device on a page and return a PNG thumbnail for each image,
+ * keyed by the same `img-{page}-{index}` id used in extractPageImages.
+ */
+export function extractImageThumbnails(page: PDFPage, pageIndex: number): Map<string, Uint8Array> {
+  const thumbnails = new Map<string, Uint8Array>();
+  let index = 0;
+
+  const device = new Device({
+    fillImage(image: Image, ctm: Matrix) {
+      const rect = rectFromMatrix(ctm);
+      const rectWidth = rect[2] - rect[0];
+      const rectHeight = rect[3] - rect[1];
+      if (rectWidth < MIN_IMAGE_DIMENSION || rectHeight < MIN_IMAGE_DIMENSION) return;
+
+      const id = `img-${pageIndex}-${index++}`;
+      try {
+        const pixmap = image.toPixmap();
+        thumbnails.set(id, pixmap.asPNG());
+      } catch {
+        // skip if pixmap extraction fails
+      }
+    },
+  });
+
+  page.run(device, Matrix.identity);
+  device.close();
+  return thumbnails;
 }
