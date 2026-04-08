@@ -104,7 +104,7 @@
     "fileNameHint": "L'extension .pdf sera ajoutée automatiquement",
     "keepOriginalName": "Conserver le nom d'origine",
     "keepOriginalNameDesc": "Utiliser le nom du fichier source au lieu du nom par défaut",
-    "defaultFileName": "rature-document-anonymise",
+    "defaultFileName": "rature-document-anonymisé",
     "removeMetadata": "Supprimer les métadonnées",
     "removeMetadataDesc": "Auteur, date de création, propriétés du document original",
     "cancel": "Annuler",
