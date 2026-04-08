@@ -26,6 +26,7 @@ const uploadPDF = async (file: File) => {
       document: result.document,
       pageCount: result.pageCount,
       pages: result.pages,
+      detectedImages: result.detectedImages,
       metadata: result.metadata,
     };
   } catch (error) {
