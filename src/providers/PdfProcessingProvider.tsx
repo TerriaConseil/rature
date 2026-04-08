@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import { PdfProcessingContext, type TextExtract, type PDFProcessingStatus } from "@/context/pdfProcessing.tsx";
 import uploadPDF from "@/lib/pdf/uploadPDF.tsx";
+import type { DetectedImage } from "@/types/index.ts";
 
 type PdfProcessingProviderProps = {
   children: ReactNode;
@@ -15,6 +16,7 @@ export function PdfProcessingProvider({ children }: PdfProcessingProviderProps) 
   const [pageCount, setPageCount] = useState(0);
   const [pdfDocument, setPdfDocument] = useState<PDFDocument | null>(null);
   const [extractedText, setExtractedText] = useState<TextExtract[]>([]);
+  const [detectedImages, setDetectedImages] = useState<DetectedImage[]>([]);
 
   const processFile = async () => {
     if (!file) {
@@ -34,6 +36,7 @@ export function PdfProcessingProvider({ children }: PdfProcessingProviderProps) 
       setPageCount(result.pageCount);
       setPdfDocument(result.document);
       setExtractedText(extracted || []);
+      setDetectedImages(result.detectedImages ?? []);
       setStatus("complete");
 
       return extracted;
@@ -51,10 +54,12 @@ export function PdfProcessingProvider({ children }: PdfProcessingProviderProps) 
     setFile(null);
     setPdfDocument(null);
     setExtractedText([]);
+    setDetectedImages([]);
   };
 
   return (
     <PdfProcessingContext value={{
+      detectedImages,
       file,
       pdfDocument,
       pageCount,
@@ -62,6 +67,7 @@ export function PdfProcessingProvider({ children }: PdfProcessingProviderProps) 
       extractedText,
       processFile,
       reset,
+      setDetectedImages,
       setFile,
     }}>
       {children}
