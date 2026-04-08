@@ -56,10 +56,25 @@ export function HomePage({ onFileSelect }: HomePageProps) {
           <span className="block text-accent text-6xl lg:text-7xl font-extrabold">
             {t('home.title')}
           </span>
-          <span className="block text-5xl lg:text-6xl font-extrabold text-fg mt-2">
+          <span className="block text-3xl lg:text-4xl font-extrabold text-fg mt-2">
             {t('home.subtitle')}
           </span>
         </h1>
+
+        <p
+          className="text-center text-base text-fg-muted leading-relaxed"
+          style={{ animation: 'fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both' }}
+        >
+          <Trans
+            i18nKey="home.description"
+            components={{
+              logo: <RatureLogo size="lg" />,
+              bold: <span className="font-bold text-fg" />,
+              accent: <span className="text-accent font-bold" />,
+              br: <br />,
+            }}
+          />
+        </p>
 
         <div
           className="max-w-3xl w-full backdrop-blur-xs bg-transparent shadow-2xl my-4 hover:shadow-xl transition-shadow duration-300"
@@ -84,21 +99,6 @@ export function HomePage({ onFileSelect }: HomePageProps) {
             </li>
           ))}
         </ul>
-
-        <p
-          className="text-center text-base text-fg-muted leading-relaxed"
-          style={{ animation: 'fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both' }}
-        >
-          <Trans
-            i18nKey="home.description"
-            components={{
-              logo: <RatureLogo size="lg" />,
-              bold: <span className="font-bold text-fg" />,
-              accent: <span className="text-accent font-bold" />,
-              br: <br />,
-            }}
-          />
-        </p>
       </section>
 
       <div className="fixed inset-0 z-100 flex items-center justify-center bg-surface p-8 md:hidden">
