@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { PDFDocument } from 'mupdf';
 import { Buffer } from 'buffer';
 
-import type { GroupedEntity } from '@/types/index.ts';
+import type { DetectedImage, GroupedEntity, ImageRedactionMethod } from '@/types/index.ts';
 import RedactWorkerUrl from '@/workers/redactWorker.ts?worker&url';
 
 export function useRedactWorker() {
@@ -12,6 +12,8 @@ export function useRedactWorker() {
       entities: GroupedEntity[],
       currentPageIndex: number,
       onCurrentPageReady: (doc: PDFDocument, processedPages: Set<number>) => void,
+      images: DetectedImage[] = [],
+      imageMethod: ImageRedactionMethod = 'none',
     ): Promise<PDFDocument> => {
       return new Promise((resolve, reject) => {
         const worker = new Worker(RedactWorkerUrl, { type: 'module' });
@@ -23,7 +25,7 @@ export function useRedactWorker() {
           if (data.type === 'ready') {
             file.arrayBuffer().then(fileBuffer => {
               worker.postMessage(
-                { type: 'redact', jobId, fileBuffer, entities, currentPageIndex },
+                { type: 'redact', jobId, fileBuffer, entities, images, imageMethod, currentPageIndex },
                 [fileBuffer],
               );
             }).catch(err => {

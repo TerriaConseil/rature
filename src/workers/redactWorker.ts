@@ -1,8 +1,8 @@
 /// <reference lib="webworker" />
-import { PDFDocument, type Quad } from 'mupdf';
+import { PDFDocument, PDFPage, type Quad } from 'mupdf';
 import { Buffer } from 'buffer';
 
-import type { GroupedEntity } from '@/types/index.ts';
+import type { DetectedImage, GroupedEntity, ImageRedactionMethod } from '@/types/index.ts';
 
 declare const self: DedicatedWorkerGlobalScope;
 
@@ -11,6 +11,8 @@ type RedactMessage = {
   jobId: string;
   fileBuffer: ArrayBuffer;
   entities: GroupedEntity[];
+  images: DetectedImage[];
+  imageMethod: ImageRedactionMethod;
   currentPageIndex: number;
 };
 
@@ -62,10 +64,23 @@ function buildRedactQuads(chars: CharEntry[]): Quad[] {
   return quads;
 }
 
-function processPage(pdf: PDFDocument, pageIndex: number, uniqueTexts: string[]) {
+const IMAGE_METHOD_MAP: Record<ImageRedactionMethod, number> = {
+  none: PDFPage.REDACT_IMAGE_NONE,
+  pixels: PDFPage.REDACT_IMAGE_PIXELS,
+  remove: PDFPage.REDACT_IMAGE_REMOVE,
+};
+
+function processPage(
+  pdf: PDFDocument,
+  pageIndex: number,
+  uniqueTexts: string[],
+  pageImages: DetectedImage[],
+  imageMethodConst: number,
+) {
   const page = pdf.loadPage(pageIndex);
   const structuredText = page.toStructuredText('preserve-whitespace');
 
+  // --- Text redaction annotations ---
   let chars: CharEntry[] | null = null;
   try {
     chars = extractPageChars(structuredText);
@@ -78,30 +93,39 @@ function processPage(pdf: PDFDocument, pageIndex: number, uniqueTexts: string[])
       for (const result of structuredText.search(text)) {
         const annotation = page.createAnnotation('Redact');
         annotation.setQuadPoints(result);
-        annotation.applyRedaction();
       }
     }
-    return;
-  }
+  } else {
+    const flatText = chars.map(c => c.char).join('');
 
-  const flatText = chars.map(c => c.char).join('');
-
-  for (const text of uniqueTexts) {
-    const regex = new RegExp(`(?<![\\p{L}\\p{N}])${escapeRegex(text)}(?![\\p{L}\\p{N}])`, 'giu');
-    let match;
-    while ((match = regex.exec(flatText)) !== null) {
-      const matchChars = chars.slice(match.index, match.index + match[0].length);
-      const quads = buildRedactQuads(matchChars);
-      if (!quads.length) continue;
-      const annotation = page.createAnnotation('Redact');
-      annotation.setQuadPoints(quads);
-      annotation.applyRedaction();
+    for (const text of uniqueTexts) {
+      const regex = new RegExp(`(?<![\\p{L}\\p{N}])${escapeRegex(text)}(?![\\p{L}\\p{N}])`, 'giu');
+      let match;
+      while ((match = regex.exec(flatText)) !== null) {
+        const matchChars = chars.slice(match.index, match.index + match[0].length);
+        const quads = buildRedactQuads(matchChars);
+        if (!quads.length) continue;
+        const annotation = page.createAnnotation('Redact');
+        annotation.setQuadPoints(quads);
+      }
     }
   }
+
+  // --- Image redaction annotations ---
+  if (imageMethodConst !== PDFPage.REDACT_IMAGE_NONE) {
+    for (const img of pageImages) {
+      if (!img.included) continue;
+      const annotation = page.createAnnotation('Redact');
+      annotation.setRect(img.rect);
+    }
+  }
+
+  // --- Apply all redactions at once ---
+  page.applyRedactions(true, imageMethodConst);
 }
 
 self.onmessage = async (event: MessageEvent<RedactMessage>) => {
-  const { type, jobId, fileBuffer, entities, currentPageIndex } = event.data;
+  const { type, jobId, fileBuffer, entities, images, imageMethod, currentPageIndex } = event.data;
   if (type !== 'redact') return;
 
   try {
@@ -116,10 +140,13 @@ self.onmessage = async (event: MessageEvent<RedactMessage>) => {
       ),
     ];
 
+    const imageMethodConst = IMAGE_METHOD_MAP[imageMethod] ?? PDFPage.REDACT_IMAGE_NONE;
+
     const pageCount = pdf.countPages();
 
     // Phase 1: process the current page first for immediate preview
-    processPage(pdf, currentPageIndex, uniqueTexts);
+    const currentPageImages = images.filter(img => img.page === currentPageIndex);
+    processPage(pdf, currentPageIndex, uniqueTexts, currentPageImages, imageMethodConst);
     const partialSave = pdf.saveToBuffer({ garbage: 0, compress: true, clean: false, ascii: false });
     const partialBuffer = new Uint8Array(partialSave.asUint8Array());
     const pageResultMsg: RedactResult = { type: 'page_result', jobId, pdfBuffer: partialBuffer, processedPages: [currentPageIndex] };
@@ -128,7 +155,8 @@ self.onmessage = async (event: MessageEvent<RedactMessage>) => {
     // Phase 2: process all remaining pages
     for (let i = 0; i < pageCount; i++) {
       if (i === currentPageIndex) continue;
-      processPage(pdf, i, uniqueTexts);
+      const pageImages = images.filter(img => img.page === i);
+      processPage(pdf, i, uniqueTexts, pageImages, imageMethodConst);
     }
 
     const fullSave = pdf.saveToBuffer({ garbage: 4, compress: true, clean: true, ascii: false });
