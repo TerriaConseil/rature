@@ -73,10 +73,10 @@
   },
   "imageEdition": {
     "title": "Édition des images",
-    "selectAll": "Tout sélectionner",
+    "selectAll": "Sélectionner toutes les images du document",
     "deselectAll": "Tout désélectionner",
-    "selectPage": "Sélectionner la page",
-    "deselectPage": "Désélectionner la page",
+    "selectPage": "Tout sélectionner (page)",
+    "deselectPage": "Tout désélectionner (page)",
     "emptyState": "Aucune image détectée dans ce document.",
     "dimensions": "{{w}} × {{h}} px",
     "modal": {

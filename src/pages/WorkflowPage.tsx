@@ -10,6 +10,7 @@ import { PDFPageRenderer } from '@/components/workflow/PDFPageRenderer.tsx';
 import { PageThumbnailPanel } from '@/components/workflow/PageThumbnailPanel.tsx';
 import { DetectionSidebar } from '@/components/workflow/DetectionSidebar.tsx';
 import { ExportModal } from '@/components/workflow/ExportModal.tsx';
+import { ImageEditionPage } from '@/components/workflow/ImageEditionPage.tsx';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 import { useRedactWorker } from '@/hooks/useRedactWorker.ts';
@@ -188,7 +189,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         <div className="flex flex-1 overflow-hidden">
           <PageThumbnailPanel currentPage={currentPage} redactedDocument={null} pendingPages={new Set()} onPageChange={setCurrentPage} />
           <div className="flex-1 relative flex flex-col overflow-hidden">
-            {/* ImageEditionPage rendered here in Step 5 */}
+            <ImageEditionPage />
             <ActionsIsland mode={mode} onModeChange={handleModeChange} />
           </div>
         </div>
