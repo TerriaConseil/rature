@@ -38,14 +38,17 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const [highlightedEntityText, setHighlightedEntityText] = useState<string | null>(null);
   const [showExport, setShowExport] = useState(false);
 
-  // Stable refs so callbacks don't need entities/currentPage in their dep arrays
+  // Stable refs so callbacks don't need entities/currentPage/detectedImages in their dep arrays
   const entitiesRef = useRef(entities);
   const currentPageRef = useRef(currentPage);
+  const detectedImagesRef = useRef(detectedImages);
 
   // eslint-disable-next-line react-hooks/refs
   entitiesRef.current = entities;
   // eslint-disable-next-line react-hooks/refs
   currentPageRef.current = currentPage;
+  // eslint-disable-next-line react-hooks/refs
+  detectedImagesRef.current = detectedImages;
 
   const toggleEntity = useCallback((name: string) => {
     setEntities(entitiesRef.current.map(e => e.text === name ? { ...e, included: !e.included } : e));
@@ -102,7 +105,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
             });
             setIsRedacting(false);
           },
-          detectedImages,
+          detectedImagesRef.current,
           'pixels',
         );
         setRedactedDocument(doc);
