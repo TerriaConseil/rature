@@ -24,7 +24,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { mode: modeParam } = useParams<{ mode: string }>();
-  const mode: WorkflowMode = modeParam === 'preview' ? 'preview' : 'edition';
+  const mode: WorkflowMode = modeParam === 'preview' ? 'preview' : modeParam === 'image-edition' ? 'image-edition' : 'edition';
   const { nerEntities: entities, reset: resetEntities, setNerEntities: setEntities } = useAnonymization();
   const { file, pageCount, reset: resetPdfDocument } = usePdfProcessing();
   const { redact } = useRedactWorker();
@@ -110,6 +110,10 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         setIsRedacting(false);
         setPendingPages(new Set());
       }
+    } else if (newMode === 'image-edition') {
+      setRedactedDocument(null);
+      setPendingPages(new Set());
+      navigate('/document/image-edition', { replace: true });
     } else {
       setRedactedDocument(null);
       setPendingPages(new Set());
@@ -179,6 +183,14 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
             onEntitySelect={handleEntitySelect}
             onHighlightAll={handleHighlightAll}
           />
+        </div>
+      ) : mode === 'image-edition' ? (
+        <div className="flex flex-1 overflow-hidden">
+          <PageThumbnailPanel currentPage={currentPage} redactedDocument={null} pendingPages={new Set()} onPageChange={setCurrentPage} />
+          <div className="flex-1 relative flex flex-col overflow-hidden">
+            {/* ImageEditionPage rendered here in Step 5 */}
+            <ActionsIsland mode={mode} onModeChange={handleModeChange} />
+          </div>
         </div>
       ) : isRedacting ? (
         <div className="flex-1 overflow-auto bg-[#e8e8ec] dark:bg-[#0e0e14] flex items-center justify-center">
