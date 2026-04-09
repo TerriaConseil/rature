@@ -66,7 +66,25 @@
   "toolbar": {
     "back": "Retour",
     "confirmBack": "Êtes-vous sûr ? Tous les changements seront perdus.",
-    "export": "Exporter le PDF"
+    "export": "Exporter le PDF",
+    "textEdition": "Édition du texte",
+    "imageEdition": "Édition des images",
+    "preview": "Aperçu"
+  },
+  "imageEdition": {
+    "title": "Édition des images",
+    "selectAll": "Tout sélectionner",
+    "deselectAll": "Tout désélectionner",
+    "selectPage": "Sélectionner la page",
+    "deselectPage": "Désélectionner la page",
+    "emptyState": "Aucune image détectée dans ce document.",
+    "dimensions": "{{w}} × {{h}} px",
+    "modal": {
+      "title": "Image présente sur plusieurs pages",
+      "body": "Cette image apparaît sur {{count}} autre(s) page(s). Appliquer la même modification à toutes les occurrences ?",
+      "thisOnly": "Cette image uniquement",
+      "allOccurrences": "Toutes les occurrences"
+    }
   },
   "sidebar": {
     "title": "Entités détectées",

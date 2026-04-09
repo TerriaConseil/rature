@@ -66,7 +66,25 @@
   "toolbar": {
     "back": "Back",
     "confirmBack": "Are you sure? All changes will be lost.",
-    "export": "Export PDF"
+    "export": "Export PDF",
+    "textEdition": "Text Edition",
+    "imageEdition": "Image Edition",
+    "preview": "Preview"
+  },
+  "imageEdition": {
+    "title": "Image Edition",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "selectPage": "Select page",
+    "deselectPage": "Deselect page",
+    "emptyState": "No images detected in this document.",
+    "dimensions": "{{w}} × {{h}} px",
+    "modal": {
+      "title": "Image found on multiple pages",
+      "body": "This image appears on {{count}} other page(s). Apply the same change to all occurrences?",
+      "thisOnly": "This image only",
+      "allOccurrences": "All occurrences"
+    }
   },
   "sidebar": {
     "title": "Detected entities",
