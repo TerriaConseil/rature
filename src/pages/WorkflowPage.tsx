@@ -158,6 +158,19 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         onExport={() => setShowExport(true)}
       />
 
+      <div className="shrink-0 px-5 py-2.5 border-b border-border-theme bg-card flex items-baseline gap-3">
+        <span className="text-sm font-semibold text-fg">
+          {mode === 'edition' && t('toolbar.textEdition')}
+          {mode === 'image-edition' && t('toolbar.imageEdition')}
+          {mode === 'preview' && t('toolbar.preview')}
+        </span>
+        <span className="text-xs text-fg-muted">
+          {mode === 'edition' && t('toolbar.textEditionDesc')}
+          {mode === 'image-edition' && t('toolbar.imageEditionDesc')}
+          {mode === 'preview' && t('toolbar.previewDesc')}
+        </span>
+      </div>
+
       {mode === 'edition' ? (
         <div className="flex flex-1 overflow-hidden">
           <PDFViewer

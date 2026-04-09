@@ -69,7 +69,10 @@
     "export": "Exporter le PDF",
     "textEdition": "Édition du texte",
     "imageEdition": "Édition des images",
-    "preview": "Aperçu"
+    "preview": "Aperçu",
+    "textEditionDesc": "Vérifiez et ajustez les entités textuelles détectées avant l'occultation.",
+    "imageEditionDesc": "Sélectionnez les images à masquer dans votre document.",
+    "previewDesc": "Vérifiez le document occulté avant de l'exporter."
   },
   "imageEdition": {
     "title": "Édition des images",

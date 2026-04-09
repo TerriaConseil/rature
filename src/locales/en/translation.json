@@ -69,7 +69,10 @@
     "export": "Export PDF",
     "textEdition": "Text Edition",
     "imageEdition": "Image Edition",
-    "preview": "Preview"
+    "preview": "Preview",
+    "textEditionDesc": "Review and adjust the detected text entities before redaction.",
+    "imageEditionDesc": "Select the images you want to redact from your document.",
+    "previewDesc": "Review the redacted document before exporting."
   },
   "imageEdition": {
     "title": "Image Edition",
