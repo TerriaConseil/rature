@@ -27,7 +27,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const { mode: modeParam } = useParams<{ mode: string }>();
   const mode: WorkflowMode = modeParam === 'preview' ? 'preview' : modeParam === 'image-edition' ? 'image-edition' : 'edition';
   const { nerEntities: entities, reset: resetEntities, setNerEntities: setEntities } = useAnonymization();
-  const { file, pageCount, reset: resetPdfDocument } = usePdfProcessing();
+  const { file, pageCount, detectedImages, reset: resetPdfDocument } = usePdfProcessing();
   const { redact } = useRedactWorker();
   const [redactedDocument, setRedactedDocument] = useState<PDFDocument | null>(null);
   const [pendingPages, setPendingPages] = useState<Set<number>>(new Set());
@@ -102,6 +102,8 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
             });
             setIsRedacting(false);
           },
+          detectedImages,
+          'pixels',
         );
         setRedactedDocument(doc);
         setPendingPages(new Set());
@@ -224,7 +226,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
           onDownload={async ({ removeMetadata, exportFileName }) => {
             let doc = redactedDocument;
             if (!doc && file) {
-              doc = await redact(file, entities, 0, () => {});
+              doc = await redact(file, entities, 0, () => {}, detectedImages, 'pixels');
             }
             if (!doc || !file) return;
             downloadPDFDocument(doc, exportFileName, removeMetadata);
