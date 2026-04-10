@@ -42,7 +42,7 @@ export function DocumentSearchBar({
     <>
       <div className={cn(
           "absolute top-4 right-2 flex items-center justify-end px-4 h-8 bg-transparent shrink-0 z-50 transition-transform duration-300 ease-in-out",
-          !isSidebarCollapsed && '-translate-x-90',
+          !isSidebarCollapsed && '-translate-x-76',
         )}>
         <Button
           onClick={onOpen}
