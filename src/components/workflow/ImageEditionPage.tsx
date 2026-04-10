@@ -5,7 +5,7 @@ import { Check, ImageOff } from 'lucide-react';
 import { cn } from '@/lib/utils.ts';
 import { extractImageThumbnails } from '@/lib/pdf/extractImages.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
-import type { DetectedImage } from '@/types/index.ts';
+import type { DetectedImage, ImageRedactionMethod } from '@/types/index.ts';
 import { RepeatedImageModal } from '@/components/workflow/RepeatedImageModal.tsx';
 
 interface PendingToggle {
@@ -14,7 +14,12 @@ interface PendingToggle {
   thumbnail: string | undefined;
 }
 
-export function ImageEditionPage() {
+interface ImageEditionPageProps {
+  imageMethod: ImageRedactionMethod;
+  onImageMethodChange: (method: ImageRedactionMethod) => void;
+}
+
+export function ImageEditionPage({ imageMethod, onImageMethodChange }: ImageEditionPageProps) {
   const { t } = useTranslation();
   const { pdfDocument, detectedImages, setDetectedImages } = usePdfProcessing();
 
@@ -134,12 +139,32 @@ export function ImageEditionPage() {
           </div>
         )}
 
-        {/* Global select-all row */}
+        {/* Method selector + global select-all row */}
         {detectedImages.length > 0 && (
-          <div className="flex items-center justify-end mb-6">
+          <div className="flex items-center justify-between mb-6 gap-4">
+            {/* Redaction method pills */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-fg-muted">{t('imageEdition.method.label')} :</span>
+              <div className="flex items-center gap-0.5 bg-surface-subtle rounded-lg p-0.5">
+                {(['none', 'pixels', 'remove'] as ImageRedactionMethod[]).map(method => (
+                  <button
+                    key={method}
+                    onClick={() => onImageMethodChange(method)}
+                    className={cn(
+                      'px-2.5 py-1 rounded-md text-xs font-medium transition-all duration-200 cursor-pointer',
+                      imageMethod === method
+                        ? 'bg-card text-fg shadow-sm'
+                        : 'text-fg-muted hover:text-fg',
+                    )}
+                  >
+                    {t(`imageEdition.method.${method}`)}
+                  </button>
+                ))}
+              </div>
+            </div>
             <button
               onClick={handleSelectAll}
-              className="text-xs font-medium text-accent hover:text-accent/80 transition-colors cursor-pointer"
+              className="text-xs font-medium text-accent hover:text-accent/80 transition-colors cursor-pointer shrink-0"
             >
               {allIncluded ? t('imageEdition.deselectAll') : t('imageEdition.selectAll')}
             </button>
@@ -215,7 +240,7 @@ function ImageCard({ image, thumbnail, loading, onToggle, dimensionsLabel }: Ima
       )}
     >
       {/* Thumbnail / skeleton */}
-      <div className="aspect-[4/3] bg-surface-subtle flex items-center justify-center overflow-hidden">
+      <div className="aspect-4/3 bg-surface-subtle flex items-center justify-center overflow-hidden">
         {loading ? (
           <div className="w-full h-full animate-pulse bg-border-theme" />
         ) : thumbnail ? (

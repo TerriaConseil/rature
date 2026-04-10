@@ -15,7 +15,7 @@ import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 import { useRedactWorker } from '@/hooks/useRedactWorker.ts';
 import { downloadPDFDocument } from '@/lib/pdf/exportPDF.ts';
-import type { GroupedEntity, WorkflowMode } from '@/types/index.ts';
+import type { GroupedEntity, ImageRedactionMethod, WorkflowMode } from '@/types/index.ts';
 
 interface WorkflowPageProps {
   onBack: () => void;
@@ -37,11 +37,13 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
   const [highlightedEntityText, setHighlightedEntityText] = useState<string | null>(null);
   const [showExport, setShowExport] = useState(false);
+  const [imageMethod, setImageMethod] = useState<ImageRedactionMethod>('pixels');
 
-  // Stable refs so callbacks don't need entities/currentPage/detectedImages in their dep arrays
+  // Stable refs so callbacks don't need entities/currentPage/detectedImages/imageMethod in their dep arrays
   const entitiesRef = useRef(entities);
   const currentPageRef = useRef(currentPage);
   const detectedImagesRef = useRef(detectedImages);
+  const imageMethodRef = useRef(imageMethod);
 
   // eslint-disable-next-line react-hooks/refs
   entitiesRef.current = entities;
@@ -49,6 +51,8 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   currentPageRef.current = currentPage;
   // eslint-disable-next-line react-hooks/refs
   detectedImagesRef.current = detectedImages;
+  // eslint-disable-next-line react-hooks/refs
+  imageMethodRef.current = imageMethod;
 
   const toggleEntity = useCallback((name: string) => {
     setEntities(entitiesRef.current.map(e => e.text === name ? { ...e, included: !e.included } : e));
@@ -106,7 +110,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
             setIsRedacting(false);
           },
           detectedImagesRef.current,
-          'pixels',
+          imageMethodRef.current,
         );
         setRedactedDocument(doc);
         setPendingPages(new Set());
@@ -207,7 +211,7 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         <div className="flex flex-1 overflow-hidden">
           <PageThumbnailPanel currentPage={currentPage} redactedDocument={null} pendingPages={new Set()} onPageChange={setCurrentPage} />
           <div className="flex-1 relative flex flex-col overflow-hidden">
-            <ImageEditionPage />
+            <ImageEditionPage imageMethod={imageMethod} onImageMethodChange={setImageMethod} />
             <ActionsIsland mode={mode} onModeChange={handleModeChange} />
           </div>
         </div>
@@ -238,11 +242,14 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         <ExportModal
           entities={entities}
           fileName={file.name}
+          includedImageCount={detectedImages.filter(img => img.included).length}
+          imageMethod={imageMethod}
+          onImageMethodChange={setImageMethod}
           onClose={() => setShowExport(false)}
           onDownload={async ({ removeMetadata, exportFileName }) => {
             let doc = redactedDocument;
             if (!doc && file) {
-              doc = await redact(file, entities, 0, () => {}, detectedImages, 'pixels');
+              doc = await redact(file, entities, 0, () => {}, detectedImages, imageMethod);
             }
             if (!doc || !file) return;
             downloadPDFDocument(doc, exportFileName, removeMetadata);

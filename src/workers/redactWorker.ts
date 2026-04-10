@@ -111,17 +111,20 @@ function processPage(
     }
   }
 
-  // --- Image redaction annotations ---
+  // Pass 1: apply text redactions with black boxes, leaving images untouched
+  page.applyRedactions(true, PDFPage.REDACT_IMAGE_NONE);
+
+  // Pass 2: apply image redactions separately
+  // black_boxes=false for REMOVE so the image disappears cleanly without leaving a black rectangle
   if (imageMethodConst !== PDFPage.REDACT_IMAGE_NONE) {
     for (const img of pageImages) {
       if (!img.included) continue;
       const annotation = page.createAnnotation('Redact');
       annotation.setRect(img.rect);
     }
+    const imageBlackBoxes = imageMethodConst !== PDFPage.REDACT_IMAGE_REMOVE;
+    page.applyRedactions(imageBlackBoxes, imageMethodConst);
   }
-
-  // --- Apply all redactions at once ---
-  page.applyRedactions(true, imageMethodConst);
 }
 
 self.onmessage = async (event: MessageEvent<RedactMessage>) => {
