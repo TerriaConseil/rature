@@ -10,11 +10,12 @@ import { PDFPageRenderer } from '@/components/workflow/PDFPageRenderer.tsx';
 import { PageThumbnailPanel } from '@/components/workflow/PageThumbnailPanel.tsx';
 import { DetectionSidebar } from '@/components/workflow/DetectionSidebar.tsx';
 import { ExportModal } from '@/components/workflow/ExportModal.tsx';
+import { ImageEditionPage } from '@/components/workflow/ImageEditionPage.tsx';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 import { useRedactWorker } from '@/hooks/useRedactWorker.ts';
 import { downloadPDFDocument } from '@/lib/pdf/exportPDF.ts';
-import type { GroupedEntity, WorkflowMode } from '@/types/index.ts';
+import type { GroupedEntity, ImageRedactionMethod, WorkflowMode } from '@/types/index.ts';
 
 interface WorkflowPageProps {
   onBack: () => void;
@@ -24,9 +25,9 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { mode: modeParam } = useParams<{ mode: string }>();
-  const mode: WorkflowMode = modeParam === 'preview' ? 'preview' : 'edition';
+  const mode: WorkflowMode = modeParam === 'preview' ? 'preview' : modeParam === 'image-edition' ? 'image-edition' : 'edition';
   const { nerEntities: entities, reset: resetEntities, setNerEntities: setEntities } = useAnonymization();
-  const { file, pageCount, reset: resetPdfDocument } = usePdfProcessing();
+  const { file, pageCount, detectedImages, reset: resetPdfDocument } = usePdfProcessing();
   const { redact } = useRedactWorker();
   const [redactedDocument, setRedactedDocument] = useState<PDFDocument | null>(null);
   const [pendingPages, setPendingPages] = useState<Set<number>>(new Set());
@@ -36,15 +37,22 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
   const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
   const [highlightedEntityText, setHighlightedEntityText] = useState<string | null>(null);
   const [showExport, setShowExport] = useState(false);
+  const [imageMethod, setImageMethod] = useState<ImageRedactionMethod>('pixels');
 
-  // Stable refs so callbacks don't need entities/currentPage in their dep arrays
+  // Stable refs so callbacks don't need entities/currentPage/detectedImages/imageMethod in their dep arrays
   const entitiesRef = useRef(entities);
   const currentPageRef = useRef(currentPage);
+  const detectedImagesRef = useRef(detectedImages);
+  const imageMethodRef = useRef(imageMethod);
 
   // eslint-disable-next-line react-hooks/refs
   entitiesRef.current = entities;
   // eslint-disable-next-line react-hooks/refs
   currentPageRef.current = currentPage;
+  // eslint-disable-next-line react-hooks/refs
+  detectedImagesRef.current = detectedImages;
+  // eslint-disable-next-line react-hooks/refs
+  imageMethodRef.current = imageMethod;
 
   const toggleEntity = useCallback((name: string) => {
     setEntities(entitiesRef.current.map(e => e.text === name ? { ...e, included: !e.included } : e));
@@ -101,6 +109,8 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
             });
             setIsRedacting(false);
           },
+          detectedImagesRef.current,
+          imageMethodRef.current,
         );
         setRedactedDocument(doc);
         setPendingPages(new Set());
@@ -110,6 +120,10 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         setIsRedacting(false);
         setPendingPages(new Set());
       }
+    } else if (newMode === 'image-edition') {
+      setRedactedDocument(null);
+      setPendingPages(new Set());
+      navigate('/document/image-edition', { replace: true });
     } else {
       setRedactedDocument(null);
       setPendingPages(new Set());
@@ -151,6 +165,19 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         onExport={() => setShowExport(true)}
       />
 
+      <div className="shrink-0 px-5 py-2.5 border-b border-border-theme bg-card flex items-baseline gap-3">
+        <span className="text-sm font-semibold text-fg">
+          {mode === 'edition' && t('toolbar.textEdition')}
+          {mode === 'image-edition' && t('toolbar.imageEdition')}
+          {mode === 'preview' && t('toolbar.preview')}
+        </span>
+        <span className="text-xs text-fg-muted">
+          {mode === 'edition' && t('toolbar.textEditionDesc')}
+          {mode === 'image-edition' && t('toolbar.imageEditionDesc')}
+          {mode === 'preview' && t('toolbar.previewDesc')}
+        </span>
+      </div>
+
       {mode === 'edition' ? (
         <div className="flex flex-1 overflow-hidden">
           <PDFViewer
@@ -180,6 +207,14 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
             onHighlightAll={handleHighlightAll}
           />
         </div>
+      ) : mode === 'image-edition' ? (
+        <div className="flex flex-1 overflow-hidden">
+          <PageThumbnailPanel currentPage={currentPage} redactedDocument={null} pendingPages={new Set()} onPageChange={setCurrentPage} />
+          <div className="flex-1 relative flex flex-col overflow-hidden">
+            <ImageEditionPage imageMethod={imageMethod} onImageMethodChange={setImageMethod} />
+            <ActionsIsland mode={mode} onModeChange={handleModeChange} />
+          </div>
+        </div>
       ) : isRedacting ? (
         <div className="flex-1 overflow-auto bg-[#e8e8ec] dark:bg-[#0e0e14] flex items-center justify-center">
           <div className="flex items-center gap-1.5">
@@ -207,11 +242,14 @@ export function WorkflowPage({ onBack }: WorkflowPageProps) {
         <ExportModal
           entities={entities}
           fileName={file.name}
+          includedImageCount={detectedImages.filter(img => img.included).length}
+          imageMethod={imageMethod}
+          onImageMethodChange={setImageMethod}
           onClose={() => setShowExport(false)}
           onDownload={async ({ removeMetadata, exportFileName }) => {
             let doc = redactedDocument;
             if (!doc && file) {
-              doc = await redact(file, entities, 0, () => {});
+              doc = await redact(file, entities, 0, () => {}, detectedImages, imageMethod);
             }
             if (!doc || !file) return;
             downloadPDFDocument(doc, exportFileName, removeMetadata);

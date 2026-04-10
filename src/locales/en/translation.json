@@ -66,7 +66,43 @@
   "toolbar": {
     "back": "Back",
     "confirmBack": "Are you sure? All changes will be lost.",
-    "export": "Export PDF"
+    "export": "Export PDF",
+    "textEdition": "Text Edition",
+    "imageEdition": "Image Edition",
+    "preview": "Preview",
+    "textEditionDesc": "Review and adjust the detected text entities before redaction.",
+    "imageEditionDesc": "Select the images you want to redact from your document.",
+    "previewDesc": "Review the redacted document before exporting."
+  },
+  "imageEdition": {
+    "title": "Image Edition",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "selectPage": "Select page",
+    "deselectPage": "Deselect page",
+    "emptyState": "No images detected in this document.",
+    "dimensions": "{{w}} × {{h}} px",
+    "included": {
+      "none": "Visible",
+      "pixels": "Redacted",
+      "remove": "Removed"
+    },
+    "notIncluded": "Visible",
+    "method": {
+      "label": "Image redaction method",
+      "none": "Keep",
+      "noneDesc": "Images are kept as-is in the exported document.",
+      "pixels": "Redact",
+      "pixelsDesc": "Selected images are replaced by a black rectangle.",
+      "remove": "Remove",
+      "removeDesc": "Selected images are permanently removed from the document."
+    },
+    "modal": {
+      "title": "Image found on multiple pages",
+      "body": "This image appears on {{count}} other page(s). Apply the same change to all occurrences?",
+      "thisOnly": "This image only",
+      "allOccurrences": "All occurrences"
+    }
   },
   "sidebar": {
     "title": "Detected entities",
@@ -94,9 +130,9 @@
     "willBeRedacted": "will be redacted across",
     "pageCount_one": "{{count}} page",
     "pageCount_other": "{{count}} pages",
-    "replaceMode": "Replacement mode",
+    "replaceMode": "Text replacement mode",
     "redactedLabel": "[REDACTED]",
-    "redactedDesc": "Replaces text with a generic marker",
+    "redactedDesc": "Replaces text with a black rectangle",
     "pseudonymLabel": "Pseudonym",
     "pseudonymDesc": "Replaces with a consistent fictional identifier",
     "comingSoon": "Coming soon",
@@ -105,6 +141,7 @@
     "keepOriginalName": "Keep original name",
     "keepOriginalNameDesc": "Use the source file name instead of the default name",
     "defaultFileName": "rature-anonymized-document",
+    "metadata": "Metadata",
     "removeMetadata": "Remove metadata",
     "removeMetadataDesc": "Author, creation date, original document properties",
     "cancel": "Cancel",

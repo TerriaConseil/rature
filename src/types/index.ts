@@ -37,4 +37,4 @@ export interface DetectedImage {
 
 export type ImageRedactionMethod = 'none' | 'pixels' | 'remove';
 
-export type WorkflowMode = 'edition' | 'preview';
+export type WorkflowMode = 'edition' | 'image-edition' | 'preview';

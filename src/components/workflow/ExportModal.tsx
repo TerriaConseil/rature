@@ -2,18 +2,21 @@ import { useEffect, useState } from 'react';
 import { X, Download, CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button.tsx';
-import type { GroupedEntity } from '@/types/index.ts';
+import type { GroupedEntity, ImageRedactionMethod } from '@/types/index.ts';
 
 interface ExportModalProps {
   entities: GroupedEntity[]
   fileName: string
+  includedImageCount: number
+  imageMethod: ImageRedactionMethod
+  onImageMethodChange: (method: ImageRedactionMethod) => void
   onClose: () => void
   onDownload: (opts: { removeMetadata: boolean; exportFileName: string }) => Promise<void>
 }
 
 type ReplaceMode = 'redacted' | 'pseudonym';
 
-export function ExportModal({ entities, fileName, onClose, onDownload }: ExportModalProps) {
+export function ExportModal({ entities, fileName, includedImageCount, imageMethod, onImageMethodChange, onClose, onDownload }: ExportModalProps) {
   const { t } = useTranslation();
   const [replaceMode, setReplaceMode] = useState<ReplaceMode>('redacted');
   const [removeMetadata, setRemoveMetadata] = useState(true);
@@ -45,7 +48,10 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
   const handleDownload = async () => {
     setIsDownloading(true);
     try {
-      await onDownload({ removeMetadata, exportFileName: effectiveFileName });
+      // Use default file name if input is empty
+      const fileName = effectiveFileName || t('export.defaultFileName');
+
+      await onDownload({ removeMetadata, exportFileName: fileName });
       setDone(true);
     } finally {
       setIsDownloading(false);
@@ -57,7 +63,7 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 dark:bg-black/60 backdrop-blur-sm"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="w-full max-w-md rounded-2xl border border-border-theme bg-card shadow-2xl">
+      <div className="w-full max-w-2xl rounded-2xl border border-border-theme bg-card shadow-2xl">
         <div className="flex items-center justify-between px-6 py-4 border-b border-border-theme">
           <h2 className="text-base font-semibold text-fg">{t('export.title')}</h2>
           <button
@@ -70,18 +76,18 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
 
         {!done ? (
           <>
-            <div className="px-6 py-5 space-y-5">
-              <div className="rounded-xl bg-surface-subtle border border-border-theme p-4 space-y-1">
-                <p className="text-sm text-fg">
-                  <span className="font-semibold text-accent">{t('export.entityCount', { count: includedCount })}</span>{' '}
-                  {t('export.willBeRedacted')}{' '}
-                  <span className="font-semibold">{t('export.pageCount', { count: totalPages })}</span>
-                </p>
-                <p className="text-xs text-fg-muted truncate">{fileName}</p>
-              </div>
-
+            <div className="bg-blend-saturation border-b border-border-theme p-4">
+              <p className="text-sm text-fg">
+                <span className="font-semibold text-accent">{t('export.entityCount', { count: includedCount })}</span>{' '}
+                {t('export.willBeRedacted')}{' '}
+                <span className="font-semibold">{t('export.pageCount', { count: totalPages })}</span>
+              </p>
+            </div>
+            <div className="flex flex-col gap-4 px-6 py-5 space-y-5">
               <div className="space-y-2">
-                <p className="text-xs font-medium text-fg-muted uppercase tracking-wider">{t('export.fileNameLabel')}</p>
+                <p className="text-xs font-semibold text-fg uppercase tracking-wider">
+                  {t('export.fileNameLabel')}
+                </p>
                 <div className="space-y-2">
                   <div className="relative">
                     <input
@@ -101,7 +107,7 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
                       .pdf
                     </span>
                   </div>
-                  <p className="text-xs text-fg-muted">{t('export.fileNameHint')}</p>
+                  <p className="text-xs text-fg-subtle">{t('export.fileNameHint')}</p>
                   <label className="flex items-center gap-3 cursor-pointer group mt-1">
                     <input
                       type="checkbox"
@@ -110,7 +116,7 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
                       className="w-4 h-4 accent-accent cursor-pointer rounded"
                     />
                     <div>
-                      <p className="text-sm font-medium text-fg group-hover:text-accent transition-colors">
+                      <p className="text-sm text-fg group-hover:text-accent transition-colors">
                         {t('export.keepOriginalName')}
                       </p>
                       <p className="text-xs text-fg-muted">{t('export.keepOriginalNameDesc')}</p>
@@ -120,16 +126,20 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
               </div>
 
               <div className="space-y-2">
-                <p className="text-xs font-medium text-fg-muted uppercase tracking-wider">{t('export.replaceMode')}</p>
-                <div className="space-y-2">
+                <p className="text-xs font-semibold text-fg uppercase tracking-wider">
+                  {t('export.replaceMode')}
+                </p>
+                <div className="grid grid-cols-2 gap-2">
                   {replaceOptions.map(opt => (
                     <label
                       key={opt.value}
                       className={[
-                        'flex items-start gap-3 p-3 rounded-xl border border-border-theme transition-all',
+                        'flex flex-col gap-1 p-3 rounded-xl border border-border-theme transition-all',
                         opt.disabled
                           ? 'opacity-50 cursor-not-allowed pointer-events-none'
-                          : 'hover:border-accent/50 cursor-pointer',
+                          : replaceMode === opt.value
+                            ? 'border-accent/60 bg-accent/5 cursor-pointer'
+                            : 'hover:border-accent/50 cursor-pointer',
                       ].join(' ')}
                     >
                       <input
@@ -139,40 +149,75 @@ export function ExportModal({ entities, fileName, onClose, onDownload }: ExportM
                         checked={replaceMode === opt.value}
                         onChange={() => !opt.disabled && setReplaceMode(opt.value)}
                         disabled={opt.disabled}
-                        className="mt-0.5 accent-accent cursor-pointer"
+                        className="sr-only"
                       />
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <p className="text-sm font-medium text-fg">{opt.label}</p>
-                          {opt.disabled && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium tracking-wider uppercase bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800">
-                              {t('export.comingSoon')}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-fg-muted">{opt.desc}</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-sm text-fg">{opt.label}</p>
+                        {opt.disabled && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium tracking-wider uppercase bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800">
+                            {t('export.comingSoon')}
+                          </span>
+                        )}
                       </div>
+                      <p className="text-xs text-fg-muted">{opt.desc}</p>
                     </label>
                   ))}
                 </div>
               </div>
 
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={removeMetadata}
-                  onChange={e => setRemoveMetadata(e.target.checked)}
-                  className="w-4 h-4 accent-accent cursor-pointer rounded"
-                />
-                <div>
-                  <p className="text-sm font-medium text-fg group-hover:text-accent transition-colors">
-                    {t('export.removeMetadata')}
+              {includedImageCount > 0 && (
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-fg uppercase tracking-wider">
+                    {t('imageEdition.method.label')}
                   </p>
-                  <p className="text-xs text-fg-muted">
-                    {t('export.removeMetadataDesc')}
-                  </p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(['none', 'pixels', 'remove'] as ImageRedactionMethod[]).map(method => (
+                      <label
+                        key={method}
+                        className={[
+                          'flex flex-col gap-1 p-3 rounded-xl border border-border-theme cursor-pointer transition-all',
+                          imageMethod === method
+                            ? 'border-accent/60 bg-accent/5'
+                            : 'hover:border-accent/50',
+                        ].join(' ')}
+                      >
+                        <input
+                          type="radio"
+                          name="image-method"
+                          value={method}
+                          checked={imageMethod === method}
+                          onChange={() => onImageMethodChange(method)}
+                          className="sr-only"
+                        />
+                        <p className="text-sm text-fg">{t(`imageEdition.method.${method}`)}</p>
+                        <p className="text-xs text-fg-muted">{t(`imageEdition.method.${method}Desc`)}</p>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </label>
+              )}
+
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-fg uppercase tracking-wider">
+                  {t('export.metadata')}
+                </p>
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={removeMetadata}
+                    onChange={e => setRemoveMetadata(e.target.checked)}
+                    className="w-4 h-4 accent-accent cursor-pointer rounded"
+                  />
+                  <div>
+                    <p className="text-sm text-fg group-hover:text-accent transition-colors">
+                      {t('export.removeMetadata')}
+                    </p>
+                    <p className="text-xs text-fg-muted">
+                      {t('export.removeMetadataDesc')}
+                    </p>
+                  </div>
+                </label>
+              </div>
             </div>
 
             <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border-theme">

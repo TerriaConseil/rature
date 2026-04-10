@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils.ts";
 import type { WorkflowMode } from "@/types/index.ts";
-import { Eye, Pencil } from "lucide-react";
+import { Eye, Image, Pencil } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 interface ActionsIslandProps {
@@ -20,7 +20,17 @@ export function ActionsIsland({ mode, onModeChange }: ActionsIslandProps) {
         )}
       >
         <Pencil size={14} />
-        <span>{t('actions.edition')}</span>
+        <span>{t('toolbar.textEdition')}</span>
+      </button>
+      <button
+        onClick={() => onModeChange('image-edition')}
+        className={cn(
+          'flex items-center gap-2 h-8 px-3 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer',
+          mode === 'image-edition' ? 'bg-surface-subtle text-fg shadow-sm' : 'text-fg-muted hover:text-fg',
+        )}
+      >
+        <Image size={14} />
+        <span>{t('toolbar.imageEdition')}</span>
       </button>
       <button
         onClick={() => onModeChange('preview')}
@@ -30,7 +40,7 @@ export function ActionsIsland({ mode, onModeChange }: ActionsIslandProps) {
         )}
       >
         <Eye size={14} />
-        <span>{t('actions.preview')}</span>
+        <span>{t('toolbar.preview')}</span>
       </button>
     </div>
   );

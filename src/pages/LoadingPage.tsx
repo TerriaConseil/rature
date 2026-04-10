@@ -6,6 +6,7 @@ import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { useNERWorker } from '@/hooks/useNERWorker.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 import { CUSTOM_PAGE_SPLIT_TOKEN, NER_MODELS } from '@/models/utils.ts';
+import { Navigate } from 'react-router';
 
 interface LoadingPageProps {
   onComplete: () => void;
@@ -121,7 +122,7 @@ export function LoadingPage({ onComplete }: LoadingPageProps) {
   }, [stepIndex]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!file) {
-    return <div>{t('errors.noFile')}</div>;
+    return <Navigate to="/" />;
   }
 
   const StepIcon = STEP_ICONS[iconStep];

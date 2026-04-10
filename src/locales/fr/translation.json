@@ -66,7 +66,43 @@
   "toolbar": {
     "back": "Retour",
     "confirmBack": "Êtes-vous sûr ? Tous les changements seront perdus.",
-    "export": "Exporter le PDF"
+    "export": "Exporter le PDF",
+    "textEdition": "Édition du texte",
+    "imageEdition": "Édition des images",
+    "preview": "Aperçu",
+    "textEditionDesc": "Vérifiez et ajustez les entités textuelles détectées avant l'occultation.",
+    "imageEditionDesc": "Sélectionnez les images à masquer dans votre document.",
+    "previewDesc": "Vérifiez le document occulté avant de l'exporter."
+  },
+  "imageEdition": {
+    "title": "Édition des images",
+    "selectAll": "Sélectionner toutes les images du document",
+    "deselectAll": "Tout désélectionner",
+    "selectPage": "Tout sélectionner (page)",
+    "deselectPage": "Tout désélectionner (page)",
+    "emptyState": "Aucune image détectée dans ce document.",
+    "dimensions": "{{w}} × {{h}} px",
+    "included": {
+      "none": "Visible",
+      "pixels": "Occultée",
+      "remove": "Supprimée"
+    },
+    "notIncluded": "Visible",
+    "method": {
+      "label": "Méthode d'occultation des images",
+      "none": "Conserver",
+      "noneDesc": "Les images sont conservées telles quelles dans le document exporté.",
+      "pixels": "Occulter",
+      "pixelsDesc": "Les images sélectionnées sont remplacées par un rectangle noir.",
+      "remove": "Supprimer",
+      "removeDesc": "Les images sélectionnées sont définitivement supprimées du document."
+    },
+    "modal": {
+      "title": "Image présente sur plusieurs pages",
+      "body": "Cette image apparaît sur {{count}} autre(s) page(s). Appliquer la même modification à toutes les occurrences ?",
+      "thisOnly": "Cette image uniquement",
+      "allOccurrences": "Toutes les occurrences"
+    }
   },
   "sidebar": {
     "title": "Entités détectées",
@@ -94,9 +130,9 @@
     "willBeRedacted": "seront occultées sur",
     "pageCount_one": "{{count}} page",
     "pageCount_other": "{{count}} pages",
-    "replaceMode": "Mode de remplacement",
+    "replaceMode": "Mode de remplacement du texte",
     "redactedLabel": "[OCCULTÉ]",
-    "redactedDesc": "Remplace le texte par un marqueur générique",
+    "redactedDesc": "Remplace le texte par un rectangle noir",
     "pseudonymLabel": "Pseudonyme",
     "pseudonymDesc": "Remplace par un identifiant fictif cohérent",
     "comingSoon": "Bientôt disponible",
@@ -105,6 +141,7 @@
     "keepOriginalName": "Conserver le nom d'origine",
     "keepOriginalNameDesc": "Utiliser le nom du fichier source au lieu du nom par défaut",
     "defaultFileName": "rature-document-anonymisé",
+    "metadata": "Métadonnées",
     "removeMetadata": "Supprimer les métadonnées",
     "removeMetadataDesc": "Auteur, date de création, propriétés du document original",
     "cancel": "Annuler",
