@@ -37,7 +37,7 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 dark:bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/40 dark:bg-black/60 backdrop-blur-sm"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div className="w-full max-w-sm rounded-2xl border border-border-theme bg-card shadow-2xl">

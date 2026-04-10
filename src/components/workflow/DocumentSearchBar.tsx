@@ -1,9 +1,10 @@
 import { type RefObject } from 'react';
 import { Search, ChevronUp, ChevronDown, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/ui/button.tsx';
-import { cn } from '@/lib/utils.ts';
 import type { EntityMatch } from '@/lib/entity-expansion.ts';
+import { cn } from '@/lib/utils.ts';
 
 interface DocumentSearchBarProps {
   open: boolean;
@@ -12,6 +13,7 @@ interface DocumentSearchBarProps {
   matches: EntityMatch[];
   matchIndex: number;
   inputRef: RefObject<HTMLInputElement | null>;
+  isSidebarCollapsed: boolean;
   onOpen: () => void;
   onQueryChange: (q: string) => void;
   onNavigate: (dir: 'prev' | 'next') => void;
@@ -28,6 +30,7 @@ export function DocumentSearchBar({
   matches,
   matchIndex,
   inputRef,
+  isSidebarCollapsed,
   onOpen,
   onQueryChange,
   onNavigate,
@@ -37,7 +40,10 @@ export function DocumentSearchBar({
   const { t } = useTranslation();
   return (
     <>
-      <div className="absolute top-4 right-2 flex items-center justify-end px-4 h-8 bg-transparent shrink-0 z-50">
+      <div className={cn(
+          "absolute top-4 right-2 flex items-center justify-end px-4 h-8 bg-transparent shrink-0 z-50 transition-transform duration-300 ease-in-out",
+          !isSidebarCollapsed && '-translate-x-76',
+        )}>
         <Button
           onClick={onOpen}
           title={t('search.buttonTitle')}

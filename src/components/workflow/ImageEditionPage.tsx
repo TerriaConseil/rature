@@ -142,23 +142,25 @@ export function ImageEditionPage({ imageMethod, onImageMethodChange }: ImageEdit
 
         {/* Method selector + global select-all row */}
         {detectedImages.length > 0 && (
-          <div className="flex items-center justify-between mb-6 gap-4">
+          <div className="flex items-start justify-between mb-6 gap-4">
             {/* Redaction method pills */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-fg-muted">{t('imageEdition.method.label')} :</span>
-              <div className="flex items-center gap-0.5 bg-surface-subtle rounded-lg p-0.5">
+            <div className="flex flex-col items-start gap-2">
+              <p className="text-sm font-semibold text-fg">{t('imageEdition.method.label')}</p>
+              <div className="flex gap-0.5 bg-surface-subtle rounded-lg p-0.5">
                 {(['none', 'pixels', 'remove'] as ImageRedactionMethod[]).map(method => (
                   <button
                     key={method}
                     onClick={() => onImageMethodChange(method)}
                     className={cn(
-                      'px-2.5 py-1 rounded-md text-xs font-medium transition-all duration-200 cursor-pointer',
+                      'flex flex-col items-start gap-2',
+                      'px-2.5 py-1 rounded-md text-left transition-all duration-200 cursor-pointer',
                       imageMethod === method
                         ? 'bg-card text-fg shadow-sm'
                         : 'text-fg-muted hover:text-fg',
                     )}
                   >
-                    {t(`imageEdition.method.${method}`)}
+                    <span className="font-semibold text-sm">{t(`imageEdition.method.${method}`)}</span>
+                    <span className="font-normal text-xs">{t(`imageEdition.method.${method}Desc`)}</span>
                   </button>
                 ))}
               </div>

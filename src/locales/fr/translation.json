@@ -148,7 +148,8 @@
     "download": "Télécharger le PDF",
     "successTitle": "Document exporté avec succès",
     "successDesc": "Votre PDF anonymisé a été téléchargé.",
-    "close": "Fermer"
+    "close": "Fermer",
+    "error": "L'export a échoué. Veuillez réessayer."
   },
   "entityActions": {
     "ariaLabel": "Actions sur l'entité",

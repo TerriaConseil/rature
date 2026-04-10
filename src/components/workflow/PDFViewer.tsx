@@ -2,13 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { MessageSquarePlus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { ActionsIsland } from '@/components/workflow/ActionsIsland.tsx';
-
 import { DeleteEntityDialog } from '@/components/workflow/DeleteEntityDialog.tsx';
 import { DocumentSearchBar } from '@/components/workflow/DocumentSearchBar.tsx';
 import { EmptyPDFPage } from '@/components/workflow/EmptyPDFPage.tsx';
 import { FeedbackModal } from '@/components/workflow/FeedbackModal.tsx';
-import { PageThumbnailPanel } from '@/components/workflow/PageThumbnailPanel.tsx';
 import { SelectionPopover } from '@/components/workflow/SelectionPopover.tsx';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { useDocumentSearch } from '@/hooks/useDocumentSearch.ts';
@@ -17,7 +14,7 @@ import { useTextSelection } from '@/hooks/useTextSelection.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 import { createTextParts } from '@/lib/pdf/createTextParts.tsx';
 import { cn } from '@/lib/utils.ts';
-import type { GroupedEntity, WorkflowMode } from '@/types/index.ts';
+import type { GroupedEntity } from '@/types/index.ts';
 
 interface PDFViewerProps {
   currentPage: number;
@@ -25,13 +22,12 @@ interface PDFViewerProps {
   entities: GroupedEntity[];
   selectedEntityId: string | null;
   highlightedEntityText?: string | null;
+  isSidebarCollapsed: boolean;
   onEntityClick: (id: string) => void;
   onEntityUpdate: (entityId: string, updates: Partial<GroupedEntity>) => void;
   onPageChange: (page: number) => void;
   onEntityDeleteOne?: (id: string) => void;
   onEntityDeleteAll?: (text: string) => void;
-  mode: WorkflowMode;
-  onModeChange: (mode: WorkflowMode) => void;
 }
 
 export const PDFViewer = React.memo(function PDFViewer({
@@ -40,17 +36,16 @@ export const PDFViewer = React.memo(function PDFViewer({
   entities,
   selectedEntityId,
   highlightedEntityText,
+  isSidebarCollapsed,
   onEntityClick,
   onEntityUpdate,
   onPageChange,
   onEntityDeleteOne,
   onEntityDeleteAll,
-  mode,
-  onModeChange,
 }: PDFViewerProps) {
   const { t } = useTranslation();
   const { modelName, addEntity } = useAnonymization();
-  const { extractedText, pageCount } = usePdfProcessing();
+  const { extractedText } = usePdfProcessing();
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
 
@@ -167,6 +162,7 @@ export const PDFViewer = React.memo(function PDFViewer({
         matches={searchMatches}
         matchIndex={searchMatchIndex}
         inputRef={searchInputRef}
+        isSidebarCollapsed={isSidebarCollapsed}
         onOpen={() => setSearchOpen(true)}
         onQueryChange={setSearchQuery}
         onNavigate={navigateMatch}
@@ -178,11 +174,7 @@ export const PDFViewer = React.memo(function PDFViewer({
       />
 
       <div className="flex-1 flex overflow-hidden">
-      {pageCount > 1 && (
-        <PageThumbnailPanel currentPage={currentPage} onPageChange={onPageChange} />
-      )}
       <div className="flex-1 relative flex flex-col overflow-hidden">
-      <ActionsIsland mode={mode} onModeChange={onModeChange} />
       <div className="flex-1 overflow-auto bg-surface-subtle flex justify-center py-16 px-4">
         <div
           className="bg-white dark:bg-[#2a2a36] rounded-lg w-full max-w-2xl min-h-210.5 p-12 relative self-start"
@@ -226,7 +218,10 @@ export const PDFViewer = React.memo(function PDFViewer({
 
       <button
         onClick={() => setFeedbackOpen(true)}
-        className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-fg-muted hover:text-fg bg-card border border-border-theme hover:border-border-strong shadow-sm transition-all duration-200 cursor-pointer"
+        className={cn(
+          "absolute bottom-4 right-4 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-fg-muted hover:text-fg bg-card border border-border-theme hover:border-border-strong shadow-sm transition-all ease-in-out duration-300 cursor-pointer",
+          !isSidebarCollapsed && '-translate-x-78'
+        )}
       >
         <MessageSquarePlus size={13} />
         <span>{t('feedback.title')}</span>
