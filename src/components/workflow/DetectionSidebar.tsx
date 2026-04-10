@@ -55,6 +55,8 @@ interface DetectionSidebarProps {
   onDeselectAll: () => void;
   onEntitySelect: (id: string) => void;
   onHighlightAll: (text: string | null) => void;
+  isCollapsed: boolean;
+  onCollapseToggle: () => void;
 }
 
 export const DetectionSidebar = React.memo(function DetectionSidebar({
@@ -67,6 +69,8 @@ export const DetectionSidebar = React.memo(function DetectionSidebar({
   onDeselectAll,
   onEntitySelect,
   onHighlightAll,
+  isCollapsed,
+  onCollapseToggle,
 }: DetectionSidebarProps) {
   const { t } = useTranslation();
   const { modelName, modelTokens } = useAnonymization();
@@ -151,7 +155,21 @@ export const DetectionSidebar = React.memo(function DetectionSidebar({
   };
 
   return (
-    <aside className="w-90 shrink-0 border-l border-border-theme bg-card flex flex-col overflow-hidden">
+    <aside
+      className="absolute right-0 inset-y-0 bg-card border-l border-border-theme flex flex-col overflow-hidden transition-[width] duration-300 ease-in-out z-10"
+      style={{
+        width: isCollapsed ? 0 : '360px',
+        boxShadow: isCollapsed ? 'none' : '0 8px 32px rgb(0 0 0 / 0.18), 0 2px 8px rgb(0 0 0 / 0.10)',
+      }}
+    >
+      <button
+        onClick={onCollapseToggle}
+        aria-label={isCollapsed ? 'Open sidebar' : 'Close sidebar'}
+        className="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 z-10 flex items-center justify-center bg-card border border-border-theme shadow-sm rounded-l-lg"
+        style={{ width: 28, height: 56 }}
+      >
+        {isCollapsed ? <ChevronRight className="w-4 h-4 text-fg-muted" /> : <ChevronLeft className="w-4 h-4 text-fg-muted" />}
+      </button>
       <div className="px-4 py-3 border-b border-border-theme shrink-0">
         <div className="flex items-center justify-between mb-1">
           <h2 className="text-sm font-semibold text-fg">{t('sidebar.title')}</h2>

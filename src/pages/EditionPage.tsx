@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 import { ActionsIsland } from '@/components/workflow/ActionsIsland.tsx';
 import { DetectionSidebar } from '@/components/workflow/DetectionSidebar.tsx';
@@ -12,6 +12,9 @@ export function EditionPage() {
   const { nerEntities: entities, setNerEntities: setEntities } = useAnonymization();
   const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
   const [highlightedEntityText, setHighlightedEntityText] = useState<string | null>(null);
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  useEffect(() => { setIsCollapsed(false); }, []);
 
   const entitiesRef = useRef(entities);
   const currentPageRef = useRef(currentPage);
@@ -60,7 +63,7 @@ export function EditionPage() {
   }, [setCurrentPage]);
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className="flex h-full overflow-hidden relative">
       <PDFViewer
         currentPage={currentPage}
         zoom={zoom}
@@ -84,6 +87,8 @@ export function EditionPage() {
         onDeselectAll={deselectAll}
         onEntitySelect={handleEntitySelect}
         onHighlightAll={handleHighlightAll}
+        isCollapsed={isCollapsed}
+        onCollapseToggle={() => setIsCollapsed(c => !c)}
       />
       <ActionsIsland mode="edition" onModeChange={handleModeChange} />
     </div>
