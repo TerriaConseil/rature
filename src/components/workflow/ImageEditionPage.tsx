@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, ImageOff } from 'lucide-react';
+import { Check, Eye, ImageOff } from 'lucide-react';
 
-import { cn } from '@/lib/utils.ts';
-import { extractImageThumbnails } from '@/lib/pdf/extractImages.ts';
-import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
-import type { DetectedImage, ImageRedactionMethod } from '@/types/index.ts';
+import { Badge } from '@/components/ui/badge.tsx';
 import { RepeatedImageModal } from '@/components/workflow/RepeatedImageModal.tsx';
+import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
+import { extractImageThumbnails } from '@/lib/pdf/extractImages.ts';
+import { cn } from '@/lib/utils.ts';
+import type { DetectedImage, ImageRedactionMethod } from '@/types/index.ts';
 
 interface PendingToggle {
   image: DetectedImage;
@@ -43,7 +44,7 @@ export function ImageEditionPage({ imageMethod, onImageMethodChange }: ImageEdit
         const page = pdfDocument.loadPage(pageIndex);
         const pageThumbs = extractImageThumbnails(page, pageIndex);
         for (const [id, bytes] of pageThumbs) {
-          const url = URL.createObjectURL(new Blob([bytes], { type: 'image/png' }));
+          const url = URL.createObjectURL(new Blob([bytes as Uint8Array<ArrayBuffer>], { type: 'image/png' }));
           objectUrls.push(url);
           newThumbnails.set(id, url);
         }
@@ -196,6 +197,7 @@ export function ImageEditionPage({ imageMethod, onImageMethodChange }: ImageEdit
                     key={image.id}
                     image={image}
                     thumbnail={thumbnails.get(image.id)}
+                    redactionMethod={imageMethod}
                     loading={thumbnailsLoading}
                     onToggle={handleToggleImage}
                     dimensionsLabel={t('imageEdition.dimensions', { w: image.width, h: image.height })}
@@ -222,12 +224,15 @@ export function ImageEditionPage({ imageMethod, onImageMethodChange }: ImageEdit
 interface ImageCardProps {
   image: DetectedImage;
   thumbnail: string | undefined;
+  redactionMethod: ImageRedactionMethod;
   loading: boolean;
   onToggle: (image: DetectedImage) => void;
   dimensionsLabel: string;
 }
 
-function ImageCard({ image, thumbnail, loading, onToggle, dimensionsLabel }: ImageCardProps) {
+function ImageCard({ image, thumbnail, redactionMethod, loading, onToggle, dimensionsLabel }: ImageCardProps) {
+  const { t } = useTranslation();
+
   return (
     <button
       onClick={() => onToggle(image)}
@@ -260,10 +265,18 @@ function ImageCard({ image, thumbnail, loading, onToggle, dimensionsLabel }: Ima
       </div>
 
       {/* Checkmark overlay */}
-      {image.included && (
-        <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-accent flex items-center justify-center shadow">
-          <Check size={11} strokeWidth={3} className="text-white" />
-        </div>
+      {image.included ? (
+        <Badge variant="accent" className="absolute top-1.5 right-1.5 shadow">
+          <Check size={12} />
+          {redactionMethod === 'none' && t('imageEdition.included.none')}
+          {redactionMethod === 'pixels' && t('imageEdition.included.pixels')}
+          {redactionMethod === 'remove' && t('imageEdition.included.remove')}
+        </Badge>
+      ) : (
+        <Badge className="absolute top-1.5 right-1.5 shadow">
+          <Eye size={12} />
+          {t('imageEdition.notIncluded')}
+        </Badge>
       )}
     </button>
   );

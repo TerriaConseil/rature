@@ -82,6 +82,12 @@
     "deselectPage": "Deselect page",
     "emptyState": "No images detected in this document.",
     "dimensions": "{{w}} × {{h}} px",
+    "included": {
+      "none": "Visible",
+      "pixels": "Redacted",
+      "remove": "Removed"
+    },
+    "notIncluded": "Visible",
     "method": {
       "label": "Image redaction method",
       "none": "Keep",

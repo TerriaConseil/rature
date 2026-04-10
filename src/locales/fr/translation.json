@@ -82,6 +82,12 @@
     "deselectPage": "Tout désélectionner (page)",
     "emptyState": "Aucune image détectée dans ce document.",
     "dimensions": "{{w}} × {{h}} px",
+    "included": {
+      "none": "Visible",
+      "pixels": "Occultée",
+      "remove": "Supprimée"
+    },
+    "notIncluded": "Visible",
     "method": {
       "label": "Méthode d'occultation des images",
       "none": "Conserver",
