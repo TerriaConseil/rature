@@ -48,7 +48,10 @@ export function ExportModal({ entities, fileName, includedImageCount, imageMetho
   const handleDownload = async () => {
     setIsDownloading(true);
     try {
-      await onDownload({ removeMetadata, exportFileName: effectiveFileName });
+      // Use default file name if input is empty
+      const fileName = effectiveFileName || t('export.defaultFileName');
+
+      await onDownload({ removeMetadata, exportFileName: fileName });
       setDone(true);
     } finally {
       setIsDownloading(false);
