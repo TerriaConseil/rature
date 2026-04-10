@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import type { PDFDocument } from 'mupdf';
-import type { ImageRedactionMethod, WorkflowMode } from '@/types/index.ts';
+import type { DetectedImage, GroupedEntity, ImageRedactionMethod, WorkflowMode } from '@/types/index.ts';
 
 export interface DocumentContextValue {
   currentPage: number;
@@ -18,6 +18,15 @@ export interface DocumentContextValue {
   imageMethod: ImageRedactionMethod;
   setImageMethod: (method: ImageRedactionMethod) => void;
   handleModeChange: (mode: WorkflowMode) => Promise<void>;
+  redact: (
+    file: File,
+    entities: GroupedEntity[],
+    currentPageIndex: number,
+    onCurrentPageReady: (doc: PDFDocument, processedPages: Set<number>) => void,
+    images: DetectedImage[],
+    imageMethod: ImageRedactionMethod,
+  ) => Promise<PDFDocument>;
+  reset: () => void;
 }
 
 export const DocumentContext = createContext<DocumentContextValue | null>(null);

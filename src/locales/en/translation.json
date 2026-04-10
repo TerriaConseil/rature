@@ -148,7 +148,8 @@
     "download": "Download PDF",
     "successTitle": "Document exported successfully",
     "successDesc": "Your anonymized PDF has been downloaded.",
-    "close": "Close"
+    "close": "Close",
+    "error": "Export failed. Please try again."
   },
   "entityActions": {
     "ariaLabel": "Entity actions",

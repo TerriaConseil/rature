@@ -32,6 +32,16 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
   detectedImagesRef.current = detectedImages;
   imageMethodRef.current = imageMethod;
 
+  const reset = useCallback(() => {
+    setCurrentPage(1);
+    setZoom(100);
+    setShowExport(false);
+    setRedactedDocument(null);
+    setPendingPages(new Set());
+    setIsRedacting(false);
+    setImageMethod('pixels');
+  }, []);
+
   const handleModeChange = useCallback(async (newMode: WorkflowMode) => {
     if (newMode === 'preview') {
       if (!file) return;
@@ -91,6 +101,8 @@ export function DocumentProvider({ children }: { children: ReactNode }) {
       imageMethod,
       setImageMethod,
       handleModeChange,
+      redact,
+      reset,
     }}>
       {children}
     </DocumentContext.Provider>
