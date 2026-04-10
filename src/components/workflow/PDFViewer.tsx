@@ -218,7 +218,10 @@ export const PDFViewer = React.memo(function PDFViewer({
 
       <button
         onClick={() => setFeedbackOpen(true)}
-        className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-fg-muted hover:text-fg bg-card border border-border-theme hover:border-border-strong shadow-sm transition-all duration-200 cursor-pointer"
+        className={cn(
+          "absolute bottom-4 right-4 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-fg-muted hover:text-fg bg-card border border-border-theme hover:border-border-strong shadow-sm transition-all ease-in-out duration-300 cursor-pointer",
+          !isSidebarCollapsed && '-translate-x-78'
+        )}
       >
         <MessageSquarePlus size={13} />
         <span>{t('feedback.title')}</span>
