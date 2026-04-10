@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 
+import { ActionsIsland } from '@/components/workflow/ActionsIsland.tsx';
 import { DetectionSidebar } from '@/components/workflow/DetectionSidebar.tsx';
 import { PDFViewer } from '@/components/workflow/PDFViewer.tsx';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
@@ -71,8 +72,6 @@ export function EditionPage() {
         onPageChange={setCurrentPage}
         onEntityDeleteOne={deleteEntityById}
         onEntityDeleteAll={deleteEntity}
-        mode="edition"
-        onModeChange={handleModeChange}
       />
       <DetectionSidebar
         currentPage={currentPage}
@@ -86,6 +85,7 @@ export function EditionPage() {
         onEntitySelect={handleEntitySelect}
         onHighlightAll={handleHighlightAll}
       />
+      <ActionsIsland mode="edition" onModeChange={handleModeChange} />
     </div>
   );
 }

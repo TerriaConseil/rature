@@ -2,13 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { MessageSquarePlus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import { ActionsIsland } from '@/components/workflow/ActionsIsland.tsx';
-
 import { DeleteEntityDialog } from '@/components/workflow/DeleteEntityDialog.tsx';
 import { DocumentSearchBar } from '@/components/workflow/DocumentSearchBar.tsx';
 import { EmptyPDFPage } from '@/components/workflow/EmptyPDFPage.tsx';
 import { FeedbackModal } from '@/components/workflow/FeedbackModal.tsx';
-import { PageThumbnailPanel } from '@/components/workflow/PageThumbnailPanel.tsx';
 import { SelectionPopover } from '@/components/workflow/SelectionPopover.tsx';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { useDocumentSearch } from '@/hooks/useDocumentSearch.ts';
@@ -17,7 +14,7 @@ import { useTextSelection } from '@/hooks/useTextSelection.ts';
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 import { createTextParts } from '@/lib/pdf/createTextParts.tsx';
 import { cn } from '@/lib/utils.ts';
-import type { GroupedEntity, WorkflowMode } from '@/types/index.ts';
+import type { GroupedEntity } from '@/types/index.ts';
 
 interface PDFViewerProps {
   currentPage: number;
@@ -30,8 +27,6 @@ interface PDFViewerProps {
   onPageChange: (page: number) => void;
   onEntityDeleteOne?: (id: string) => void;
   onEntityDeleteAll?: (text: string) => void;
-  mode: WorkflowMode;
-  onModeChange: (mode: WorkflowMode) => void;
 }
 
 export const PDFViewer = React.memo(function PDFViewer({
@@ -45,12 +40,10 @@ export const PDFViewer = React.memo(function PDFViewer({
   onPageChange,
   onEntityDeleteOne,
   onEntityDeleteAll,
-  mode,
-  onModeChange,
 }: PDFViewerProps) {
   const { t } = useTranslation();
   const { modelName, addEntity } = useAnonymization();
-  const { extractedText, pageCount } = usePdfProcessing();
+  const { extractedText } = usePdfProcessing();
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
 
@@ -178,11 +171,7 @@ export const PDFViewer = React.memo(function PDFViewer({
       />
 
       <div className="flex-1 flex overflow-hidden">
-      {pageCount > 1 && (
-        <PageThumbnailPanel currentPage={currentPage} onPageChange={onPageChange} />
-      )}
       <div className="flex-1 relative flex flex-col overflow-hidden">
-      <ActionsIsland mode={mode} onModeChange={onModeChange} />
       <div className="flex-1 overflow-auto bg-surface-subtle flex justify-center py-16 px-4">
         <div
           className="bg-white dark:bg-[#2a2a36] rounded-lg w-full max-w-2xl min-h-210.5 p-12 relative self-start"
