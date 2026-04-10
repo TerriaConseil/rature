@@ -19,7 +19,9 @@ export function EditionPage() {
   const entitiesRef = useRef(entities);
   const currentPageRef = useRef(currentPage);
 
+  // eslint-disable-next-line react-hooks/refs
   entitiesRef.current = entities;
+  // eslint-disable-next-line react-hooks/refs
   currentPageRef.current = currentPage;
 
   const toggleEntity = useCallback((name: string) => {
@@ -70,6 +72,7 @@ export function EditionPage() {
         entities={entities}
         selectedEntityId={selectedEntityId}
         highlightedEntityText={highlightedEntityText}
+        isSidebarCollapsed={isCollapsed}
         onEntityClick={handleEntitySelect}
         onEntityUpdate={handleEntityUpdate}
         onPageChange={setCurrentPage}

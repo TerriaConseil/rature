@@ -22,6 +22,7 @@ interface PDFViewerProps {
   entities: GroupedEntity[];
   selectedEntityId: string | null;
   highlightedEntityText?: string | null;
+  isSidebarCollapsed: boolean;
   onEntityClick: (id: string) => void;
   onEntityUpdate: (entityId: string, updates: Partial<GroupedEntity>) => void;
   onPageChange: (page: number) => void;
@@ -35,6 +36,7 @@ export const PDFViewer = React.memo(function PDFViewer({
   entities,
   selectedEntityId,
   highlightedEntityText,
+  isSidebarCollapsed,
   onEntityClick,
   onEntityUpdate,
   onPageChange,
@@ -160,6 +162,7 @@ export const PDFViewer = React.memo(function PDFViewer({
         matches={searchMatches}
         matchIndex={searchMatchIndex}
         inputRef={searchInputRef}
+        isSidebarCollapsed={isSidebarCollapsed}
         onOpen={() => setSearchOpen(true)}
         onQueryChange={setSearchQuery}
         onNavigate={navigateMatch}
