@@ -58,7 +58,6 @@ function DocumentLayoutInner() {
         currentPage={currentPage}
         totalPages={pageCount}
         zoom={zoom}
-        mode={mode}
         onBack={handleBackClick}
         onPrevPage={() => setCurrentPage(p => Math.max(p - 1, 1))}
         onNextPage={() => setCurrentPage(p => Math.min(p + 1, pageCount))}
