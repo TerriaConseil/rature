@@ -6,6 +6,7 @@ import { DeleteEntityDialog } from '@/components/workflow/DeleteEntityDialog.tsx
 import { DocumentSearchBar } from '@/components/workflow/DocumentSearchBar.tsx';
 import { EmptyPDFPage } from '@/components/workflow/EmptyPDFPage.tsx';
 import { FeedbackModal } from '@/components/workflow/FeedbackModal.tsx';
+import { HowItWorks } from '@/components/workflow/HowItWorks.tsx';
 import { SelectionPopover } from '@/components/workflow/SelectionPopover.tsx';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { useDocumentSearch } from '@/hooks/useDocumentSearch.ts';
@@ -154,6 +155,7 @@ export const PDFViewer = React.memo(function PDFViewer({
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden relative">
+      <HowItWorks />
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
       <DocumentSearchBar
         open={searchOpen}

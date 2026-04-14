@@ -209,6 +209,33 @@
     "nextOccurrence": "Next occurrence",
     "close": "Close search"
   },
+  "help": {
+    "buttonTitle": "How it works?",
+    "questions": {
+      "add": "How to add an entity?",
+      "remove": "How to remove an entity?",
+      "update": "How to update an entity?"
+    },
+    "modal": {
+      "add": {
+        "title": "Manually add an entity",
+        "step1": "1. Select the word or text to add you want to add",
+        "step2": "2. Click on 'Add this one only' or 'Add all'"
+      },
+      "remove": {
+        "title": "Manually remove an entity",
+        "step1": "1. Hover the entity to remove",
+        "step2": "2. Click on the 3 horizontal dots that appear",
+        "step3": "3. Click on 'Delete this occurrence' or 'Delete all'"
+      },
+      "update": {
+        "title": "Manually update an entity",
+        "step1": "1. Click on the entity to update",
+        "step2": "2. Hover the entity that is now selected",
+        "step3": "3. Click on an edge and move your cursor to expand or shorten an entity"
+      }
+    }
+  },
   "settings": {
     "title": "Settings",
     "documents": {
