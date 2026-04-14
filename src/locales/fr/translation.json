@@ -209,6 +209,33 @@
     "nextOccurrence": "Occurrence suivante",
     "close": "Fermer la recherche"
   },
+  "help": {
+    "buttonTitle": "Comment ça marche ?",
+    "questions": {
+      "add": "Comment ajouter une entité ?",
+      "remove": "Comment supprimer une entité ?",
+      "update": "Comment modifier une entité ?"
+    },
+    "modal": {
+      "add": {
+        "title": "Ajouter une entité manuellement",
+        "step1": "1. Sélectionnez le mot ou le texte à ajouter",
+        "step2": "2. Cliquez sur 'Ajouter' ou 'Ajouter toutes les occurences'"
+      },
+      "remove": {
+        "title": "Supprimer une entité manuellement",
+        "step1": "1. Survolez l'entité à supprimer",
+        "step2": "2. Cliquez sur les 3 petits points horizonaux qui apparaissent",
+        "step3": "3. Cliquez sur 'Supprimer cette occurrence' ou 'Supprimer toutes les occurences'"
+      },
+      "update": {
+        "title": "Modifier une entité manuellement",
+        "step1": "1. Cliquez sur l'entité à modifier",
+        "step2": "2. Survolez l'entité qui est maintenant sélectionnée",
+        "step3": "3. Cliquez sur un bord puis déplacez le curseur pour allonger ou raccourcir une entité"
+      }
+    }
+  },
   "settings": {
     "title": "Paramètres",
     "documents": {
