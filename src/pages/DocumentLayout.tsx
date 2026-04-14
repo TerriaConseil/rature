@@ -67,7 +67,7 @@ function DocumentLayoutInner() {
         onExport={() => setShowExport(true)}
       />
 
-      <div className="shrink-0 px-5 py-2.5 border-b border-border-theme bg-card flex items-baseline gap-3">
+      <div className="h-10.5 shrink-0 px-5 py-2.5 border-b border-border-theme bg-card flex items-baseline gap-3">
         <span className="text-sm font-semibold text-fg">
           {mode === 'edition' && t('toolbar.textEdition')}
           {mode === 'image-edition' && t('toolbar.imageEdition')}
