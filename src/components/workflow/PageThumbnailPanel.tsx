@@ -155,7 +155,7 @@ export function PageThumbnailPanel({ currentPage, onPageChange, entities, redact
   if (!displayDoc || pageCount <= 1) return null;
 
   return (
-    <div className="flex flex-col w-64 shrink-0 border-r border-border-theme bg-surface-subtle overflow-y-auto overflow-x-hidden">
+    <div className="absolute top-24.5 bottom-0 left-0 flex flex-col w-64 border-r border-border-theme bg-card overflow-y-auto overflow-x-hidden z-50">
       <div className="flex flex-col gap-1.5 p-2.5 py-4">
         {Array.from({ length: pageCount }, (_, i) => (
           <PageThumbnailItem

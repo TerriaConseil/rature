@@ -67,7 +67,7 @@ export function DocumentSearchBar({
 
       <div
         className={cn(
-          'absolute top-4 right-6 z-20',
+          'absolute top-4 right-80 z-50',
           'flex items-center gap-1.5 pl-3 pr-2 py-1.5',
           'bg-white dark:bg-[#2a2a36]',
           'border-2 border-transparent rounded-xl shadow-xl',

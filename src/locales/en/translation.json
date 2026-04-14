@@ -64,7 +64,7 @@
     "loadingFromCache": "Loading from cache..."
   },
   "toolbar": {
-    "back": "Back",
+    "back": "Redact another document",
     "confirmBack": "Are you sure? All changes will be lost.",
     "export": "Export PDF",
     "textEdition": "Text Edition",

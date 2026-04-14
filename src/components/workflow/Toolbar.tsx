@@ -9,14 +9,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button.tsx';
 import { cn } from '@/lib/utils.ts';
-import type { WorkflowMode } from '@/types/index.ts';
 
 interface ToolbarProps {
   fileName: string
   currentPage: number
   totalPages: number
   zoom: number
-  mode: WorkflowMode
   onBack: () => void
   onPrevPage: () => void
   onNextPage: () => void
@@ -30,7 +28,6 @@ export function Toolbar({
   currentPage,
   totalPages,
   zoom,
-  mode,
   onBack,
   onPrevPage,
   onNextPage,
@@ -42,13 +39,8 @@ export function Toolbar({
   return (
     <div className={cn(
       'h-14 border-b flex items-center gap-3 px-4 shrink-0 transition-all duration-300 relative overflow-hidden',
-      mode === 'preview'
-        ? 'bg-teal-50 dark:bg-teal-950/30 border-accent/50 dark:border-accent/30'
-        : 'bg-card border-border-theme',
+      'bg-card border-border-theme',
     )}>
-      {mode === 'preview' && (
-        <div className="absolute top-0 inset-x-0 h-0.75 bg-accent" />
-      )}
       <button
         onClick={onBack}
         className="flex items-center gap-1.5 text-sm text-fg-muted hover:text-fg transition-colors cursor-pointer"

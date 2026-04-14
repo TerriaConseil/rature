@@ -174,46 +174,46 @@ export const PDFViewer = React.memo(function PDFViewer({
       />
 
       <div className="flex-1 flex overflow-hidden">
-      <div className="flex-1 relative flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-auto bg-surface-subtle flex justify-center py-16 px-4">
-        <div
-          className="bg-white dark:bg-[#2a2a36] rounded-lg w-full max-w-2xl min-h-210.5 p-12 relative self-start"
-          style={{
-            boxShadow: '0 2px 8px rgb(0 0 0 / 0.07)',
-            zoom: zoom / 100,
-          }}
-        >
-          <div className="absolute top-3 right-4 text-xs text-gray-400 tabular-nums">
-            {t('pdf.page', { page: currentPage })}
-          </div>
+        <div className="flex-1 relative flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-auto bg-surface-subtle flex justify-center py-16 px-80">
+            <div
+              className="bg-white dark:bg-[#2a2a36] rounded-lg w-full max-w-2xl min-h-210.5 p-12 relative self-start"
+              style={{
+                boxShadow: '0 2px 8px rgb(0 0 0 / 0.07)',
+                zoom: zoom / 100,
+              }}
+            >
+              <div className="absolute top-3 right-4 text-xs text-gray-400 tabular-nums">
+                {t('pdf.page', { page: currentPage })}
+              </div>
 
-          <div
-            ref={setContainerRef}
-            onMouseUp={() => handleMouseUp(!!dragStateRef.current)}
-            className={cn(
-              'font-mono text-[13px] leading-[1.9] text-gray-800 dark:text-gray-200 whitespace-pre-wrap select-text',
-              dragState && 'select-none cursor-ew-resize',
-              isEmptyPage && 'flex items-center justify-center min-h-[70vh]',
+              <div
+                ref={setContainerRef}
+                onMouseUp={() => handleMouseUp(!!dragStateRef.current)}
+                className={cn(
+                  'font-mono text-[13px] leading-[1.9] text-gray-800 dark:text-gray-200 whitespace-pre-wrap select-text',
+                  dragState && 'select-none cursor-ew-resize',
+                  isEmptyPage && 'flex items-center justify-center min-h-[70vh]',
+                )}
+              >
+                {isEmptyPage ? <EmptyPDFPage /> : textParts}
+              </div>
+            </div>
+
+            {selection && (
+              <div data-popover>
+                <SelectionPopover
+                  selectedText={selection.text}
+                  position={selection.position}
+                  matchCount={selection.allMatches.length}
+                  onCreate={() => handleAddEntity(false)}
+                  onCreateAll={() => handleAddEntity(true)}
+                  onDismiss={dismissSelection}
+                />
+              </div>
             )}
-          >
-            {isEmptyPage ? <EmptyPDFPage /> : textParts}
           </div>
         </div>
-
-        {selection && (
-          <div data-popover>
-            <SelectionPopover
-              selectedText={selection.text}
-              position={selection.position}
-              matchCount={selection.allMatches.length}
-              onCreate={() => handleAddEntity(false)}
-              onCreateAll={() => handleAddEntity(true)}
-              onDismiss={dismissSelection}
-            />
-          </div>
-        )}
-      </div>
-      </div>
       </div>
 
       <button
