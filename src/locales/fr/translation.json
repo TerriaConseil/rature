@@ -64,7 +64,7 @@
     "loadingFromCache": "Chargement depuis le cache..."
   },
   "toolbar": {
-    "back": "Retour",
+    "back": "Anonymiser un autre document",
     "confirmBack": "Êtes-vous sûr ? Tous les changements seront perdus.",
     "export": "Exporter le PDF",
     "textEdition": "Édition du texte",
