@@ -1,12 +1,23 @@
-import { useCallback } from 'react';
+import { lazy, Suspense, useCallback } from 'react';
 import { Route, Routes, useNavigate } from 'react-router';
 
 import { HomePage } from '@/pages/HomePage.tsx';
-import { LoadingPage } from '@/pages/LoadingPage.tsx';
-import { DocumentLayout } from '@/pages/DocumentLayout.tsx';
-import { EditionPage } from '@/pages/EditionPage.tsx';
-import { ImageEditionPage } from '@/pages/ImageEditionPage.tsx';
-import { PreviewPage } from '@/pages/PreviewPage.tsx';
+
+const LoadingPage = lazy(() =>
+  import('@/pages/LoadingPage.tsx').then(m => ({ default: m.LoadingPage }))
+);
+const DocumentLayout = lazy(() =>
+  import('@/pages/DocumentLayout.tsx').then(m => ({ default: m.DocumentLayout }))
+);
+const EditionPage = lazy(() =>
+  import('@/pages/EditionPage.tsx').then(m => ({ default: m.EditionPage }))
+);
+const ImageEditionPage = lazy(() =>
+  import('@/pages/ImageEditionPage.tsx').then(m => ({ default: m.ImageEditionPage }))
+);
+const PreviewPage = lazy(() =>
+  import('@/pages/PreviewPage.tsx').then(m => ({ default: m.PreviewPage }))
+);
 
 export default function App() {
   const navigate = useNavigate();
@@ -20,14 +31,16 @@ export default function App() {
   }, [navigate]);
 
   return (
-    <Routes>
-      <Route index element={<HomePage onFileSelect={handleFileSelected} />} />
-      <Route path="processing" element={<LoadingPage onComplete={handleLoadingComplete} />} />
-      <Route path="document" element={<DocumentLayout />}>
-        <Route path="edition" element={<EditionPage />} />
-        <Route path="image-edition" element={<ImageEditionPage />} />
-        <Route path="preview" element={<PreviewPage />} />
-      </Route>
-    </Routes>
+    <Suspense fallback={null}>
+      <Routes>
+        <Route index element={<HomePage onFileSelect={handleFileSelected} />} />
+        <Route path="processing" element={<LoadingPage onComplete={handleLoadingComplete} />} />
+        <Route path="document" element={<DocumentLayout />}>
+          <Route path="edition" element={<EditionPage />} />
+          <Route path="image-edition" element={<ImageEditionPage />} />
+          <Route path="preview" element={<PreviewPage />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }

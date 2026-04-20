@@ -1,4 +1,4 @@
-import { PDFDocument } from "mupdf";
+import type { PDFDocument } from "mupdf";
 import { createContext } from "react";
 
 import type { DetectedImage } from "@/types/index.ts";
