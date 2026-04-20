@@ -3,7 +3,6 @@ import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import { PdfProcessingContext, type TextExtract, type PDFProcessingStatus } from "@/context/pdfProcessing.tsx";
-import uploadPDF from "@/lib/pdf/uploadPDF.tsx";
 import type { DetectedImage } from "@/types/index.ts";
 
 type PdfProcessingProviderProps = {
@@ -26,6 +25,7 @@ export function PdfProcessingProvider({ children }: PdfProcessingProviderProps) 
     setStatus("processing");
 
     try {
+      const { default: uploadPDF } = await import('@/lib/pdf/uploadPDF.tsx');
       const result = await uploadPDF(file);
 
       const extracted = result.pages.map(({ pageNumber, text }) => ({
