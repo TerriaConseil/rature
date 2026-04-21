@@ -1,15 +1,21 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { ActionsIsland } from '@/components/workflow/ActionsIsland.tsx';
 import { DetectionSidebar } from '@/components/workflow/DetectionSidebar.tsx';
 import { PDFViewer } from '@/components/workflow/PDFViewer.tsx';
 import { useAnonymization } from '@/hooks/useAnonymization.ts';
 import { useDocument } from '@/hooks/useDocument.ts';
+import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
+import { tryApplyExpansionDelta } from '@/lib/entity-expansion.ts';
 import type { GroupedEntity } from '@/types/index.ts';
 
 export function EditionPage() {
   const { currentPage, setCurrentPage, zoom, handleModeChange } = useDocument();
   const { nerEntities: entities, setNerEntities: setEntities } = useAnonymization();
+  const { extractedText } = usePdfProcessing();
+  const { t } = useTranslation();
   const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
   const [highlightedEntityText, setHighlightedEntityText] = useState<string | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -48,6 +54,53 @@ export function EditionPage() {
     setEntities(entitiesRef.current.map(e => e.id === entityId ? { ...e, ...updates } : e));
   }, [setEntities]);
 
+  const handleEntityUpdateAll = useCallback(
+    (entityId: string, originalText: string, updates: Partial<GroupedEntity>) => {
+      const entity = entitiesRef.current.find(e => e.id === entityId);
+      if (!entity || updates.start == null || updates.end == null) return;
+
+      const deltaStart = entity.start - updates.start;
+      const deltaEnd = updates.end - entity.end;
+
+      // updatedCount starts at 1 — the dragged entity itself is always applied
+      let updatedCount = 1;
+      let skippedCount = 0;
+
+      const newEntities: GroupedEntity[] = [];
+      for (const e of entitiesRef.current) {
+        if (e.id === entityId) {
+          newEntities.push({ ...e, ...updates });
+          continue;
+        }
+        if (e.text !== originalText) {
+          newEntities.push(e);
+          continue;
+        }
+
+        const pageText = extractedText[e.page - 1]?.text ?? '';
+        // Pass newEntities (already-updated siblings) so overlap detection sees
+        // the latest positions, not the stale pre-mutation snapshot.
+        const result = tryApplyExpansionDelta(e, deltaStart, deltaEnd, pageText, newEntities);
+        if (result) {
+          updatedCount++;
+          newEntities.push({ ...e, ...result });
+        } else {
+          skippedCount++;
+          newEntities.push(e);
+        }
+      }
+
+      setEntities(newEntities);
+
+      if (skippedCount === 0) {
+        toast.success(t('edit.updatedAll', { count: updatedCount }));
+      } else {
+        toast.info(t('edit.updatedPartial', { updated: updatedCount, total: updatedCount + skippedCount }));
+      }
+    },
+    [setEntities, extractedText, t],
+  );
+
   const selectAll = useCallback(() => {
     setEntities(entitiesRef.current.map(e => ({ ...e, included: true })));
   }, [setEntities]);
@@ -75,6 +128,7 @@ export function EditionPage() {
         isSidebarCollapsed={isCollapsed}
         onEntityClick={handleEntitySelect}
         onEntityUpdate={handleEntityUpdate}
+        onEntityUpdateAll={handleEntityUpdateAll}
         onPageChange={setCurrentPage}
         onEntityDeleteOne={deleteEntityById}
         onEntityDeleteAll={deleteEntity}

@@ -197,6 +197,15 @@
     "deleteAll": "Tout supprimer",
     "cancel": "Annuler"
   },
+  "edit": {
+    "title": "Modifier l'entité ?",
+    "updateOne": "Modifier cette occurrence uniquement",
+    "updateAll": "Modifier toutes les occurrences",
+    "cancel": "Annuler",
+    "updatedAll_one": "{{count}} occurrence mise à jour",
+    "updatedAll_other": "{{count}} occurrences mises à jour",
+    "updatedPartial": "{{updated}} occurrences sur {{total}} mises à jour"
+  },
   "actions": {
     "edition": "Édition",
     "preview": "Aperçu"
