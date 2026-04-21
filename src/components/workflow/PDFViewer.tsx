@@ -261,6 +261,7 @@ export const PDFViewer = React.memo(function PDFViewer({
         open={!!updateConfirm}
         onOpenChange={open => !open && setUpdateConfirm(null)}
         entityText={updateConfirm?.originalText ?? ''}
+        entityUpdates={updateConfirm?.updates.text ?? ''}
         instanceCount={updateConfirm?.count ?? 1}
         onUpdateOne={() => {
           onEntityUpdate(updateConfirm!.entityId, updateConfirm!.updates);

@@ -1,4 +1,4 @@
-import { Pencil } from 'lucide-react';
+import { ArrowRight, Pencil } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
@@ -14,6 +14,7 @@ interface UpdateEntityDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   entityText: string;
+  entityUpdates: string;
   instanceCount: number;
   onUpdateOne: () => void;
   onUpdateAll: () => void;
@@ -23,6 +24,7 @@ export function UpdateEntityDialog({
   open,
   onOpenChange,
   entityText,
+  entityUpdates,
   instanceCount,
   onUpdateOne,
   onUpdateAll,
@@ -33,9 +35,13 @@ export function UpdateEntityDialog({
       <AlertDialogContent>
         <AlertDialogTitle>{t('edit.title')}</AlertDialogTitle>
         <AlertDialogDescription asChild>
-          <div className="mt-2 mb-5">
+          <div className="flex items-center gap-2 mt-2 mb-5">
             <span className="inline-block px-2 py-0.5 rounded-md bg-surface-subtle border border-border-theme text-fg font-medium text-xs max-w-full truncate">
               {entityText}
+            </span>
+            <ArrowRight size={16} />
+            <span className="inline-block px-2 py-0.5 rounded-md bg-surface-subtle border border-border-theme text-fg font-medium text-xs max-w-full truncate">
+              {entityUpdates}
             </span>
           </div>
         </AlertDialogDescription>
