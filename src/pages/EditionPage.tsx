@@ -62,22 +62,33 @@ export function EditionPage() {
       const deltaStart = entity.start - updates.start;
       const deltaEnd = updates.end - entity.end;
 
+      // updatedCount starts at 1 — the dragged entity itself is always applied
       let updatedCount = 1;
       let skippedCount = 0;
 
-      const newEntities = entitiesRef.current.map(e => {
-        if (e.id === entityId) return { ...e, ...updates };
-        if (e.text !== originalText) return e;
+      const newEntities: GroupedEntity[] = [];
+      for (const e of entitiesRef.current) {
+        if (e.id === entityId) {
+          newEntities.push({ ...e, ...updates });
+          continue;
+        }
+        if (e.text !== originalText) {
+          newEntities.push(e);
+          continue;
+        }
 
         const pageText = extractedText[e.page - 1]?.text ?? '';
-        const result = tryApplyExpansionDelta(e, deltaStart, deltaEnd, pageText, entitiesRef.current);
+        // Pass newEntities (already-updated siblings) so overlap detection sees
+        // the latest positions, not the stale pre-mutation snapshot.
+        const result = tryApplyExpansionDelta(e, deltaStart, deltaEnd, pageText, newEntities);
         if (result) {
           updatedCount++;
-          return { ...e, ...result };
+          newEntities.push({ ...e, ...result });
+        } else {
+          skippedCount++;
+          newEntities.push(e);
         }
-        skippedCount++;
-        return e;
-      });
+      }
 
       setEntities(newEntities);
 
