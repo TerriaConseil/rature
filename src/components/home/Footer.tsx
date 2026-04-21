@@ -11,7 +11,15 @@ export function Footer() {
       <div className="absolute -top-16 left-0 right-0 h-16 pointer-events-none" />
       <div className="mx-auto max-w-300 px-6 flex flex-wrap items-center justify-center gap-3">
         <p className="text-sm text-fg/70">
-          © {new Date().getFullYear()} Terria Conseil
+          © {new Date().getFullYear()}{' '}
+          <a
+            href="https://terriaconseil.fr?utm_source=rature"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-fg/70 hover:text-fg transition-colors"
+          >
+            Terria Conseil
+          </a>
         </p>
         <p className="text-sm text-fg/80">•</p>
         <a
