@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { MessageSquarePlus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { DeleteEntityDialog } from '@/components/workflow/DeleteEntityDialog.tsx';
+import { UpdateEntityDialog } from '@/components/workflow/UpdateEntityDialog.tsx';
 import { DocumentSearchBar } from '@/components/workflow/DocumentSearchBar.tsx';
 import { EmptyPDFPage } from '@/components/workflow/EmptyPDFPage.tsx';
 import { FeedbackModal } from '@/components/workflow/FeedbackModal.tsx';
@@ -26,6 +27,7 @@ interface PDFViewerProps {
   isSidebarCollapsed: boolean;
   onEntityClick: (id: string) => void;
   onEntityUpdate: (entityId: string, updates: Partial<GroupedEntity>) => void;
+  onEntityUpdateAll?: (entityId: string, originalText: string, updates: Partial<GroupedEntity>) => void;
   onPageChange: (page: number) => void;
   onEntityDeleteOne?: (id: string) => void;
   onEntityDeleteAll?: (text: string) => void;
@@ -40,6 +42,7 @@ export const PDFViewer = React.memo(function PDFViewer({
   isSidebarCollapsed,
   onEntityClick,
   onEntityUpdate,
+  onEntityUpdateAll,
   onPageChange,
   onEntityDeleteOne,
   onEntityDeleteAll,
@@ -52,6 +55,9 @@ export const PDFViewer = React.memo(function PDFViewer({
 
   type DeleteConfirm = { entityId: string; entityText: string; count: number } | null;
   const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirm>(null);
+
+  type UpdateConfirm = { entityId: string; originalText: string; updates: Partial<GroupedEntity>; count: number } | null;
+  const [updateConfirm, setUpdateConfirm] = useState<UpdateConfirm>(null);
 
   const instanceCounts = useMemo(() => {
     const map = new Map<string, number>();
@@ -79,11 +85,25 @@ export const PDFViewer = React.memo(function PDFViewer({
   const pageContent = extractedText[currentPage - 1] ?? extractedText[0];
   const pageEntities = entities.filter(e => e.page === currentPage).sort((a, b) => a.start - b.start);
 
+  const handleEntityUpdateIntercepted = useCallback(
+    (entityId: string, updates: Partial<GroupedEntity>) => {
+      const entity = entities.find(e => e.id === entityId);
+      if (!entity) { onEntityUpdate(entityId, updates); return; }
+      const count = instanceCounts.get(entity.text) ?? 1;
+      if (count > 1 && onEntityUpdateAll) {
+        setUpdateConfirm({ entityId, originalText: entity.text, updates, count });
+      } else {
+        onEntityUpdate(entityId, updates);
+      }
+    },
+    [entities, instanceCounts, onEntityUpdate, onEntityUpdateAll],
+  );
+
   const { dragState, dragStateRef, startDrag } = useEntityDrag(
     pageEntities,
     pageContent.text,
     containerRef,
-    onEntityUpdate,
+    handleEntityUpdateIntercepted,
   );
 
   const { selection, handleMouseUp, handleAddEntity, dismissSelection } = useTextSelection(
@@ -236,6 +256,20 @@ export const PDFViewer = React.memo(function PDFViewer({
         instanceCount={deleteConfirm?.count ?? 1}
         onDeleteOne={() => { onEntityDeleteOne?.(deleteConfirm!.entityId); setDeleteConfirm(null); }}
         onDeleteAll={() => { onEntityDeleteAll?.(deleteConfirm!.entityText); setDeleteConfirm(null); }}
+      />
+      <UpdateEntityDialog
+        open={!!updateConfirm}
+        onOpenChange={open => !open && setUpdateConfirm(null)}
+        entityText={updateConfirm?.originalText ?? ''}
+        instanceCount={updateConfirm?.count ?? 1}
+        onUpdateOne={() => {
+          onEntityUpdate(updateConfirm!.entityId, updateConfirm!.updates);
+          setUpdateConfirm(null);
+        }}
+        onUpdateAll={() => {
+          onEntityUpdateAll?.(updateConfirm!.entityId, updateConfirm!.originalText, updateConfirm!.updates);
+          setUpdateConfirm(null);
+        }}
       />
     </div>
   );
