@@ -53,3 +53,40 @@ export function findAllOccurrences(
 
   return results.sort((a, b) => a.page - b.page || a.start - b.start);
 }
+
+/**
+ * Attempts to apply a character-offset delta to a sibling entity's span.
+ * Returns null if the result would be out of bounds, empty, or overlap another entity.
+ *
+ * @param entity       The sibling entity to expand/contract.
+ * @param deltaStart   Chars to add to the left (entity.start decreases by this amount).
+ * @param deltaEnd     Chars to add to the right (entity.end increases by this amount).
+ * @param pageText     Full text of the page this entity lives on.
+ * @param allEntities  All entities (used for overlap detection; the sibling itself is excluded).
+ */
+export function tryApplyExpansionDelta(
+  entity: GroupedEntity,
+  deltaStart: number,
+  deltaEnd: number,
+  pageText: string,
+  allEntities: GroupedEntity[],
+): { start: number; end: number; text: string } | null {
+  const newStart = entity.start - deltaStart;
+  const newEnd = entity.end + deltaEnd;
+
+  if (newStart < 0 || newEnd > pageText.length || newStart >= newEnd) return null;
+
+  const newText = pageText.slice(newStart, newEnd);
+  if (!newText.trim()) return null;
+
+  const overlaps = allEntities.some(
+    other =>
+      other.id !== entity.id &&
+      other.page === entity.page &&
+      other.start < newEnd &&
+      other.end > newStart,
+  );
+  if (overlaps) return null;
+
+  return { start: newStart, end: newEnd, text: newText };
+}
