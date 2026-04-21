@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ColorSpace, type PDFDocument } from 'mupdf';
+import { ScanLine } from 'lucide-react';
 
 import { usePdfProcessing } from '@/hooks/usePdfProcessing.ts';
 import { redactPDFDocument } from '@/lib/pdf/redactPDF.ts';
@@ -11,12 +12,13 @@ interface PageThumbnailItemProps {
   pdfDocument: PDFDocument;
   isActive: boolean;
   isPending: boolean;
+  isEmpty: boolean;
   onClick: () => void;
 }
 
 const THUMBNAIL_CSS_WIDTH = 160;
 
-function PageThumbnailItem({ pageIndex, pdfDocument, isActive, isPending, onClick }: PageThumbnailItemProps) {
+function PageThumbnailItem({ pageIndex, pdfDocument, isActive, isPending, isEmpty, onClick }: PageThumbnailItemProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [aspectRatio, setAspectRatio] = useState(Math.SQRT2); // A4 default fallback
   const prevUrlRef = useRef<string | null>(null);
@@ -31,25 +33,28 @@ function PageThumbnailItem({ pageIndex, pdfDocument, isActive, isPending, onClic
       const pageWidth = bounds[2] - bounds[0];
       const pageHeight = bounds[3] - bounds[1];
 
-      const dpr = window.devicePixelRatio ?? 1;
-      const cssScale = THUMBNAIL_CSS_WIDTH / pageWidth;
-      const physicalScale = cssScale * dpr;
-      const matrix: [number, number, number, number, number, number] = [physicalScale, 0, 0, physicalScale, 0, 0];
-
-      const pixmap = page.toPixmap(matrix, ColorSpace.DeviceRGB, false);
-      const png = pixmap.asPNG();
-
-      if (cancelled) return;
-
-      const blob = new Blob([png as Uint8Array<ArrayBuffer>], { type: 'image/png' });
-      const url = URL.createObjectURL(blob);
-
-      if (prevUrlRef.current) URL.revokeObjectURL(prevUrlRef.current);
-      prevUrlRef.current = url;
-
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setAspectRatio(pageHeight / pageWidth);
-      setImageUrl(url);
+
+      if (!isEmpty) {
+        const dpr = window.devicePixelRatio ?? 1;
+        const cssScale = THUMBNAIL_CSS_WIDTH / pageWidth;
+        const physicalScale = cssScale * dpr;
+        const matrix: [number, number, number, number, number, number] = [physicalScale, 0, 0, physicalScale, 0, 0];
+
+        const pixmap = page.toPixmap(matrix, ColorSpace.DeviceRGB, false);
+        const png = pixmap.asPNG();
+
+        if (!cancelled) {
+          const blob = new Blob([png as Uint8Array<ArrayBuffer>], { type: 'image/png' });
+          const url = URL.createObjectURL(blob);
+
+          if (prevUrlRef.current) URL.revokeObjectURL(prevUrlRef.current);
+          prevUrlRef.current = url;
+
+          setImageUrl(url);
+        }
+      }
     } catch (err) {
       console.error('Thumbnail render error:', err);
     }
@@ -57,7 +62,7 @@ function PageThumbnailItem({ pageIndex, pdfDocument, isActive, isPending, onClic
     return () => {
       cancelled = true;
     };
-  }, [pdfDocument, pageIndex]);
+  }, [pdfDocument, pageIndex, isEmpty]);
 
   useEffect(() => {
     return () => {
@@ -93,7 +98,11 @@ function PageThumbnailItem({ pageIndex, pdfDocument, isActive, isPending, onClic
         )}
         style={{ width: THUMBNAIL_CSS_WIDTH, height: thumbnailHeight }}
       >
-        {imageUrl ? (
+        {isEmpty ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+            <ScanLine size={18} strokeWidth={1.5} className="text-gray-400 dark:text-gray-500" />
+          </div>
+        ) : imageUrl ? (
           <img
             src={imageUrl}
             alt={`Page ${pageIndex + 1}`}
@@ -131,7 +140,7 @@ interface PageThumbnailPanelProps {
 }
 
 export function PageThumbnailPanel({ currentPage, onPageChange, entities, redactedDocument, pendingPages }: PageThumbnailPanelProps) {
-  const { pdfDocument, pageCount, file } = usePdfProcessing();
+  const { pdfDocument, pageCount, file, extractedText } = usePdfProcessing();
   const [computedDoc, setComputedDoc] = useState<PDFDocument | null>(null);
 
   useEffect(() => {
@@ -164,6 +173,7 @@ export function PageThumbnailPanel({ currentPage, onPageChange, entities, redact
             pdfDocument={displayDoc}
             isActive={currentPage === i + 1}
             isPending={pendingPages?.has(i) ?? false}
+            isEmpty={(extractedText[i]?.text ?? '').trim().length < 15}
             onClick={() => onPageChange(i + 1)}
           />
         ))}
