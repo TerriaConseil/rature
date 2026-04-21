@@ -267,7 +267,11 @@ export const PDFViewer = React.memo(function PDFViewer({
           setUpdateConfirm(null);
         }}
         onUpdateAll={() => {
-          onEntityUpdateAll?.(updateConfirm!.entityId, updateConfirm!.originalText, updateConfirm!.updates);
+          if (onEntityUpdateAll) {
+            onEntityUpdateAll(updateConfirm!.entityId, updateConfirm!.originalText, updateConfirm!.updates);
+          } else {
+            onEntityUpdate(updateConfirm!.entityId, updateConfirm!.updates);
+          }
           setUpdateConfirm(null);
         }}
       />
