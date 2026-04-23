@@ -8,7 +8,7 @@
   "home": {
     "title": "Anonymize your PDFs",
     "subtitle": "No server. Full privacy.",
-    "description": "<logo /> automatically detects and redacts names, addresses,<br />emails, phone numbers, and more — directly <bold>in your browser</bold>.<br />No upload, no server: your documents <accent>never leave</accent> your device.",
+    "description": "<logo /> automatically detects and redacts <accent>sensitive data</accent>: names, addresses,<br />emails, phone numbers, and more — directly <bold>in your browser</bold>.<br />No upload, no server: your documents <accent>never leave</accent> your device.",
     "descriptionBrowser": "in your browser",
     "descriptionNeverLeave": "never leave",
     "badges": {

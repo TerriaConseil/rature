@@ -8,7 +8,7 @@
   "home": {
     "title": "Anonymisez vos PDF",
     "subtitle": "Sans serveur, confidentialité totale.",
-    "description": "<logo /> détecte et masque automatiquement les noms, adresses,<br />emails, numéros de téléphone et bien plus — directement <bold>dans votre navigateur</bold>.<br />Aucun envoi, aucun serveur : vos documents <accent>ne quittent jamais</accent> votre ordinateur.",
+    "description": "<logo /> détecte et masque automatiquement <accent>les données sensibles</accent> : les noms, adresses,<br />emails, numéros de téléphone et bien plus — directement <bold>dans votre navigateur</bold>.<br />Aucun envoi, aucun serveur : vos documents <accent>ne quittent jamais</accent> votre ordinateur.",
     "descriptionBrowser": "dans votre navigateur",
     "descriptionNeverLeave": "ne quittent jamais",
     "badges": {
