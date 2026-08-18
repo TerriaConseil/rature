@@ -104,7 +104,7 @@ export function AboutPage() {
             />
           </p>
           <a
-            href="https://github.com/TerriaConseil/rature"
+            href="https://github.com/alphabeat/rature"
             target="_blank"
             rel="noopener noreferrer"
             className="mb-4 pl-4"
@@ -124,7 +124,7 @@ export function AboutPage() {
             <Trans
               i18nKey="about.openSource.devContrib"
               components={{
-                githubLink: <a href="https://github.com/TerriaConseil/rature/issues" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4" />
+                githubLink: <a href="https://github.com/alphabeat/rature/issues" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4" />
               }}
             />
             <br />

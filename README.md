@@ -42,7 +42,7 @@ Built for corporate lawyers, legal experts, DPOs, and compliance professionals w
 ### Install and run
 
 ```bash
-git clone https://github.com/terria-conseil/rature.git
+git clone https://github.com/alphabeat/rature
 cd rature
 bun install
 bun run dev

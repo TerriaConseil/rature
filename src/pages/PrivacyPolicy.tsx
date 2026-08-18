@@ -4,7 +4,7 @@ import { Footer } from "@/components/home/Footer.tsx";
 import { Navbar } from "@/components/Navbar.tsx";
 
 const bold = <span className="font-bold" />;
-const githubLink = <a href="https://github.com/TerriaConseil/rature" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4" />;
+const githubLink = <a href="https://github.com/alphabeat/rature" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4" />;
 const hostLink = <a href="https://www.ovhcloud.com/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4" />;
 const mailLink = <a href="mailto:contact@rature.fr" className="underline underline-offset-4" />;
 const components = { bold, githubLink, hostLink, mailLink };

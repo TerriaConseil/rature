@@ -56,7 +56,7 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
             {t('feedback.description')}
           </p>
           <a
-            href="https://github.com/TerriaConseil/rature/issues/new?template=bug_report.md"
+            href="https://github.com/alphabeat/rature/issues/new?template=bug_report.md"
             target="_blank"
             rel="noopener noreferrer"
             onClick={onClose}
@@ -72,7 +72,7 @@ export function FeedbackModal({ open, onClose }: FeedbackModalProps) {
             <ChevronRight size={14} className="text-fg-subtle shrink-0" />
           </a>
           <a
-            href="https://github.com/TerriaConseil/rature/issues/new?template=feature_request.md"
+            href="https://github.com/alphabeat/rature/issues/new?template=feature_request.md"
             target="_blank"
             rel="noopener noreferrer"
             onClick={onClose}

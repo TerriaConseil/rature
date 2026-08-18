@@ -611,7 +611,7 @@
       "s5_3": {
         "title": "5.3 How to exercise your rights?",
         "p1": "Although Rature collects <bold>no personally identifiable data</bold>, you can contact us via:",
-        "li1": "The project's GitHub repository: <githubLink>github.com/TerriaConseil/rature</githubLink>",
+        "li1": "The project's GitHub repository: <githubLink>github.com/alphabeat/rature</githubLink>",
         "li2": "The dedicated email address: <mailLink>contact@rature.fr</mailLink>",
         "p2": "We are committed to responding to your request within <bold>one month</bold> (which may be extended by two months in complex cases)."
       },
@@ -626,7 +626,7 @@
       "li1": "Verification of document processing.",
       "li2": "Auditing of the application's operation.",
       "li3": "Contribution to the project.",
-      "p2": "🔗 <bold>GitHub repository link</bold>: <githubLink>github.com/TerriaConseil/rature</githubLink>"
+      "p2": "🔗 <bold>GitHub repository link</bold>: <githubLink>github.com/alphabeat/rature</githubLink>"
     },
     "s7": {
       "title": "7. Hosting",
@@ -668,7 +668,7 @@
       "title": "10. Contact",
       "p1": "For any questions regarding this policy or the operation of Rature:",
       "email": "📧 <bold>Email</bold>: <mailLink>contact@rature.fr</mailLink>",
-      "github": "🔗 <bold>GitHub repository</bold>: <githubLink>github.com/TerriaConseil/rature</githubLink>"
+      "github": "🔗 <bold>GitHub repository</bold>: <githubLink>github.com/alphabeat/rature</githubLink>"
     },
     "s11": {
       "title": "11. Changes and notification",

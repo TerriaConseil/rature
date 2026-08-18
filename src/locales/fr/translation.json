@@ -611,7 +611,7 @@
       "s5_3": {
         "title": "5.3 Comment exercer vos droits ?",
         "p1": "Bien que Rature ne collecte <bold>aucune donnée personnelle identifiable</bold>, vous pouvez nous contacter via :",
-        "li1": "Le dépôt GitHub du projet : <githubLink>github.com/TerriaConseil/rature</githubLink>",
+        "li1": "Le dépôt GitHub du projet : <githubLink>github.com/alphabeat/rature</githubLink>",
         "li2": "L'adresse email dédiée : <mailLink>contact@rature.fr</mailLink>",
         "p2": "Nous nous engageons à répondre à votre demande sous <bold>un mois</bold> (délai pouvant être prolongé de deux mois en cas de complexité)."
       },
@@ -626,7 +626,7 @@
       "li1": "La vérification du traitement des documents.",
       "li2": "L'audit du fonctionnement de l'application.",
       "li3": "La contribution au projet.",
-      "p2": "🔗 <bold>Lien vers le dépôt GitHub</bold> : <githubLink>github.com/TerriaConseil/rature</githubLink>"
+      "p2": "🔗 <bold>Lien vers le dépôt GitHub</bold> : <githubLink>github.com/alphabeat/rature</githubLink>"
     },
     "s7": {
       "title": "7. Hébergement",
@@ -668,7 +668,7 @@
       "title": "10. Contact",
       "p1": "Pour toute question relative à cette politique ou au fonctionnement de Rature :",
       "email": "📧 <bold>Email</bold> : <mailLink>contact@rature.fr</mailLink>",
-      "github": "🔗 <bold>Dépôt GitHub</bold> : <githubLink>github.com/TerriaConseil/rature</githubLink>"
+      "github": "🔗 <bold>Dépôt GitHub</bold> : <githubLink>github.com/alphabeat/rature</githubLink>"
     },
     "s11": {
       "title": "11. Modification et notification des modifications",

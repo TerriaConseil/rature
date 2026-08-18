@@ -12,18 +12,13 @@ export function Footer() {
       <div className="mx-auto max-w-300 px-6 flex flex-wrap items-center justify-center gap-3">
         <p className="text-sm text-fg/70">
           © {new Date().getFullYear()}{' '}
-          <a
-            href="https://terriaconseil.fr?utm_source=rature"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-fg/70 hover:text-fg transition-colors"
-          >
-            Terria Conseil
-          </a>
+          <span className="text-sm text-fg/70 hover:text-fg transition-colors">
+            Julien Kilo
+          </span>
         </p>
         <p className="text-sm text-fg/80">•</p>
         <a
-          href="https://github.com/TerriaConseil/rature"
+          href="https://github.com/alphabeat/rature"
           target="_blank"
           rel="noopener noreferrer"
           className="text-sm text-fg/70 hover:text-fg transition-colors"
